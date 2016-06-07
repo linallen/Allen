@@ -9,7 +9,7 @@ import clusterer.Clusterer;
 import pkgCommon.AAI_IO;
 import pkgCommon.Timer;
 import pkgDataSet.DataSet;
-import pkgSimMeasure.SimMeasure;
+import similarity.measure.SimMeasure;
 
 /**
  * Spectral Clustering implementation adopted from Luigi Dragone.<br>

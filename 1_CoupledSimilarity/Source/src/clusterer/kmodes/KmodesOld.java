@@ -12,8 +12,8 @@ import pkgCommon.Timer;
 import pkgDataSet.DataSet;
 import pkgDataSet.Obj;
 import pkgModule.AAI_Module;
-import pkgSimMeasure.SimCouple;
-import pkgSimMeasure.SimMeasure;
+import similarity.measure.SimCouple;
+import similarity.measure.SimMeasure;
 
 /**
  * k-modes algorithm implementation.

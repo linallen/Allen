@@ -1,4 +1,4 @@
-package pkgEvalDescriptor;
+package eval.descriptor;
 
 /**
  * Used for evaluating similarity measures, Descriptor SD (Sum-Dissimilarity) is

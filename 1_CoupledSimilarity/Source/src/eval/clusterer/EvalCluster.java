@@ -1,4 +1,4 @@
-package pkgEvalCluster;
+package eval.clusterer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

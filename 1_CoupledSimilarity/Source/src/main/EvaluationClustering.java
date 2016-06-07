@@ -3,12 +3,12 @@ import clusterer.Clusterer;
 import clusterer.kmodes.Kmodes;
 import clusterer.spectral.matlab.SpectralMatlab;
 import clusterer.spectral.weka.SpectralWeka;
+import eval.clusterer.EvalClusterMatlab;
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
 import pkgCommon.AAI_IO;
 import pkgDataSet.DataSet;
-import pkgEvalCluster.EvalClusterMatlab;
-import pkgSimMeasure.SimMeasure;
+import similarity.measure.SimMeasure;
 
 /**
  * Evaluating a similarity measure's clustering performance for multiple rounds

@@ -1,4 +1,4 @@
-package pkgEvalCluster;
+package eval.clusterer;
 
 public class Test {
 

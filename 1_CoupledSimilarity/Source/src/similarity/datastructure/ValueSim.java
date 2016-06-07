@@ -1,4 +1,4 @@
-package pkgSimilarity;
+package similarity.datastructure;
 
 import java.util.HashMap;
 

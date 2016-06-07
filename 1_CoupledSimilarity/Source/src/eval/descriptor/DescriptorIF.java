@@ -1,7 +1,7 @@
-package pkgEvalDescriptor;
+package eval.descriptor;
 
 import pkgDataSet.DataSet;
-import pkgSimMeasure.SimMeasure;
+import similarity.measure.SimMeasure;
 
 /**
  * interfaces of discriptor

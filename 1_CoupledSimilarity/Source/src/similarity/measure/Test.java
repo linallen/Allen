@@ -1,8 +1,8 @@
-package pkgSimMeasure;
+package similarity.measure;
 
+import eval.searching.PrecRecall;
 import pkgCommon.AAI_IO;
 import pkgDataSet.DataSet;
-import pkgEvalSearch.PrecRecall;
 
 public class Test {
 	/** Experiment 1: testing algorithm on Precision, Recall, and F metrics */

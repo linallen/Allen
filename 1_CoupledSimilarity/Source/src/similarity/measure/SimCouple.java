@@ -1,4 +1,4 @@
-package pkgSimMeasure;
+package similarity.measure;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -13,8 +13,8 @@ import pkgDataSet.Feature;
 import pkgDataSet.Obj;
 import pkgDataSet.Value;
 import pkgModule.AAI_Module;
-import pkgSimilarity.SimObjs;
-import pkgSimilarity.ValueSim;
+import similarity.datastructure.SimObjs;
+import similarity.datastructure.ValueSim;
 
 /**
  * COS (Coupled Object Similarity) and CMS (Coupled Metric Similarity)

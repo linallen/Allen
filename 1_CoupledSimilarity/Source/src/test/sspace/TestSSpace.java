@@ -1,4 +1,4 @@
-package pkgTestSSpace;
+package test.sspace;
 
 import edu.ucla.sspace.clustering.Assignments;
 import edu.ucla.sspace.clustering.NormalizedSpectralClustering;

@@ -1,4 +1,4 @@
-package pkgSimMeasure;
+package similarity.measure;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

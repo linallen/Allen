@@ -5,7 +5,7 @@ import java.io.FileWriter;
 
 import pkgDataSet.DataSet;
 import pkgDataSet.Obj;
-import pkgSimMeasure.SimMeasure;
+import similarity.measure.SimMeasure;
 
 public interface Clusterer {
 	public int numberOfClusters();
