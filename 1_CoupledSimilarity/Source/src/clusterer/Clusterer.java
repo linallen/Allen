@@ -3,9 +3,9 @@ package clusterer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-import pkgDataSet.DataSet;
-import pkgDataSet.Obj;
-import similarity.measure.SimMeasure;
+import sim.dataset.DataSet;
+import sim.dataset.Obj;
+import sim.measure.SimMeasure;
 
 public interface Clusterer {
 	public int numberOfClusters();

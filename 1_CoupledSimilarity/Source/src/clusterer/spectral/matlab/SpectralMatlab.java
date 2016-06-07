@@ -6,8 +6,8 @@ import matlabcontrol.MatlabProxyFactory;
 import pkgCommon.AAI_IO;
 import pkgCommon.Common;
 import pkgCommon.Timer;
-import pkgDataSet.DataSet;
-import similarity.measure.SimMeasure;
+import sim.dataset.DataSet;
+import sim.measure.SimMeasure;
 
 /**
  * Spectral Clustering implementation (Matlab version). The class calls Matlab

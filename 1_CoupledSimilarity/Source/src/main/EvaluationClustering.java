@@ -7,8 +7,8 @@ import eval.clusterer.EvalClusterMatlab;
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
 import pkgCommon.AAI_IO;
-import pkgDataSet.DataSet;
-import similarity.measure.SimMeasure;
+import sim.dataset.DataSet;
+import sim.measure.SimMeasure;
 
 /**
  * Evaluating a similarity measure's clustering performance for multiple rounds

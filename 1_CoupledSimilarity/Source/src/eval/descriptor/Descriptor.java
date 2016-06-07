@@ -1,8 +1,8 @@
 package eval.descriptor;
 
-import pkgDataSet.DataSet;
-import pkgDataSet.Obj;
-import similarity.measure.SimMeasure;
+import sim.dataset.DataSet;
+import sim.dataset.Obj;
+import sim.measure.SimMeasure;
 
 public abstract class Descriptor implements DescriptorIF {
 	public double m_interSum;

@@ -1,8 +1,8 @@
-package similarity.datastructure;
+package sim.datastructure;
 
 import java.util.HashMap;
 
-import pkgDataSet.Value;
+import sim.dataset.Value;
 
 /**
  * Similarity scores between feature values.

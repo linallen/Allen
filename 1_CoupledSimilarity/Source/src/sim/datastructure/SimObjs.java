@@ -1,10 +1,10 @@
-package similarity.datastructure;
+package sim.datastructure;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import pkgDataSet.Obj;
+import sim.dataset.Obj;
 
 /**
  * Store similar objects to the target object.<br>

@@ -1,9 +1,9 @@
 package eval.descriptor;
 
 import pkgCommon.Common;
-import pkgDataSet.DataSet;
-import pkgDataSet.Obj;
-import similarity.measure.SimMeasure;
+import sim.dataset.DataSet;
+import sim.dataset.Obj;
+import sim.measure.SimMeasure;
 
 /**
  * Used for evaluating similarity measures, Descriptor RD (Relative

@@ -9,11 +9,11 @@ import java.util.HashMap;
 import clusterer.Clusterer;
 import pkgCommon.Common;
 import pkgCommon.Timer;
-import pkgDataSet.DataSet;
-import pkgDataSet.Obj;
 import pkgModule.AAI_Module;
-import similarity.measure.SimCouple;
-import similarity.measure.SimMeasure;
+import sim.dataset.DataSet;
+import sim.dataset.Obj;
+import sim.measure.SimMeasure;
+import sim.measure.coupled.SimCouple;
 
 /**
  * k-modes algorithm implementation.

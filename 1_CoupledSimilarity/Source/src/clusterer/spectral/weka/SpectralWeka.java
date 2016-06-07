@@ -8,8 +8,8 @@ import cern.colt.matrix.DoubleMatrix2D;
 import clusterer.Clusterer;
 import pkgCommon.AAI_IO;
 import pkgCommon.Timer;
-import pkgDataSet.DataSet;
-import similarity.measure.SimMeasure;
+import sim.dataset.DataSet;
+import sim.measure.SimMeasure;
 
 /**
  * Spectral Clustering implementation adopted from Luigi Dragone.<br>

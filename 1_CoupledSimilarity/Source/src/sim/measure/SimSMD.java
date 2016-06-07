@@ -1,8 +1,8 @@
-package similarity.measure;
+package sim.measure;
 
-import pkgDataSet.DataSet;
-import pkgDataSet.Obj;
-import pkgDataSet.Value;
+import sim.dataset.DataSet;
+import sim.dataset.Obj;
+import sim.dataset.Value;
 
 /** Simple Matching Dissimilarity, or Hamming distance */
 public class SimSMD implements SimMeasure {

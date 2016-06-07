@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import pkgCommon.Common;
-import pkgDataSet.DataSet;
-import pkgDataSet.Obj;
-import pkgDataSet.Value;
+import sim.dataset.DataSet;
+import sim.dataset.Obj;
+import sim.dataset.Value;
 
 /** The mode object in k-modes algorithm. */
 public class Mode extends Obj {

@@ -1,4 +1,4 @@
-package similarity.measure;
+package sim.measure.coupled;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -8,13 +8,14 @@ import java.util.HashSet;
 import pkgCommon.AAI_IO;
 import pkgCommon.Common;
 import pkgCommon.Timer;
-import pkgDataSet.DataSet;
-import pkgDataSet.Feature;
-import pkgDataSet.Obj;
-import pkgDataSet.Value;
 import pkgModule.AAI_Module;
-import similarity.datastructure.SimObjs;
-import similarity.datastructure.ValueSim;
+import sim.dataset.DataSet;
+import sim.dataset.Feature;
+import sim.dataset.Obj;
+import sim.dataset.Value;
+import sim.datastructure.SimObjs;
+import sim.datastructure.ValueSim;
+import sim.measure.SimMeasure;
 
 /**
  * COS (Coupled Object Similarity) and CMS (Coupled Metric Similarity)
