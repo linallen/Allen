@@ -1,0 +1,17 @@
+package main;
+
+/**
+ * Classes and functions commonly used in all modules.
+ * 
+ * @author Allen Lin, 11 Sep 2014
+ */
+public class Main {
+	public static void main(String[] args) throws Exception {
+		System.out.println(help());
+	}
+
+	public static String help() {
+		return "Authored by Allen Lin, 9 June 2016.\n" + "Classes and functions commonly used in all modules.\n"
+				+ "8 June 2016, Added common.xml as parent POM.";
+	}
+}
