@@ -7,9 +7,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
-import common.*;
-import feature.*;
-import module.*;
+import common.AAI_IO;
+import common.Common;
+import common.Timer;
+import feature.Feature;
+import feature.FtrType;
+import module.AAI_Module;
 
 /**
  * Arff class for manipulating Arff objects, including loading and saving ARFF
