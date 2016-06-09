@@ -11,7 +11,6 @@ public class Main {
 	}
 
 	public static String help() {
-		return "Authored by Allen Lin, 9 June 2016.\n" + "Classes and functions commonly used in all modules.\n"
-				+ "8 June 2016, Added common.xml as parent POM.";
+		return "Authored by Allen Lin, 9 June 2016.\n" + "Classes and functions commonly used in all modules.\n";
 	}
 }
