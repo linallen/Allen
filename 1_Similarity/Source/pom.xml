@@ -10,12 +10,5 @@
 	<groupId>Allen</groupId>
 	<artifactId>similarity</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<dependencies>
-		<dependency>
-			<groupId>Allen</groupId>
-			<artifactId>base</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
 </project>
 
