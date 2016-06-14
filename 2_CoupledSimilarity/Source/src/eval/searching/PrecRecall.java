@@ -5,10 +5,8 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-import pkgCommon.AAI_IO;
-import pkgCommon.Common;
-import pkgCommon.Timer;
-import pkgModule.AAI_Module;
+import common.*;
+import module.AAI_Module;
 
 /**
  * Evaluate searching results with Precision, Recall, and F-measure metrics.

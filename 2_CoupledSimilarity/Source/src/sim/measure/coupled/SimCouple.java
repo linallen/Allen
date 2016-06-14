@@ -5,10 +5,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import pkgCommon.AAI_IO;
-import pkgCommon.Common;
-import pkgCommon.Timer;
-import pkgModule.AAI_Module;
 import sim.dataset.DataSet;
 import sim.dataset.Feature;
 import sim.dataset.Obj;
@@ -16,6 +12,9 @@ import sim.dataset.Value;
 import sim.datastructure.SimObjs;
 import sim.datastructure.ValueSim;
 import sim.measure.SimMeasure;
+
+import common.*;
+import module.AAI_Module;
 
 /**
  * COS (Coupled Object Similarity) and CMS (Coupled Metric Similarity)

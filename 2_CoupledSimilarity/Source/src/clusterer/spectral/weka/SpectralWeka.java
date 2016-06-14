@@ -6,10 +6,10 @@ import java.io.FileReader;
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix2D;
 import clusterer.Clusterer;
-import pkgCommon.AAI_IO;
-import pkgCommon.Timer;
 import sim.dataset.DataSet;
 import sim.measure.SimMeasure;
+
+import common.*;
 
 /**
  * Spectral Clustering implementation adopted from Luigi Dragone.<br>

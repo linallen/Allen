@@ -3,11 +3,11 @@ package sim.measure;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-import pkgCommon.Common;
-import pkgCommon.Timer;
 import sim.dataset.DataSet;
 import sim.dataset.Obj;
 import sim.measure.coupled.SimCouple;
+
+import common.*;
 
 /**
  * interfaces of similarity measure.

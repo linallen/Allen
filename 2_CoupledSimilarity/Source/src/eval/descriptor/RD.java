@@ -1,6 +1,6 @@
 package eval.descriptor;
 
-import pkgCommon.Common;
+import common.Common;
 import sim.dataset.DataSet;
 import sim.dataset.Obj;
 import sim.measure.SimMeasure;

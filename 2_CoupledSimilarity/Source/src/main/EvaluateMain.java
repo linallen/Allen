@@ -1,9 +1,11 @@
 package main;
+
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
-import pkgCommon.AAI_IO;
 import sim.dataset.DataSet;
 import sim.measure.SimMeasure;
+
+import common.*;
 
 public class EvaluateMain {
 	static String WORK_DIR = "D:/GoogleDrive/UTS/SourceCode/1_CoupledSimilarity/_experiments/";

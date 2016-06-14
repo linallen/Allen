@@ -1,9 +1,10 @@
 package sim.measure;
 
 import eval.searching.PrecRecall;
-import pkgCommon.AAI_IO;
 import sim.dataset.DataSet;
 import sim.measure.coupled.SimCouple;
+
+import common.*;
 
 public class Test {
 	/** Experiment 1: testing algorithm on Precision, Recall, and F metrics */

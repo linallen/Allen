@@ -3,7 +3,7 @@ package sim.dataset;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import pkgCommon.Common;
+import common.*;
 
 public class Feature {
 	/** feature name (optional) */

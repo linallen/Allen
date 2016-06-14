@@ -2,7 +2,7 @@ package sim.dataset;
 
 import java.util.ArrayList;
 
-import pkgCommon.Common;
+import common.*;
 
 /** Global Features[n] */
 public class FtrLst {

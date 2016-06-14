@@ -7,13 +7,12 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import clusterer.Clusterer;
-import pkgCommon.Common;
-import pkgCommon.Timer;
-import pkgModule.AAI_Module;
 import sim.dataset.DataSet;
 import sim.dataset.Obj;
 import sim.measure.SimMeasure;
 import sim.measure.coupled.SimCouple;
+import common.*;
+import module.AAI_Module;
 
 /**
  * k-modes algorithm implementation.

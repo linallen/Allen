@@ -2,7 +2,7 @@ package sim.dataset;
 
 import java.util.ArrayList;
 
-import pkgCommon.Common;
+import common.*;
 
 public class Cls {
 	/** class name (optional, for debug only) */

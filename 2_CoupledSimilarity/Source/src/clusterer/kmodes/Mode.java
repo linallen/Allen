@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import pkgCommon.Common;
 import sim.dataset.DataSet;
 import sim.dataset.Obj;
 import sim.dataset.Value;
+
+import common.*;
 
 /** The mode object in k-modes algorithm. */
 public class Mode extends Obj {
@@ -23,7 +24,7 @@ public class Mode extends Obj {
 
 	public Mode(DataSet data, int ftrNum) {
 		m_data = data;
-		//name("Mode_" + (m_modeNum++));
+		// name("Mode_" + (m_modeNum++));
 		name("" + (m_modeNum++));
 		m_valFreq = new ArrayList<ValueFreq>();
 		for (int i = 0; i < ftrNum; i++) {

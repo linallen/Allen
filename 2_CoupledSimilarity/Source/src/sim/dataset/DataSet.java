@@ -6,10 +6,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
-import pkgCommon.AAI_IO;
-import pkgCommon.Common;
-import pkgCommon.Timer;
-import pkgModule.AAI_Module;
+import common.*;
+import module.*;
 
 /**
  * Stores a data set containing a (categorical) feature table.<br>
