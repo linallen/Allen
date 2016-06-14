@@ -1,8 +1,8 @@
-package datastructure;
+package allen.similarity.datastructure;
 
 import java.util.HashMap;
 
-import dataset.Value;
+import allen.similarity.dataset.Value;
 
 /**
  * Similarity scores between feature values.

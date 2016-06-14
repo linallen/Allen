@@ -1,4 +1,4 @@
-package dataset;
+package allen.similarity.dataset;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,8 +6,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
-import common.*;
-import module.AAI_Module;
+import allen.base.common.*;
+import allen.base.module.AAI_Module;
 
 /**
  * Stores a data set containing a (categorical) feature table.<br>

@@ -1,8 +1,8 @@
-package dataset;
+package allen.similarity.dataset;
 
 import java.util.ArrayList;
 
-import common.Common;
+import allen.base.common.Common;
 
 /** Global Features[n] */
 public class FtrLst {

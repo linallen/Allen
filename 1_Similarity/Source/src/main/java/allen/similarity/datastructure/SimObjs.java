@@ -1,10 +1,10 @@
-package datastructure;
+package allen.similarity.datastructure;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import dataset.Obj;
+import allen.similarity.dataset.Obj;
 
 /**
  * Store similar objects to the target object.<br>

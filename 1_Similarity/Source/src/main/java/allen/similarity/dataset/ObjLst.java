@@ -1,4 +1,4 @@
-package dataset;
+package allen.similarity.dataset;
 
 import java.util.ArrayList;
 

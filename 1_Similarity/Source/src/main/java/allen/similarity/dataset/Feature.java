@@ -1,9 +1,9 @@
-package dataset;
+package allen.similarity.dataset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import common.Common;
+import allen.base.common.Common;
 
 public class Feature {
 	/** feature name (optional) */
