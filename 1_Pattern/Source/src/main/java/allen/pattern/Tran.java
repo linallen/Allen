@@ -1,4 +1,4 @@
-package pattern;
+package allen.pattern;
 
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package pattern;
+package allen.pattern;
 
 import java.util.ArrayList;
 import java.util.Collection;

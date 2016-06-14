@@ -1,12 +1,12 @@
-package pattern;
+package allen.pattern;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import common.*;
-import module.AAI_Module;
+import allen.base.common.*;
+import allen.base.module.AAI_Module;
 
 /**
  * transaction data set.

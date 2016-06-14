@@ -1,4 +1,4 @@
-package main;
+package allen.pattern;
 
 /**
  * The data structures for pattern mining.

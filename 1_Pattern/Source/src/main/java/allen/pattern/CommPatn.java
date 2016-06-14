@@ -1,11 +1,12 @@
-package pattern;
+package allen.pattern;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import arff.Arff;
-import common.Common;
-import feature.*;
+import allen.arff.Arff;
+import allen.base.common.Common;
+import allen.base.feature.Feature;
+import allen.base.feature.FtrType;
 
 /**
  * Common functions for pattern mining.

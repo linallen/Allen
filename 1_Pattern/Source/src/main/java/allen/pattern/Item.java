@@ -1,9 +1,9 @@
-package pattern;
+package allen.pattern;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-import common.Common;
+import allen.base.common.Common;
 
 /**
  * item.

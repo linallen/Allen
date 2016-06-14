@@ -1,12 +1,12 @@
-package pattern;
+package allen.pattern;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import common.AAI_IO;
-import module.AAI_Module;
+import allen.base.common.AAI_IO;
+import allen.base.module.AAI_Module;
 
 /**
  * pattern list
