@@ -1,4 +1,4 @@
-package common;
+package allen.base.common;
 
 /**
  * Class for showing progress in percentage.

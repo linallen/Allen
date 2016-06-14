@@ -1,10 +1,10 @@
-package module;
+package allen.base.module;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 
-import common.*;
+import allen.base.common.*;
 
 /**
  * General module class which<br>

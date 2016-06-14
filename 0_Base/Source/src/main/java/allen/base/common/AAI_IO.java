@@ -1,4 +1,4 @@
-package common;
+package allen.base.common;
 
 import java.io.Closeable;
 import java.io.File;

@@ -1,4 +1,4 @@
-package main;
+package allen.base;
 
 /**
  * Classes and functions commonly used in all modules.
