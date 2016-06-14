@@ -5,7 +5,7 @@ package allen.base;
  * 
  * @author Allen Lin, 11 Sep 2014
  */
-public class Readme {
+public class Main {
 	public static void main(String[] args) throws Exception {
 		System.out.println(help());
 	}

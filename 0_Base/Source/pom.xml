@@ -25,7 +25,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>main.Readme</mainClass>
+									<mainClass>allen.base.Main</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
