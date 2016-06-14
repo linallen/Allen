@@ -1,4 +1,4 @@
-package arff;
+package allen.arff;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,12 +7,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
-import common.AAI_IO;
-import common.Common;
-import common.Timer;
-import feature.Feature;
-import feature.FtrType;
-import module.AAI_Module;
+import allen.base.common.*;
+import allen.base.feature.*;
+import allen.base.module.*;
 
 /**
  * Arff class for manipulating Arff objects, including loading and saving ARFF

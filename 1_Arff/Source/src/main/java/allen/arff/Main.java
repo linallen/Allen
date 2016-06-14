@@ -1,6 +1,4 @@
-package main;
-
-import arff.Arff;
+package allen.arff;
 
 public class Main {
 	public static void main(String[] args) throws Exception {

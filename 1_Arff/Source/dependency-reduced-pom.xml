@@ -4,7 +4,7 @@
     <artifactId>parent_pom</artifactId>
     <groupId>Allen</groupId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../../common.xml</relativePath>
+    <relativePath>../../parent_pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>Allen</groupId>

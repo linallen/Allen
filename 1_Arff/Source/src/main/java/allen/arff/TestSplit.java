@@ -1,4 +1,4 @@
-package arff;
+package allen.arff;
 
 public class TestSplit {
 	private static String WORK_DIR = "C:/Dropbox/UTS/SourceCode/5_CodingArff/_data/mushroom/";

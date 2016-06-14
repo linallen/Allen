@@ -1,4 +1,4 @@
-package arff;
+package allen.arff;
 
 public class Test {
 	private static String WORK_DIR = "C:/Dropbox/UTS/SourceCode/5_CodingArff/_data/";
@@ -7,7 +7,7 @@ public class Test {
 	private static String m_outputCSV = WORK_DIR + "output.CSV";
 
 	public static void main(String[] args) throws Throwable {
-		Arff arff = new Arff(null);
+		Arff arff = new Arff();
 		arff.load(m_inputArff);
 		arff.saveARFF(m_outputARFF);
 		arff.saveCSV(m_outputCSV);
