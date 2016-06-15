@@ -420,7 +420,7 @@ public abstract class AAI_Module implements Runnable, Serializable {
 	/** output debug message to out-stream and log file */
 	public synchronized void outputDbg(String msg) {
 		if (debug()) {
-			output("Dbg: " + Common.quote(msg));
+			output("[Debug]: " + Common.quote(msg));
 		}
 	}
 
@@ -440,12 +440,6 @@ public abstract class AAI_Module implements Runnable, Serializable {
 	/** output a error message for DEBUG */
 	public synchronized void error(String msg) {
 		output("Error: " + msg);
-	}
-
-	protected void dbgPrint(String msg) {
-		if (debug()) {
-			System.out.println(msg);
-		}
 	}
 
 	// TODO: delete

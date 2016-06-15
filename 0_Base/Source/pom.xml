@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>allen</groupId>
 	<artifactId>base</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Allen's Base Functions and Modules</name>
@@ -61,5 +62,11 @@
 			</plugin>
 		</plugins>
 	</build>
-	<groupId>Allen</groupId>
+	<dependencies>
+		<dependency>
+			<groupId>com.diffplug.matsim</groupId>
+			<artifactId>matlabcontrol</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+	</dependencies>
 </project>
