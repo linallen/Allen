@@ -1,9 +1,9 @@
 package eval.descriptor;
 
-import common.Common;
-import sim.dataset.DataSet;
-import sim.dataset.Obj;
-import sim.measure.SimMeasure;
+import allen.base.common.Common;
+import allen.sim.dataset.DataSet;
+import allen.sim.dataset.Obj;
+import allen.sim.measure.SimMeasure;
 
 /**
  * Used for evaluating similarity measures, Descriptor RD (Relative

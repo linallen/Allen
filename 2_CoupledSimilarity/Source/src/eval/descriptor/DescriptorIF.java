@@ -1,7 +1,7 @@
 package eval.descriptor;
 
-import sim.dataset.DataSet;
-import sim.measure.SimMeasure;
+import allen.sim.dataset.DataSet;
+import allen.sim.measure.SimMeasure;
 
 /**
  * interfaces of discriptor

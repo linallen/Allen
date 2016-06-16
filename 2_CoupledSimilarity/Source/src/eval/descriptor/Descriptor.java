@@ -1,8 +1,8 @@
 package eval.descriptor;
 
-import sim.dataset.DataSet;
-import sim.dataset.Obj;
-import sim.measure.SimMeasure;
+import allen.sim.dataset.DataSet;
+import allen.sim.dataset.Obj;
+import allen.sim.measure.SimMeasure;
 
 public abstract class Descriptor implements DescriptorIF {
 	public double m_interSum;

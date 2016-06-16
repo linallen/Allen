@@ -5,8 +5,8 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 
-import common.*;
-import module.AAI_Module;
+import allen.base.common.*;
+import allen.base.module.AAI_Module;
 
 /**
  * Evaluate searching results with Precision, Recall, and F-measure metrics.

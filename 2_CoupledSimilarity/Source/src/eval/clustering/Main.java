@@ -1,13 +1,12 @@
-package main;
+package eval.clustering;
 
+import allen.base.common.*;
+import allen.sim.dataset.DataSet;
+import allen.sim.measure.SimMeasure;
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
-import sim.dataset.DataSet;
-import sim.measure.SimMeasure;
 
-import common.*;
-
-public class EvaluateMain {
+public class Main {
 	static String WORK_DIR = "D:/GoogleDrive/UTS/SourceCode/1_CoupledSimilarity/_experiments/";
 	static String MATLAB_DIR = "D:/GoogleDrive/UTS/SourceCode/1_CoupledSimilarity/_experiments/_matlab/";
 	static int ROUND = 100;
@@ -50,7 +49,7 @@ public class EvaluateMain {
 			String dataFile = dataDir + dataName + ".data";
 			DataSet data = new DataSet();
 			data.loadData(dataFile);
-			data.dbgSummary();
+			data.dbgOutputSummary();
 			// 2. similarity measure
 			for (String simName : simNames) {
 				SimMeasure simMeasure = SimMeasure.getSimMeasure(simName);

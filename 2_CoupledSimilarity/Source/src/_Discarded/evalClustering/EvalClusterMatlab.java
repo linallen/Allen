@@ -1,4 +1,4 @@
-package eval.clusterer;
+package _Discarded.evalClustering;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

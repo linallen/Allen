@@ -1,0 +1,53 @@
+res = kmeans(fea,4);
+res = bestMap(gnd,res);
+%=============  evaluate AC: accuracy ==============
+AC = length(find(gnd == res))/length(gnd);
+%=============  evaluate MIhat: nomalized mutual information =================
+MIhat = MutualInfo(gnd,res);
+
+res = [1 0 0 1];
+gnd = [1 1 0 0];
+
+find(res==gnd)
+
+res是聚类的结果，比如 [1 0 0 1]，假设就四个数据。
+gnd是真实的label，比如[1 1 0 0].
+find(res==gnd)=[0 2]，求res和gnd两个哪几个位置是相等的。
+这里是0,2两个位置相等（向量元素从0开始编号）
+length(find(res==gnd))=2，因为[0 2]就两个元素，所以长度是2.
+length(gnd)=4，求真实label的向量长度，
+
+最后AC = length(find(gnd == res))/length(gnd)=2/4=50%.
+res = bestMap(gnd,res);
+AC = length(find(gnd == res))/length(gnd);
+
+假设就两个cluster
+
+res = bestMap(gnd,res);
+
+AC = length(find(gnd == res))/length(gnd);
+
+Matlab就这两行就可以求到AC了。
+
+
+gnd=[2;1;2;2;2;1;2;2;2;1;2;2;1;1;1];
+res=[0;1;1;1;1;1;1;1;1;1;1;1;1;1;1];
+res = bestMap(gnd,res);
+AC = length(find(gnd == res))/length(gnd)
+MIhat = MutualInfo(gnd,res)
+AC =
+    0.5333
+MIhat =
+    0.0529
+	
+///////////////////////////////////
+cd D:\GoogleDrive\UTS\SourceCode\1_CoupledSimilarity\_cluster\_matlab
+gnd=[2.;5.;5.];
+res=[0;2.;2.];
+[AC,MIhat] = evaluation(res,gnd) 
+
+gnd=[2;5;5];
+res=[0;2;2];
+res = bestMap(gnd,res);
+AC = length(find(gnd == res))/length(gnd)
+MIhat = MutualInfo(gnd,res)
