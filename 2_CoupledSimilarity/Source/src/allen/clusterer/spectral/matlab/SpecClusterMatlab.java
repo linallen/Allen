@@ -5,8 +5,6 @@ import allen.base.common.Common;
 import allen.base.common.Timer;
 import allen.clusterer.Clusterer;
 import allen.matlab.Matlab;
-import allen.sim.dataset.DataSet;
-import allen.sim.measure.SimMeasure;
 import matlabcontrol.MatlabProxy;
 
 /**

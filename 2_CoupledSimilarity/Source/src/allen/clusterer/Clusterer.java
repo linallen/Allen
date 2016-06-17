@@ -36,7 +36,7 @@ public abstract class Clusterer extends AAI_Module {
 	private static final long serialVersionUID = -4489564528508002488L;
 
 	/** -i input_file: [input] the input categorical data file. */
-	protected String m_inputFile;
+	protected String m_inputArff;
 	/** -r randomize: [parameter] randomize the algorithm, default NO */
 	protected boolean m_randomize;
 	/**
@@ -47,45 +47,62 @@ public abstract class Clusterer extends AAI_Module {
 	/** -o output_file: [output] objects with top_k similar objects. */
 	protected String m_outputFile;
 
-	/** [input 1] similarity measure */
+	/** [input 1] data set */
+	protected DataSet m_dataSet;
+	/** [input 2] similarity measure */
 	protected SimMeasure m_simMeasure;
-	/** [input 2] data set */
-	protected DataSet m_data;
 	/** [input 3] k - pre-defined cluster number */
 	protected int m_k;
 	/** [output] clusters[] */
 	protected int[] m_clusters = new int[0];
 
+	/** property functions ***************************************/
 	/** set similarity measure, data set, and k */
-	public void setParams(SimMeasure simMeasure, DataSet data, int k) {
+	public void setParams(DataSet dataSet, SimMeasure simMeasure, int k) {
 		m_simMeasure = simMeasure;
 		if (m_simMeasure != null) {
 			m_simMeasure.owner(this);
 		}
-		m_data = data;
-		if (m_data != null) {
-			m_data.owner(this);
+		m_dataSet = dataSet;
+		if (m_dataSet != null) {
+			m_dataSet.owner(this);
 		}
-		m_k = ((k <= 0) ? data.clsNum() : k);
+		m_k = ((k <= 0) ? dataSet.clsNum() : k);
 	}
-	
-	public void setDataSet(String dataFile){
-		// 1. load categorical data
-		DataSet data = new DataSet();
-		data.owner(this);
-		data.debug(this.debug());
-		data.loadData(m_inputFile);
-		outputDbg(data.dataSummary());
 
-		// 2. create similarity measure
-		SimMeasure simMeasure = SimMeasure.getSimMeasure(m_simName);
+	/** set/load data set */
+	public void dataSet(String dataFile) throws Exception {
+		DataSet dataSet = new DataSet();
+		dataSet.owner(this);
+		dataSet.debug(this.debug());
+		dataSet.loadArff(m_inputArff, false);
+		dataSet(dataSet);
+	}
+
+	/** set/load data set */
+	public void dataSet(DataSet dataSet) throws Exception {
+		m_dataSet = dataSet;
+		m_dataSet.owner(this);
+	}
+
+	/** get data set */
+	public DataSet dataSet() {
+		return m_dataSet;
+	}
+
+	/** set similarity measure */
+	public void simMeasure(String simName) throws Exception {
+		SimMeasure simMeasure = SimMeasure.getSimMeasure(simName);
 		simMeasure.owner(this);
 		simMeasure.debug(this.debug());
 		outputDbg("SIM_alg: " + Common.quote(simMeasure.name() + "/" + m_simName));
+		simMeasure(simMeasure);
+	}
 
-		// 3. run k-modes on data with CoupleSim
-		m_k = (m_k == 0) ? data.clsNum() : m_k;
-		clustering(simMeasure, data, m_k);
+	/** set similarity measure */
+	public void simMeasure(SimMeasure simMeasure) {
+		m_simMeasure = simMeasure;
+		m_simMeasure.owner(this);
 	}
 
 	/** get similarity measure */
@@ -93,9 +110,9 @@ public abstract class Clusterer extends AAI_Module {
 		return m_simMeasure;
 	}
 
-	/** get data set */
-	public DataSet data() {
-		return m_data;
+	/** set k */
+	public void k(int k) {
+		m_k = (m_k == 0) ? m_dataSet.clsNum() : m_k;
 	}
 
 	/** get k */
@@ -117,6 +134,7 @@ public abstract class Clusterer extends AAI_Module {
 		return m_clusters;
 	}
 
+	/** manipulation functions ***************************************/
 	/**
 	 * clustering given Data Set with given Similarity Measure.
 	 * 
@@ -128,30 +146,31 @@ public abstract class Clusterer extends AAI_Module {
 	 *            cluster number
 	 * @return cluster id array, starting from 0
 	 */
-	public int[] clustering(SimMeasure simMeasure, DataSet dataSet, int k) throws Exception {
-		setParams(simMeasure, dataSet, k);
+	public int[] clustering(DataSet dataSet, SimMeasure simMeasure, int k) throws Exception {
+		setParams(dataSet, simMeasure, k);
 		return clustering();
 	}
 
 	public int[] clustering() throws Exception {
-		output("Clusterer " + name() + " started on " + m_data.name() + " with k = " + m_k);
+		String text = "clusterer " + name() + " on " + m_dataSet.name() + " with sim_measure = " + m_simMeasure.name();
+		output("Started " + text + ", k = " + m_k);
 		Timer timer = new Timer();
 		m_clusters = clusteringAlg();
-		output("Clusterer " + name() + " finished on " + m_data.name() + " with " + clusterNum() + " clusters. "
-				+ timer);
+		output("Finished " + text + ", produced " + clusterNum() + " clusters. " + timer);
 		return m_clusters;
 	}
 
 	/** Main function of clustering algorithm */
 	protected abstract int[] clusteringAlg() throws Exception;
 
+	/** save result clusters[] to file */
 	public void saveClusters(String clusterCSV) throws Exception {
-		if (m_clusters.length != m_data.objNum()) {
+		if (m_clusters.length != m_dataSet.objNum()) {
 			throw new Exception("ERROR!");
 		}
 		BufferedWriter bw = new BufferedWriter(new FileWriter(clusterCSV));
-		for (int i = 0; i < m_data.objNum(); i++) {
-			Obj obj = m_data.getObj(i);
+		for (int i = 0; i < m_dataSet.objNum(); i++) {
+			Obj obj = m_dataSet.getObj(i);
 			bw.write(obj.name() + "," + obj.cls().getName() + "," + m_clusters[i] + "," + obj.strValues() + "\n");
 		}
 		bw.close();
@@ -159,26 +178,15 @@ public abstract class Clusterer extends AAI_Module {
 
 	@Override
 	protected void mainProc() throws Exception {
-		// 1. load categorical data
-		DataSet data = new DataSet();
-		data.owner(this);
-		data.debug(this.debug());
-		data.loadData(m_inputFile);
-		outputDbg(data.dataSummary());
-
-		// 2. create similarity measure
-		SimMeasure simMeasure = SimMeasure.getSimMeasure(m_simName);
-		simMeasure.owner(this);
-		simMeasure.debug(this.debug());
-		outputDbg("SIM_alg: " + Common.quote(simMeasure.name() + "/" + m_simName));
-
-		// 3. run k-modes on data with CoupleSim
-		m_k = (m_k == 0) ? data.clsNum() : m_k;
-		clustering(simMeasure, data, m_k);
-
-		// 4. output results
+		// 1. set parameters: dataSet, simMeasure, and k
+		dataSet(m_inputArff);
+		simMeasure(m_simName);
+		k(m_k);
+		// 2. run k-modes on data with CoupleSim
+		clustering(m_dataSet, m_simMeasure, m_k);
+		// 3. output results
 		if (!Common.validString(m_outputFile)) {
-			m_outputFile = m_inputFile + "." + m_simName + ".csv";
+			m_outputFile = m_inputArff + "." + m_simName + ".csv";
 		}
 		saveClusters(m_outputFile);
 	}
@@ -186,7 +194,7 @@ public abstract class Clusterer extends AAI_Module {
 	@Override
 	public void setOptions(String[] options) throws Exception {
 		// -i input_file
-		m_inputFile = Common.getOption("i", options);
+		m_inputArff = Common.getOption("i", options);
 		// -i input_file: [input] the input categorical data file
 		m_k = Common.getOptionInt("k", options, m_k);
 		// -s sim_name: SMD, OFD, ADD, COS, INTRA, INTER

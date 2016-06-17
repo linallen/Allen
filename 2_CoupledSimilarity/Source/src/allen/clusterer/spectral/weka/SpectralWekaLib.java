@@ -418,16 +418,6 @@ public class SpectralWekaLib extends AbstractClusterer {
 	}
 
 	/**
-	 * Returns the number of clusters found.
-	 * 
-	 * @return the number of clusters
-	 */
-	@Override
-	public int clusterNum() {
-		return numOfClusters;
-	}
-
-	/**
 	 * Classifies an instance w.r.t. the partitions found. It applies a naive
 	 * min-distance algorithm.
 	 * 
@@ -743,5 +733,15 @@ public class SpectralWekaLib extends AbstractClusterer {
 		result.enable(Capability.STRING_ATTRIBUTES);
 		result.enable(Capability.MISSING_VALUES);
 		return result;
+	}
+
+	/**
+	 * Returns the number of clusters found.
+	 * 
+	 * @return the number of clusters
+	 */
+	@Override
+	public int numberOfClusters() throws Exception {
+		return numOfClusters;
 	}
 }

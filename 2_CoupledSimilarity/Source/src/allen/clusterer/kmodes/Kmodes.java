@@ -56,7 +56,7 @@ public class Kmodes extends Clusterer {
 		m_modes = new ArrayList<Mode>();
 		for (Obj seedObj : seedObjs) {
 			Mode mode = new Mode(data, data.ftrNum());
-			mode.objAddRemove(seedObj, true);
+			mode.addObj(seedObj, true);
 			m_mapObjSim.put(seedObj, Double.MAX_VALUE);
 			m_mapObjMode.put(seedObj, mode);
 			m_modes.add(mode);
@@ -77,7 +77,7 @@ public class Kmodes extends Clusterer {
 			Mode mode = new Mode(data, data.ftrNum());
 			Obj obj = data.getObj(i);
 			// Obj obj = data.getObj(data.objNum() - 1 - i);
-			mode.objAddRemove(obj, true);
+			mode.addObj(obj, true);
 			m_mapObjSim.put(obj, Double.MAX_VALUE);
 			m_mapObjMode.put(obj, mode);
 			m_modes.add(mode);
@@ -112,9 +112,9 @@ public class Kmodes extends Clusterer {
 		Common.Assert(objMin != null);
 		Mode modeOld = m_mapObjMode.get(objMin);
 		if (modeOld != null) {
-			modeOld.objAddRemove(objMin, false);
+			modeOld.addObj(objMin, false);
 		}
-		modeNew.objAddRemove(objMin, true);
+		modeNew.addObj(objMin, true);
 		// objMin.m_modeSim = Double.MAX_VALUE;
 		m_mapObjSim.put(objMin, Double.MAX_VALUE);
 		// move objMin from modeOrg to mode
@@ -125,19 +125,19 @@ public class Kmodes extends Clusterer {
 	@Override
 	protected int[] clusteringAlg() throws Exception {
 		// 1. initialize k modes
-		initModes(m_data, m_k, m_randomize);
+		initModes(m_dataSet, m_k, m_randomize);
 		// 2. k-modes
 		int roundNum = 0;
 		for (int changeNum = 1; changeNum > 0; roundNum++) {
 			changeNum = 0; // # of objects changed cluster in this round
-			for (int i = 0; i < m_data.objNum(); i++) {
+			for (int i = 0; i < m_dataSet.objNum(); i++) {
 				// progress(i + 1, data.objNum());
-				Obj obj = m_data.getObj(i);
+				Obj obj = m_dataSet.getObj(i);
 				// 1. assign obj[i] to the closest mode[j]
 				Mode closestMode = null;
 				double simMax = -1;
 				for (Mode mode : m_modes) {
-					double sim = m_simMeasure.sim(obj, mode, m_data);
+					double sim = m_simMeasure.sim(obj, mode, m_dataSet);
 					// obj.m_simMin = Math.min(obj.m_simMin, sim);
 					if (sim > simMax) {
 						simMax = sim;
@@ -149,10 +149,10 @@ public class Kmodes extends Clusterer {
 				if (oldMode != closestMode) {
 					if (oldMode != null) {
 						// remove object from old mode
-						oldMode.objAddRemove(obj, false);
+						oldMode.addObj(obj, false);
 					}
 					// add object to new mode
-					closestMode.objAddRemove(obj, true);
+					closestMode.addObj(obj, true);
 					Common.Assert(simMax >= 0);
 					// obj.m_modeSim = simMax;
 					m_mapObjSim.put(obj, simMax);
@@ -160,16 +160,16 @@ public class Kmodes extends Clusterer {
 					changeNum++;
 					// if old mode is empty, move an object into it
 					if ((oldMode != null) && oldMode.isEmpty()) {
-						addFarObj(oldMode, m_data);
+						addFarObj(oldMode, m_dataSet);
 					}
 				}
 			}
 			outputDbg("KM round " + (roundNum + 1) + ": " + changeNum + " changes.");
 		}
 		// 3. transfer modes[] to clusters[]
-		m_clusters = new int[m_data.objNum()];
-		for (int i = 0; i < m_data.objNum(); i++) {
-			Obj obj = m_data.getObj(i);
+		m_clusters = new int[m_dataSet.objNum()];
+		for (int i = 0; i < m_dataSet.objNum(); i++) {
+			Obj obj = m_dataSet.getObj(i);
 			Mode mode = m_mapObjMode.get(obj);
 			m_clusters[i] = m_modes.indexOf(mode);
 		}
@@ -187,11 +187,12 @@ public class Kmodes extends Clusterer {
 	}
 
 	public static String help() {
-		return "k-mode module.\n\n";
+		return "k-modes algorithm implementation.";
 	}
 
 	public static String version() {
 		return "v1, Created on 18 Mar 2016, Allen Lin.\n"
-				+ "v2, Fixed bug: empty cluster casued by moving out object. Solution: add the most isolated object to the empty cluster. 27 Mar 2016, Allen Lin.\n";
+				+ "v2, Fixed bug: empty cluster casued by moving out object. Solution: add the most isolated object to the empty cluster. 27 Mar 2016, Allen Lin.\n"
+				+ "V2.1, Rewrite k-modes where a Mode is a FtrSet instead of an Obj, Allen, 17 June 2016.";
 	}
 }

@@ -17,11 +17,11 @@ public class ObjLst {
 		return m_objLst.size();
 	}
 
-	public void add(Obj obj) {
+	public void addObj(Obj obj) {
 		m_objLst.add(obj);
 	}
 
-	public Obj get(int i) {
+	public Obj getObj(int i) {
 		return m_objLst.get(i);
 	}
 

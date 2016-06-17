@@ -6,62 +6,46 @@ import java.util.HashSet;
 
 import allen.base.common.*;
 import allen.sim.dataset.DataSet;
+import allen.sim.dataset.Feature;
+import allen.sim.dataset.FtrSet;
+import allen.sim.dataset.FtrType;
 import allen.sim.dataset.Obj;
 import allen.sim.dataset.Value;
 
-/** The mode object in k-modes algorithm. */
-public class Mode extends Obj {
-	private static int m_modeNum = 0;
-
-	private DataSet m_data;
-
-	/** objects contained in this mode (for debug only) */
+/**
+ * The mode object in k-modes algorithm.
+ * 
+ * @author Allen Lin, 17 June 2016
+ */
+public class Mode extends FtrSet {
+	/** the objs belonging to this mode (for DEBUG only) */
 	private HashSet<Obj> m_objs = new HashSet<Obj>();
 
-	/** feature values[] of this object */
-	private ArrayList<ValueFreq> m_valFreq;
-
-	public Mode(DataSet data, int ftrNum) {
-		m_data = data;
-		// name("Mode_" + (m_modeNum++));
-		name("" + (m_modeNum++));
-		m_valFreq = new ArrayList<ValueFreq>();
-		for (int i = 0; i < ftrNum; i++) {
-			ValueFreq valFreq = new ValueFreq();
-			m_valFreq.add(valFreq);
-		}
-	}
-
-	public int size() {
-		return m_objs.size();
-	}
-
+	/** property functions ***************************************/
 	/** @return objects[] in this mode */
 	public HashSet<Obj> getObjs() {
 		return m_objs;
 	}
 
-	public boolean isEmpty() {
-		return m_objs.size() == 0;
-	}
-
-	/** add/remove an object to/from the mode (cluster) */
-	public void objAddRemove(Obj obj, boolean add) throws Exception {
-		// 1. add/remove object from the mode (cluster)
-		if (add) {
-			m_objs.add(obj);
-		} else {
-			m_objs.remove(obj);
+	/** manipulation functions ***************************************/
+	/** add an object to the mode (cluster) */
+	public void addObj(Obj obj) throws Exception {
+		m_objs.add(obj);
+		// update value counts of the mode
+		for (Value value : obj.values()) {
+			Feature ftr = value.ftr();
+			if (ftr.type() == FtrType.CATEGORICAL) {
+				Feature modeFtr = getFtr(ftr.name());
+			}
 		}
-		// 2. update value frequencies
-		Common.Assert(obj.valueNum() <= m_valFreq.size());
-		for (int i = 0; i < obj.valueNum(); i++) {
+
+		for (int i = 0; i < obj.size(); i++) {
 			Value value = obj.getValue(i);
 			if (!Value.isMissing(value)) {
 				String valueStr = value.getValue();
 				ValueFreq valFreq = m_valFreq.get(i);
 				Common.Assert(valFreq != null);
-				valFreq.updateFreq(valueStr, add);
+				valFreq.updateFreq(valueStr, in);
 			}
 		}
 		// 3. update values[]

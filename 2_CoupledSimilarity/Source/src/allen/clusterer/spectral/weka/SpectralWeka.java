@@ -3,10 +3,8 @@ package allen.clusterer.spectral.weka;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-import allen.base.common.*;
-import allen.clusterer.ClustererInterfaceToDEL;
-import allen.sim.dataset.DataSet;
-import allen.sim.measure.SimMeasure;
+import allen.base.common.AAI_IO;
+import allen.base.common.Timer;
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix2D;
 
@@ -15,7 +13,7 @@ import cern.colt.matrix.DoubleMatrix2D;
  * 
  * @author Allen Lin, 24 Mar 2016
  */
-public class SpectralWeka extends SpectralWekaLib implements ClustererInterfaceToDEL {
+public class SpectralWeka extends SpectralWekaLib {
 	private static final long serialVersionUID = 7903499745283935299L;
 
 	/**
@@ -30,7 +28,6 @@ public class SpectralWeka extends SpectralWekaLib implements ClustererInterfaceT
 	 *            where obj_idx starts from 0 to obj_num - 1
 	 * @return clusters[]
 	 */
-	@Override
 	public int[] clustering(String simMatrixFile, int k) throws Exception {
 		return clustering(simMatrixFile);
 	}
@@ -84,11 +81,5 @@ public class SpectralWeka extends SpectralWekaLib implements ClustererInterfaceT
 			AAI_IO.close(br);
 			System.out.println("Spectral Clustering finished. " + timer);
 		}
-	}
-
-	@Override
-	public int[] clustering(SimMeasure simMeasure, DataSet data, int k) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

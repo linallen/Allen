@@ -75,7 +75,7 @@ public class SimCouple extends SimMeasure {
 		double interObjSim = 0;
 		for (int k = 0; k < ftrLst.size(); k++) {
 			// if (ftrLst.get(k).getName() != val1.getFtrName()) {
-			if (!ftrLst.get(k).getName().equals(val1.getFtrName())) {
+			if (!ftrLst.get(k).name().equals(val1.getFtrName())) {
 				double interAttrSim = interAttrK_COS(val1, val2, k);
 				interObjSim += wt * interAttrSim;
 			}

@@ -1,20 +1,58 @@
 package allen.sim.dataset;
 
-import java.util.HashSet;
+import allen.base.common.Common;
+import allen.base.module.AAI_Module;
 
-public class Value {
+public class Value extends AAI_Module {
+	private static final long serialVersionUID = -1869885830125983799L;
+
 	/** owner feature (for debug only) */
 	private Feature m_feature;
 
-	/** feature value */
-	private String m_value = new String();
+	/** actual value which can be compared with "==" or "!=" */
+	private Object m_value;
 
-	/** objects containing this feature value */
-	private HashSet<Obj> m_objs = new HashSet<Obj>();
+	/** count of this CATEGORICAL value (for frequency statistics) */
+	private int m_count;
 
-	public Value(Feature feature, String value) {
-		m_feature = feature;
-		m_value = value;
+	public Value(String valueStr, Feature ftr) throws Exception {
+		name(valueStr);
+		m_feature = ftr;
+		if (ftr.type() == FtrType.NUMERIC) {
+			m_value = Common.toNumber(valueStr);
+		} else {
+			m_value = valueStr.trim().intern();
+		}
+	}
+
+	/** property functions ***************************************/
+	public Feature ftr() {
+		return m_feature;
+	}
+
+	/** increase value count */
+	public void countInc() {
+		m_count++;
+	}
+
+	/** decrease value count */
+	public void countDec() {
+		m_count--;
+	}
+
+	/** set value count */
+	public void count(int count) {
+		m_count = count;
+	}
+
+	/** get value count */
+	public int count() {
+		return m_count;
+	}
+
+	/** manipulation functions ***************************************/
+	public boolean equal(Value value) {
+		return m_value == value.m_value;
 	}
 
 	public static boolean isMissingValue(String valueStr) {
@@ -25,41 +63,21 @@ public class Value {
 		return (value == null) || value.isMissing();
 	}
 
-	public boolean isMissing() {
-		return m_value.isEmpty();
+	private boolean isMissing() {
+		return name().isEmpty();
 	}
 
-	public String getValue() {
-		return m_value;
-	}
-
-	/** add an object that contains this feature value */
-	public void addObj(Obj obj) {
-		m_objs.add(obj);
-	}
-
-	public String getFtrName() {
-		return m_feature.getName();
-	}
-
-	public HashSet<Obj> getObjs() {
-		return m_objs;
-	}
-
-	public int getObjNum() {
-		return m_objs.size();
-	}
-
+	/** output functions ***************************************/
 	public String toString() {
-		return m_value + "<" + strObjs() + ">";
+		return name();
 	}
 
 	/** get representation of object set */
-	private String strObjs() {
-		String buf = new String();
-		for (Obj obj : m_objs) {
-			buf += obj.name() + ",";
-		}
-		return buf;
-	}
+	// private String strObjs() {
+	// String buf = new String();
+	// for (Obj obj : m_objs) {
+	// buf += obj.name() + ",";
+	// }
+	// return buf;
+	// }
 }

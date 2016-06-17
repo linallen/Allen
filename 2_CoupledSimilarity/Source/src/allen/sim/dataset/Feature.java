@@ -1,103 +1,79 @@
 package allen.sim.dataset;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import allen.base.common.*;
+import allen.base.module.AAI_Module;
 
-public class Feature {
-	/** feature name (optional) */
-	private String m_name;
-	/** feature type */
+/**
+ * Feature class.
+ * 
+ * @author Allen Lin, 17 June 2016
+ */
+public class Feature extends AAI_Module {
+	private static final long serialVersionUID = 6148083896195395634L;
+
+	/** feature type: NUMERIC, CATEGORICAL, STRING, DATE */
 	private FtrType m_type;
 
-	/** value set of the feature */
-	private HashMap<String, Value> m_values = new HashMap<String, Value>();
+	/** value set (for CATEGORICAL feature ONLY). [ftr_name, value_obj] */
+	private HashMap<String, Value> m_valSet = new HashMap<String, Value>();
 
-	public Feature(String name) {
-		m_name = name;
+	/** property functions ***************************************/
+	/** set feature type */
+	public void type(FtrType type) {
+		m_type = type;
 	}
 
-	/** add value to value set, and return value object */
-	public Value add(String valStr, Obj obj) {
-		if (!Common.isValid(valStr)) {
-			return null;
-		}
-		Value ftrValue = m_values.get(valStr);
-		// build mapping<value, object>
-		if (ftrValue == null) {
-			ftrValue = new Value(this, valStr);
-			m_values.put(valStr, ftrValue);
-		}
-		// update mapping <value, obj> for named obj
-		if (!obj.name().isEmpty()) {
-			ftrValue.addObj(obj);
-		}
-		return ftrValue;
+	/** get feature type */
+	public FtrType type() {
+		return m_type;
+	}
+
+	/** manipulation functions ***************************************/
+	/** add value to the feature */
+	public void addValue(Value value) {
+		m_valSet.put(value.name(), value);
+	}
+
+	public Value getValue(String valueStr) {
+		return m_valSet.get(valueStr);
 	}
 
 	/** add value strings to value set, and return value list */
-	public ArrayList<Value> addValues(String valueStrs[]) {
-		ArrayList<Value> values = new ArrayList<Value>();
-		for (String valueStr : valueStrs) {
-			values.add(addValue(valueStr));
-		}
-		return values;
-	}
+	// public ArrayList<Value> addValues(String valueStrs[]) {
+	// ArrayList<Value> values = new ArrayList<Value>();
+	// for (String valueStr : valueStrs) {
+	// values.add(addValue(valueStr));
+	// }
+	// return values;
+	// }
 
-	/** add a value string to value set, and return value object */
-	public Value addValue(String valueStr) {
-		valueStr = valueStr.trim();
-		// if it's a missing value
-		if (Value.isMissingValue(valueStr)) {
-			return null; // TODO VERIFY
-		}
-		//
-		Value value = m_values.get(valueStr);
-		if (value == null) {
-			value = new Value(this, valueStr);
-			m_values.put(valueStr, value);
-		}
-		return value;
-	}
+	// public ArrayList<Value> valLst() {
+	// return new ArrayList<Value>(m_valSet.values());
+	// }
 
-	public String getName() {
-		return m_name;
-	}
-
-	public Value getValue(String value) {
-		return m_values.get(value);
-	}
-
-	public ArrayList<Value> valLst() {
-		return new ArrayList<Value>(m_values.values());
-	}
-
-	public int getValueNum() {
-		return m_values.size();
-	}
+	// public int getValueNum() {
+	// return m_valSet.size();
+	// }
 
 	/** return mapping <value, object> */
-	public String getValueObjMapping() {
-		String buf = new String();
-		for (Value value : m_values.values()) {
-			buf += m_name + ":" + value.toString() + "\n";
-		}
-		return buf;
-	}
+	// public String getValueObjMapping() {
+	// String buf = new String();
+	// for (Value value : m_valSet.values()) {
+	// buf += m_name + ":" + value.toString() + "\n";
+	// }
+	// return buf;
+	// }
 
 	public String toString() {
-		String buf = new String();
-		if (Common.notNullEmpty(m_name)) {
-			buf = m_name;
-		}
+		String buf = name() + " (" + type() + ")";
 		return buf + "<" + strValues() + ">";
 	}
 
 	/** get representation of feature value set */
 	private String strValues() {
 		String buf = new String();
-		for (String value : m_values.keySet()) {
+		for (String value : m_valSet.keySet()) {
 			buf += value + ",";
 		}
 		return buf;
