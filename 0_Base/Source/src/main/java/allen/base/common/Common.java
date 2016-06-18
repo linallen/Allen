@@ -21,6 +21,19 @@ import java.util.List;
  */
 public class Common {
 
+	/** string to number (Integer or Double) */
+	public static Object toNumber(String valueStr) throws Exception {
+		try {
+			return Integer.parseInt(valueStr);
+		} catch (Exception e1) {
+			try {
+				return Double.parseDouble(valueStr);
+			} catch (Exception e2) {
+				throw new Exception("Not a number: " + valueStr);
+			}
+		}
+	}
+
 	/**
 	 * added on 20 May 2015.<br>
 	 * TODO: need to remove this function.
