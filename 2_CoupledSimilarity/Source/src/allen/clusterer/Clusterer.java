@@ -171,7 +171,9 @@ public abstract class Clusterer extends AAI_Module {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(clusterCSV));
 		for (int i = 0; i < m_dataSet.objNum(); i++) {
 			Obj obj = m_dataSet.getObj(i);
-			bw.write(obj.name() + "," + obj.cls().getName() + "," + m_clusters[i] + "," + obj.strValues() + "\n");
+			// bw.write(obj.name() + "," + obj.cls().getName() + "," +
+			// m_clusters[i] + "," + obj.strValues() + "\n");
+			bw.write(obj.name() + "," + m_clusters[i] + "\n");
 		}
 		bw.close();
 	}
@@ -209,22 +211,22 @@ public abstract class Clusterer extends AAI_Module {
 	}
 
 	public static void main(String[] args) throws Exception {
-		SimCouple module = new SimCouple();
-		System.out.println("\n" + version() + "\n");
-		if (args.length == 0) {
-			System.out.println(help() + "\n");
-			return;
-		}
-		module.setOptions(args);
-		module.start();
-		module.join();
+		// SimCouple module = new SimCouple();
+		// System.out.println("\n" + version() + "\n");
+		// if (args.length == 0) {
+		// System.out.println(help() + "\n");
+		// return;
+		// }
+		// module.setOptions(args);
+		// module.start();
+		// module.join();
 	}
 
-	public static String help() {
+	public String help() {
 		return "Clusterer base class.\n\n";
 	}
 
-	public static String version() {
+	public String version() {
 		return "v1, Created on 14 June 2016, Allen Lin.\n";
 	}
 }

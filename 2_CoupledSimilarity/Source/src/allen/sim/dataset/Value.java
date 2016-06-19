@@ -13,19 +13,39 @@ public class Value extends AAI_Module {
 	private Object m_value;
 
 	/** count of this CATEGORICAL value (for frequency statistics) */
-	private int m_count;
+	private int m_count = 1;
 
 	public Value(String valueStr, Feature ftr) throws Exception {
-		name(valueStr);
+		valueStr = valueStr.trim().intern();
 		m_feature = ftr;
 		if (ftr.type() == FtrType.NUMERIC) {
 			m_value = Common.toNumber(valueStr);
 		} else {
-			m_value = valueStr.trim().intern();
+			m_value = valueStr;
 		}
+		name(valueStr);
+	}
+
+	public Value(Feature ftr) throws Exception {
+		m_feature = ftr;
+	}
+
+	public Value deepCopy() throws Exception {
+		Value valueCopy = new Value(name(), this.ftr());
+		// TODO return deep copy of Value
+		valueCopy.ftr();
+		return valueCopy;
 	}
 
 	/** property functions ***************************************/
+	public void value(String valueStr) throws Exception {
+		if (ftr().type() == FtrType.NUMERIC) {
+			m_value = Common.toNumber(valueStr);
+		} else {
+			m_value = valueStr;
+		}
+	}
+
 	public Feature ftr() {
 		return m_feature;
 	}
@@ -63,8 +83,9 @@ public class Value extends AAI_Module {
 		return (value == null) || value.isMissing();
 	}
 
-	private boolean isMissing() {
-		return name().isEmpty();
+	/** TODO no use, delete it */
+	public boolean isMissing() {
+		return m_value == null;
 	}
 
 	/** output functions ***************************************/

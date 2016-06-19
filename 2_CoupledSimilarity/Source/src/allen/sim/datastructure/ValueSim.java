@@ -5,9 +5,8 @@ import java.util.HashMap;
 import allen.sim.dataset.Value;
 
 /**
- * Similarity scores between feature values.
- * <p>
- * Data Structure: [Value1, SimValues[]]
+ * Similarity scores between feature values.<br>
+ * Data Structure: [Value, SimValues[]]
  * 
  * @author Allen Lin, 1 Feb 2016
  */
@@ -42,22 +41,17 @@ public class ValueSim {
 		// }
 	}
 
-	/** return sim(val1, val2) */
-	private double getSimScore(Value val1, Value val2) {
-		HashMap<Value, Double> simValues = m_valSim.get(val1);
-		Double sim = (simValues != null) ? simValues.get(val2) : null;
-		return (sim != null) ? sim : 0;
-	}
-
-	/** return sim(val1, val2) */
-	public double getSim(Value val1, Value val2) {
+	/**
+	 * return sim(val1, val2).
+	 * 
+	 * @return null if sim(val1, val2) has not been saved.
+	 */
+	public Double getSim(Value val1, Value val2) {
 		if (val1 == val2) {
-			// return 1;
+			// return 1; ???
 		}
-		if (Value.isMissing(val1) || Value.isMissing(val2)) {
-			return 0; // TODO DEBUG missing value
-		}
-		return Math.max(getSimScore(val1, val2), getSimScore(val2, val1));
+		HashMap<Value, Double> simValues = m_valSim.get(val1);
+		return (simValues == null) ? null : simValues.get(val2);
 	}
 
 	/** return (top-K) similar values to a given value */

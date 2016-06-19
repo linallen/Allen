@@ -2,8 +2,10 @@ package allen.sim.dataset;
 
 import java.util.ArrayList;
 
+import allen.base.set.AllenSet;
+
 /** Global Objects[n] */
-public class ObjLst {
+public class ObjLst implements AllenSet {
 	private ArrayList<Obj> m_objLst = new ArrayList<Obj>();
 
 	public ObjLst() {
@@ -13,6 +15,8 @@ public class ObjLst {
 		m_objLst = new ArrayList<Obj>(k);
 	}
 
+	/** property functions ***************************************/
+	@Override
 	public int size() {
 		return m_objLst.size();
 	}
@@ -33,6 +37,7 @@ public class ObjLst {
 		return m_objLst.get(i).name();
 	}
 
+	/** output functions ***************************************/
 	public String toString() {
 		String buf = new String();
 		for (Obj obj : m_objLst) {

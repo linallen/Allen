@@ -9,7 +9,7 @@ public class Test {
 	private static void TestPrecRecall(String dataFile, String simName) throws Exception {
 		String m_simFile = WORK_DIR + simName + "_sim_objs.csv";
 		String options = " -i " + dataFile + " -o " + m_simFile + " -s " + simName + " -debug ";
-		SimCouple module = new SimCouple();
+		SimMeasure module = new SimMeasure();
 		module.addOptions(options.split(" "));
 		module.start();
 		module.join();
@@ -24,7 +24,7 @@ public class Test {
 	}
 
 	public static void TestPrecRecall(String dataFile) throws Exception {
-		String simNames[] = { "COS", "INTRA", "INTER" };
+		String simNames[] = { "COS", "COS_INTRA", "COS_INTER" };
 		for (String simName : simNames) {
 			TestPrecRecall(dataFile, simName);
 		}
@@ -34,11 +34,11 @@ public class Test {
 	public static void TestSimMatrix(String dataFile, String simName) throws Exception {
 		SimMeasure simMeasure = SimMeasure.getSimMeasure(simName);
 		DataSet data = new DataSet();
-		data.loadData(dataFile);
+		data.loadArff(dataFile, false);
 		data.dbgOutputSummary();
 		String simGraphFile = m_dataFile + "." + simName + ".simGraph.txt";
 		System.out.println("\"" + simMeasure.name() + " " + simName + "\" on " + AAI_IO.getFileName(dataFile));
-		simMeasure.saveSimGraph(simGraphFile, data);
+		simMeasure.saveSimGraph(simGraphFile);
 
 	}
 

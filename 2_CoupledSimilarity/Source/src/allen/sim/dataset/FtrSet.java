@@ -1,10 +1,17 @@
 package allen.sim.dataset;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
+import allen.base.module.AAI_Module;
+import allen.base.set.AllenSet;
+
 /** Feature Set[n] of a data set */
-public class FtrSet {
-	/** the owner data set */
+public class FtrSet extends AAI_Module implements AllenSet {
+	private static final long serialVersionUID = 5383351457021516092L;
+
+	/** the owner data set (for Debug only) */
 	private DataSet m_dataSet;
 
 	/** feature set[n]: [ftrName, ftrObj] */
@@ -13,12 +20,9 @@ public class FtrSet {
 	private HashMap<Integer, String> m_ftrIdx = new HashMap<Integer, String>();
 
 	/** property functions ***************************************/
+	@Override
 	public int size() {
 		return m_ftrSet.size();
-	}
-
-	public boolean isEmpty() {
-		return size() == 0;
 	}
 
 	public void dataSet(DataSet dataSet) {
@@ -27,6 +31,56 @@ public class FtrSet {
 
 	public DataSet dataSet() {
 		return m_dataSet;
+	}
+
+	/** @return deep copy of this feature set (except the owner data set) */
+	public FtrSet deepCopy() throws Exception {
+		FtrSet ftrSetCopy = new FtrSet();
+		ftrSetCopy.name(name());
+		ftrSetCopy.owner(owner());
+		ftrSetCopy.m_ftrSet = new HashMap<String, Feature>();
+		for (String ftrName : m_ftrSet.keySet()) {
+			// TODO deep copy ftr's properties
+			Feature ftr = m_ftrSet.get(ftrName).deepCopy();
+			ftrSetCopy.m_ftrSet.put(ftrName, ftr);
+		}
+		ftrSetCopy.m_ftrIdx = new HashMap<Integer, String>();
+		for (Integer ftrIdx : m_ftrIdx.keySet()) {
+			ftrSetCopy.m_ftrIdx.put(ftrIdx, m_ftrIdx.get(ftrIdx));
+		}
+		return ftrSetCopy;
+	}
+
+	/** return feature[ftrName] */
+	public Feature getFtr(String ftrName) throws Exception {
+		return m_ftrSet.get(ftrName);
+	}
+
+	/** return feature[i] */
+	public Feature getFtr(int i) throws Exception {
+		String ftrName = m_ftrIdx.get(i);
+		return m_ftrSet.get(ftrName);
+	}
+
+	/** return feature set[] */
+	public Collection<Feature> ftrs() {
+		return m_ftrSet.values();
+	}
+
+	/** @return feature list[] */
+	public ArrayList<Feature> ftrLst() {
+		return new ArrayList<Feature>(m_ftrSet.values());
+	}
+
+	/** @return feature list[] of a specific type */
+	public ArrayList<Feature> ftrLst(FtrType ftrType) {
+		ArrayList<Feature> ftrLst = new ArrayList<Feature>();
+		for (Feature ftr : m_ftrSet.values()) {
+			if (ftr.type() == ftrType) {
+				ftrLst.add(ftr);
+			}
+		}
+		return ftrLst;
 	}
 
 	/** manipulation functions ***************************************/
@@ -41,17 +95,6 @@ public class FtrSet {
 			throw new Exception("Feature not found: " + ftrName);
 		}
 		m_ftrIdx.put(index, ftrName);
-	}
-
-	/** return feature[ftrName] */
-	public Feature getFtr(String ftrName) throws Exception {
-		return m_ftrSet.get(ftrName);
-	}
-
-	/** return feature[i] */
-	public Feature getFtr(int i) throws Exception {
-		String ftrName = m_ftrIdx.get(i);
-		return m_ftrSet.get(ftrName);
 	}
 
 	/** return mapping <value, object> */

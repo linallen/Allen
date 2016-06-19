@@ -2,10 +2,13 @@ package allen.sim.dataset;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import allen.base.common.AAI_IO;
 import allen.base.common.Timer;
 import allen.base.module.AAI_Module;
+import allen.base.set.AllenSet;
 
 /**
  * A data set containing a feature table.<br>
@@ -13,7 +16,7 @@ import allen.base.module.AAI_Module;
  * 
  * @author Allen Lin, 24 Mar 2016
  */
-public class DataSet extends AAI_Module {
+public class DataSet extends AAI_Module implements AllenSet {
 	private static final long serialVersionUID = -6871669684345314842L;
 
 	private static final String RELATION = "@relation";
@@ -38,8 +41,9 @@ public class DataSet extends AAI_Module {
 	private String m_dataName;
 
 	/** property functions ***************************************/
-	public boolean isEmpty() {
-		return m_objLst.size() == 0;
+	@Override
+	public int size() {
+		return m_objLst.size();
 	}
 
 	public String getDataFile() {
@@ -52,6 +56,14 @@ public class DataSet extends AAI_Module {
 
 	public int objNum() {
 		return m_objLst.size();
+	}
+
+	public ObjLst objLst() {
+		return m_objLst;
+	}
+
+	public ArrayList<Obj> getObjs() {
+		return m_objLst.getObjs();
 	}
 
 	public int ftrNum() {
@@ -68,6 +80,14 @@ public class DataSet extends AAI_Module {
 
 	public Feature ftr(String ftrName) throws Exception {
 		return m_ftrSet.getFtr(ftrName);
+	}
+
+	public Collection<Feature> ftrs() {
+		return m_ftrSet.ftrs();
+	}
+
+	public FtrSet ftrSet() {
+		return m_ftrSet;
 	}
 
 	/** manipulation functions ***************************************/
@@ -300,7 +320,7 @@ public class DataSet extends AAI_Module {
 		return buf.toString();
 	}
 
-	public static String version() {
+	public String version() {
 		return "Created by Allen Lin, 24 Mar 2016.\n" + "Changed to operate ARFF only. 16 June 2016, Allen";
-	};
+	}
 }

@@ -1,5 +1,6 @@
 package allen.sim.dataset;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import allen.base.module.AAI_Module;
@@ -29,6 +30,19 @@ public class Feature extends AAI_Module {
 		return m_type;
 	}
 
+	public Feature deepCopy() throws Exception {
+		Feature ftrCopy = new Feature();
+		ftrCopy.name(name());
+		ftrCopy.owner(owner());
+		ftrCopy.type(type());
+		ftrCopy.m_valSet = new HashMap<String, Value>();
+		for (String valName : m_valSet.keySet()) {
+			Value value = m_valSet.get(valName).deepCopy();
+			addValue(value);
+		}
+		return ftrCopy;
+	}
+
 	/** manipulation functions ***************************************/
 	/** add value to the feature */
 	public void addValue(Value value) {
@@ -37,6 +51,10 @@ public class Feature extends AAI_Module {
 
 	public Value getValue(String valueStr) {
 		return m_valSet.get(valueStr);
+	}
+
+	public Collection<Value> values() {
+		return m_valSet.values();
 	}
 
 	/** add value strings to value set, and return value list */
@@ -64,6 +82,18 @@ public class Feature extends AAI_Module {
 	// }
 	// return buf;
 	// }
+
+	/** return "ftr_name[value1(2)value2(4)...]" */
+	public String getValueCounts() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(name() + "[");
+		for (Value value : this.values()) {
+			if (value.count() > 0) {
+				sb.append(value.name() + "(" + value.count() + ")");
+			}
+		}
+		return sb.append("]").toString();
+	}
 
 	public String toString() {
 		String buf = name() + " (" + type() + ")";
