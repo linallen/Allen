@@ -752,12 +752,12 @@ public abstract class AAI_Module implements Runnable, Serializable {
 	}
 
 	/** [STUB] return help */
-	public static String help() {
+	public String help() {
 		return "-debug output debug information.\n" + "-deamon daemon version which can add options at run time.";
 	};
 
 	/** [STUB] return revision history */
-	public static String version() {
-		return "No version.";
+	public String version() {
+		return "v0.0.1, 19 June 2016, Allen Lin.";
 	};
 }
