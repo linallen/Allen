@@ -34,7 +34,7 @@ public class Test {
 	public static void TestSimMatrix(String dataFile, String simName) throws Exception {
 		SimMeasure simMeasure = SimMeasure.getSimMeasure(simName);
 		DataSet data = new DataSet();
-		data.loadArff(dataFile, false);
+		data.loadArff(dataFile);
 		data.dbgOutputSummary();
 		String simGraphFile = m_dataFile + "." + simName + ".simGraph.txt";
 		System.out.println("\"" + simMeasure.name() + " " + simName + "\" on " + AAI_IO.getFileName(dataFile));

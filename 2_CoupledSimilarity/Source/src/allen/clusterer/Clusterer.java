@@ -9,7 +9,6 @@ import allen.base.common.Timer;
 import allen.base.module.AAI_Module;
 import allen.sim.dataset.DataSet;
 import allen.sim.dataset.Obj;
-import allen.sim.measure.SimCouple;
 import allen.sim.measure.SimMeasure;
 
 /**
@@ -75,7 +74,7 @@ public abstract class Clusterer extends AAI_Module {
 		DataSet dataSet = new DataSet();
 		dataSet.owner(this);
 		dataSet.debug(this.debug());
-		dataSet.loadArff(m_inputArff, false);
+		dataSet.loadArff(m_inputArff);
 		dataSet(dataSet);
 	}
 
@@ -208,18 +207,6 @@ public abstract class Clusterer extends AAI_Module {
 		m_outputFile = Common.getOption("o", options);
 		// debug, daemon, etc
 		super.setOptions(options);
-	}
-
-	public static void main(String[] args) throws Exception {
-		// SimCouple module = new SimCouple();
-		// System.out.println("\n" + version() + "\n");
-		// if (args.length == 0) {
-		// System.out.println(help() + "\n");
-		// return;
-		// }
-		// module.setOptions(args);
-		// module.start();
-		// module.join();
 	}
 
 	public String help() {

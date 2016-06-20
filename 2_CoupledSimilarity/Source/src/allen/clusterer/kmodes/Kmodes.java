@@ -172,4 +172,8 @@ public class Kmodes extends Clusterer {
 				+ "v2, Fixed bug: empty cluster casued by moving out object. Solution: add the most isolated object to the empty cluster. 27 Mar 2016, Allen Lin.\n"
 				+ "V2.1, Rewrite k-modes where a Mode is a FtrSet instead of an Obj, Allen, 17 June 2016.";
 	}
+
+	public static void main(String[] args) throws Exception {
+		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
+	}
 }

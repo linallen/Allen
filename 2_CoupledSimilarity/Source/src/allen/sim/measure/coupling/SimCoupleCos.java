@@ -1,6 +1,5 @@
-package allen.sim.measure;
+package allen.sim.measure.coupling;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 import allen.base.common.Common;
@@ -33,16 +32,15 @@ public class SimCoupleCos extends SimCouple {
 	protected double interSim(Value val1, Value val2) throws Exception {
 		Common.Assert(val1.ftr() == val2.ftr());
 		Common.Assert(val1.ftr().type() == FtrType.CATEGORICAL);
-		Collection<Feature> cateFtrLst = this.getFtrs();
-		cateFtrLst.remove(val1.ftr()); // remove current feature
-		double wt = 1. / (cateFtrLst.size() - 1);
-		double interObjSim = 0;
-		for (Feature ftrK : cateFtrLst) {
-			double interFtrSim = IRSI(val1, val2, ftrK);
-			interObjSim += wt * interFtrSim;
+		double wt = 1. / (getFtrs().size() - 1);
+		double interSim = 0;
+		for (Feature ftrK : getFtrs()) {
+			if (ftrK != val1.ftr()) {
+				double interFtrSim = IRSI(val1, val2, ftrK);
+				interSim += wt * interFtrSim;
+			}
 		}
-		cateFtrLst.add(val1.ftr()); // add back current feature
-		return interObjSim;
+		return interSim;
 	}
 
 	/** COS sim(val1, val2). */
@@ -78,7 +76,21 @@ public class SimCoupleCos extends SimCouple {
 	@Override
 	public String help() {
 		return "COS (Coupled Object Similarity) algorithm for measuring object-object similarities based on value-value similarities.\n"
-				+ "COS was proposed in TNNLS-2013 paper: \"Coupled Attribute Similarity Learning on Categorical Data\" authored by Can Wang et al.\n\n"
-				+ ((SimMeasure) this).help();
+				+ "COS was proposed in TNNLS-2013 paper: \"Coupled Attribute Similarity Learning on Categorical Data\" authored by Can Wang et al.\n"
+				+ super.help();
+	}
+
+	@Override
+	public String version() {
+		return "v1.0, No buffer version. Created on 20 Jan 2016, Allen Lin.\n"
+				+ "v2.0, Buffered version. 3 Feb 2016, Allen Lin.\n"
+				+ "v2.1, draw obj-obj similarity matrix in Matlab. 5 Feb 2016, Allen Lin.\n"
+				+ "v2.2, added \"-t sim_type\" to support intra- and inter- similarity scores. 25 Feb 2016, Allen Lin.\n"
+				+ "v2.3, extracted DataSet class from CoupleSim class, so that the DataSet class can be shared among similarity measures. 24 Mar 2016, Allen Lin\n"
+				+ "v2.4, major revision, re-organize source code, create SimCouple as an abstract class of coupling similarity measures. 19 June 2016, Allen Lin";
+	}
+
+	public static void main(String[] args) throws Exception {
+		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
 	}
 }

@@ -1,4 +1,4 @@
-package allen.sim.measure;
+package allen.sim.measure.coupling;
 
 import allen.sim.dataset.Value;
 

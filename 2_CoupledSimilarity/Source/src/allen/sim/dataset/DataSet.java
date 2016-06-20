@@ -158,8 +158,16 @@ public class DataSet extends AAI_Module implements AllenSet {
 		return (line.isEmpty() || line.startsWith("%"));
 	}
 
+	public void loadArff(String arffFile) throws Exception {
+		loadArff(arffFile, false);
+	}
+
+	public void loadArffHdr(String arffFile) throws Exception {
+		loadArff(arffFile, true);
+	}
+
 	/** load arff or arff header from file */
-	public void loadArff(String arffFile, boolean hdrOnly) throws Exception {
+	private void loadArff(String arffFile, boolean hdrOnly) throws Exception {
 		String loadType = (hdrOnly ? "header" : "data");
 		output("Started loading arff " + loadType + " from " + arffFile);
 		Timer timer = new Timer();

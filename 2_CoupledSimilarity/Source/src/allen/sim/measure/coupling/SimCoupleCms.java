@@ -1,6 +1,5 @@
-package allen.sim.measure;
+package allen.sim.measure.coupling;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 import allen.base.common.Common;
@@ -38,15 +37,14 @@ public class SimCoupleCms extends SimCouple {
 	protected double interSim(Value val1, Value val2) throws Exception {
 		Common.Assert(val1.ftr() == val2.ftr());
 		Common.Assert(val1.ftr().type() == FtrType.CATEGORICAL);
-		Collection<Feature> cateFtrLst = this.getFtrs();
-		cateFtrLst.remove(val1.ftr()); // remove current feature
-		double interObjSim = 0;
-		for (Feature ftrK : cateFtrLst) {
-			double interAttrSim = interFtrK(val1, val2, ftrK);
-			interObjSim += interAttrSim;
+		double interSim = 0;
+		for (Feature ftrK : getFtrs()) {
+			if (ftrK != val1.ftr()) {
+				double interAttrSim = interFtrK(val1, val2, ftrK);
+				interSim += interAttrSim;
+			}
 		}
-		cateFtrLst.add(val1.ftr()); // add back current feature
-		return interObjSim / (cateFtrLst.size() - 1);
+		return interSim / (getFtrs().size() - 1);
 	}
 
 	/** CMS sim(val1, val2). */
@@ -88,7 +86,16 @@ public class SimCoupleCms extends SimCouple {
 
 	public String help() {
 		return "CMS (Coupled Metrics Similarity) algorithm for measuring object-object similarities based on value-value similarities.\n"
-				+ "CMS was proposed in paper: \"Coupled Metric Similarity Learning for Non-IID Categorical Data\" authored by Songlei Jian et al.\n\n"
-				+ ((SimMeasure) this).help();
+				+ "CMS was proposed in paper: \"Coupled Metric Similarity Learning for Non-IID Categorical Data\" authored by Songlei Jian et al.\n"
+				+ super.help();
+	}
+
+	@Override
+	public String version() {
+		return "v2.4, major revision, re-organize source code, create SimCouple as an abstract class of coupling similarity measures. 19 June 2016, Allen Lin";
+	}
+
+	public static void main(String[] args) throws Exception {
+		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
 	}
 }

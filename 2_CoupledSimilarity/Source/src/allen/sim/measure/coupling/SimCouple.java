@@ -1,4 +1,4 @@
-package allen.sim.measure;
+package allen.sim.measure.coupling;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -7,6 +7,7 @@ import allen.sim.dataset.Feature;
 import allen.sim.dataset.Obj;
 import allen.sim.dataset.Value;
 import allen.sim.datastructure.ValueSim;
+import allen.sim.measure.SimMeasure;
 
 /**
  * Coupling-based similarity measures for calculating object-object similarities
@@ -91,7 +92,8 @@ public abstract class SimCouple extends SimMeasure {
 
 	@Override
 	public String help() {
-		return "Coupling-based similarity measures for calculating object-object similarities based on value-value similarities.";
+		return "Coupling-based similarity measures for calculating object-object similarities based on value-value similarities.\n"
+				+ super.help();
 	}
 
 	@Override
