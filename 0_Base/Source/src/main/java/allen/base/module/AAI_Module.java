@@ -783,7 +783,20 @@ public class AAI_Module implements Runnable, Serializable {
 		System.out.println("Finished task " + name() + ". Total time " + timer);
 	}
 
+	/** create object from class name */
+	private static Object getObj(String className) throws Exception {
+		Class<?> cls = Class.forName(className);
+		Object obj = cls.newInstance();
+		return obj;
+	}
+
+	/** create object from class name */
+	public static AAI_Module getModule(String className) throws Exception {
+		return (AAI_Module) getObj(className);
+	}
+
 	public static void main(String[] args) throws Exception {
-		new AAI_Module().Main(args);
+		String className = Thread.currentThread().getStackTrace()[1].getClassName();
+		getModule(className).Main(args);
 	}
 }
