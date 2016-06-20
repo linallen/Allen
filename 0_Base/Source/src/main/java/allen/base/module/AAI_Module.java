@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import allen.base.common.*;
+import allen.base.common.AAI_IO;
+import allen.base.common.Common;
+import allen.base.common.Timer;
 
 /**
  * The definitions of common interfaces for all AAI modules.
@@ -31,7 +33,7 @@ import allen.base.common.*;
  * 
  * @author Allen Lin, 22 Oct 2014.
  */
-public abstract class AAI_Module implements Runnable, Serializable {
+public class AAI_Module implements Runnable, Serializable {
 	private static final long serialVersionUID = -2260425849446619100L;
 
 	/** constant characters */
@@ -138,14 +140,19 @@ public abstract class AAI_Module implements Runnable, Serializable {
 		return name() + " (" + moduleName() + ")";
 	}
 
-	/** 1. set object's name */
+	/** set object name */
 	public void name(String name) {
 		m_name = name.intern();
 	}
 
-	/** 1. get object's name */
+	/** get object name */
 	public String name() {
 		return m_name;
+	}
+
+	/** get object's name */
+	public int id() {
+		return m_id;
 	}
 
 	/** 2. set status */
@@ -760,4 +767,23 @@ public abstract class AAI_Module implements Runnable, Serializable {
 	public String version() {
 		return "v0.0.1, 19 June 2016, Allen Lin.";
 	};
+
+	/** the main() function of all AAI_Module sub-classes */
+	public final void Main(String[] args) throws Exception {
+		System.out.println(version() + "\n");
+		if (args.length == 0) {
+			System.out.println(help() + "\n");
+			return;
+		}
+		System.out.println("Started task " + name() + ". ");
+		Timer timer = new Timer();
+		setOptions(args);
+		start();
+		join();
+		System.out.println("Finished task " + name() + ". Total time " + timer);
+	}
+
+	public static void main(String[] args) throws Exception {
+		new AAI_Module().Main(args);
+	}
 }
