@@ -42,7 +42,7 @@ public class Mode extends FtrSet {
 		if (m_modeObj == null) {
 			m_modeObj = new Obj();
 			m_modeObj.name(name() + "_obj");
-			for (Feature ftr : ftrs()) {
+			for (Feature ftr : ftrSet()) {
 				if (ftr.type() == FtrType.CATEGORICAL) {
 					// get the Mode-Value of this feature
 					Value valueMax = null;
@@ -68,7 +68,7 @@ public class Mode extends FtrSet {
 		for (Value value : obj.values()) {
 			Feature ftr = value.ftr();
 			if (ftr.type() == FtrType.CATEGORICAL) {
-				Feature modeFtr = getFtr(ftr.name());
+				Feature modeFtr = get(ftr.name());
 				Value modeValue = modeFtr.getValue(value.name());
 				modeValue.countInc();
 			}
@@ -82,7 +82,7 @@ public class Mode extends FtrSet {
 		for (Value value : obj.values()) {
 			Feature ftr = value.ftr();
 			if (ftr.type() == FtrType.CATEGORICAL) {
-				Feature modeFtr = getFtr(ftr.name());
+				Feature modeFtr = get(ftr.name());
 				Value modeValue = modeFtr.getValue(value.name());
 				modeValue.countDec();
 			}
@@ -98,7 +98,7 @@ public class Mode extends FtrSet {
 		}
 		// 2. value counts[]
 		sb.append("\n");
-		for (Feature ftr : this.ftrs()) {
+		for (Feature ftr : this.ftrSet()) {
 			sb.append(ftr.getValueCounts()).append("\n");
 		}
 		return sb.toString();

@@ -23,6 +23,6 @@ public enum FtrType {
 
 	/** output functions *****************************************/
 	public String toString() {
-		return m_type;
+		return m_type.toLowerCase();
 	}
 }

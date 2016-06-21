@@ -20,7 +20,7 @@ public class SimCoupleCms extends SimCouple {
 
 	/** intra-coupled sim(val1, val2). */
 	@Override
-	protected double intraSim(Value val1, Value val2) throws Exception {
+	protected final double intraSim(Value val1, Value val2) throws Exception {
 		if (val1 == val2) {
 			return 1;
 		}
@@ -34,7 +34,7 @@ public class SimCoupleCms extends SimCouple {
 
 	/** inter-coupled sim(val1, val2). */
 	@Override
-	protected double interSim(Value val1, Value val2) throws Exception {
+	protected final double interSim(Value val1, Value val2) throws Exception {
 		Common.Assert(val1.ftr() == val2.ftr());
 		Common.Assert(val1.ftr().type() == FtrType.CATEGORICAL);
 		double interSim = 0;
@@ -55,7 +55,7 @@ public class SimCoupleCms extends SimCouple {
 
 	/** define weighted Sim(val1, val2) */
 	@Override
-	protected double getWeightedValSim(Value val1, Value val2) throws Exception {
+	protected final double getWeightedValSim(Value val1, Value val2) throws Exception {
 		return getValSim(val1, val2) / this.getFtrs().size();
 	}
 
@@ -64,7 +64,7 @@ public class SimCoupleCms extends SimCouple {
 	 * Another Attribute.<br>
 	 * See EQ(7) in the CMS paper - "Coupled Metric Similarity"
 	 */
-	private double interFtrK(Value val1, Value val2, Feature ftrK) throws Exception {
+	private final double interFtrK(Value val1, Value val2, Feature ftrK) throws Exception {
 		if (val1 == val2) {
 			return 1;
 		}

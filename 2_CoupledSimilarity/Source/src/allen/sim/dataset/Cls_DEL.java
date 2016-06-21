@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import allen.base.common.*;
 
-public class Cls {
+public class Cls_DEL {
 	/** class name (optional, for debug only) */
 	private String m_clsName = new String();
 
 	/** objects belonging to this class */
 	private ArrayList<Obj> m_objs = new ArrayList<Obj>();
 
-	public Cls(String clsName) {
+	public Cls_DEL(String clsName) {
 		m_clsName = clsName;
 	}
 

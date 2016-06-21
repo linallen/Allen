@@ -1,7 +1,9 @@
 package allen.sim.dataset;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -26,12 +28,12 @@ public class DataSet extends AAI_Module implements AllenSet {
 	// private static final String STRING = "string"; // string feature
 	// private static final String MISSING = "?"; // missing value
 
-	/** object[n] (i.e., instances[n]) */
+	/** objects[n] (i.e., instances[n]) */
 	private ObjLst m_objLst = new ObjLst();
-	/** feature[m] */
+	/** features[m] (i.e., attributes[m]) */
 	private FtrSet m_ftrSet = new FtrSet();
-	/** class[s] */
-	private ClsSet m_clsSet = new ClsSet();
+	/** class label */
+	private Feature m_class;
 
 	/** file name of data set */
 	private String m_dataFile;
@@ -71,7 +73,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 	}
 
 	public int clsNum() {
-		return m_clsSet.size();
+		return m_class.size();
 	}
 
 	public Obj getObj(int i) {
@@ -79,18 +81,41 @@ public class DataSet extends AAI_Module implements AllenSet {
 	}
 
 	public Feature ftr(String ftrName) throws Exception {
-		return m_ftrSet.getFtr(ftrName);
+		return m_ftrSet.get(ftrName);
 	}
 
 	public Collection<Feature> ftrs() {
-		return m_ftrSet.ftrs();
+		return m_ftrSet.ftrSet();
 	}
 
 	public FtrSet ftrSet() {
 		return m_ftrSet;
 	}
 
+	// public Feature cls(String clsName) throws Exception {
+	// return m_clsSet.getFtr(clsName);
+	// }
+
 	/** manipulation functions ***************************************/
+	/** TODO set class feature of the data set */
+	public void setClass(int clsIdx) throws Exception {
+		// 1. move class feature from ftr_set[] to m_label
+		clsIdx = (clsIdx < 0) ? (m_ftrSet.size() - 1) : clsIdx;
+		m_class = m_ftrSet.get(clsIdx);
+		m_ftrSet.remove(m_class.name());
+		// 2. update data set[]
+		output("Started seting class. ftr[" + clsIdx + "]: " + m_class);
+		Timer timer = new Timer();
+		for (int i = 0; i < objNum(); i++) {
+			progress(i + 1, objNum());
+			Obj obj = getObj(i);
+			outputDbg(obj.toString());
+			obj.setClass(m_class);
+			outputDbg(obj.toString());
+		}
+		output("Finished seting class. ftr[" + clsIdx + "] " + m_class.name() + ". " + timer);
+	}
+
 	/**
 	 * line=" @relation  hi Neo ", key="@RELATION", then return "hi Neo".
 	 * 
@@ -169,7 +194,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 	/** load arff or arff header from file */
 	private void loadArff(String arffFile, boolean hdrOnly) throws Exception {
 		String loadType = (hdrOnly ? "header" : "data");
-		output("Started loading arff " + loadType + " from " + arffFile);
+		output("Started loading ARFF " + loadType + " from " + arffFile);
 		Timer timer = new Timer();
 		m_dataFile = AAI_IO.getFileName(arffFile);
 		m_dataDir = AAI_IO.getAbsDir(arffFile);
@@ -195,7 +220,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 				if (!isComment(line)) {
 					// parse ATTRIBUTE line to ftr
 					Feature ftr = parseAttrLine(line);
-					m_ftrSet.addFtr(ftr.name(), ftr);
+					m_ftrSet.add(ftr.name(), ftr);
 					m_ftrSet.setFtrIdx(ftr.name(), m_ftrSet.size() - 1);
 					outputDbg(ftr.toString());
 				}
@@ -217,7 +242,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 							String valueStr = values[j].trim();
 							if ((valueStr.length() > 1) || (!valueStr.equals("?"))) {
 								// add value to object's value list
-								Feature ftr = m_ftrSet.getFtr(j);
+								Feature ftr = m_ftrSet.get(j);
 								Value value;
 								if (ftr.type() == FtrType.CATEGORICAL) {
 									value = ftr.getValue(valueStr);
@@ -237,14 +262,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 			}
 		} finally {
 			AAI_IO.close(br);
-			output("Finished loading arff " + loadType + " from " + arffFile + ". " + timer);
-		}
-		if (debug()) {
-			dbgOutputSummary();
-			dbgOutputData2Matlab();
-			System.out.println(m_objLst);
-			System.out.println(m_ftrSet);
-			System.out.println(m_clsSet);
+			output("Finished loading ARFF " + loadType + " from " + arffFile + ". " + timer);
 		}
 	}
 
@@ -261,27 +279,65 @@ public class DataSet extends AAI_Module implements AllenSet {
 	 * ave_val_num]
 	 */
 	public void dbgOutputSummary() throws Exception {
-		// if (debug()) {
-		// String buf = m_dataName + "\t" + objNum() + "\t" + ftrNum() + "\t" +
-		// clsNum() + "\t";
-		// int minValNum = Integer.MAX_VALUE, maxValNum = Integer.MIN_VALUE,
-		// totalValNum = 0;
-		// for (int j = 0; j < m_ftrSet.size(); j++) {
-		// Feature ftr = m_ftrSet.get(j);
-		// int valNum = ftr.size();
-		// minValNum = Math.min(minValNum, valNum);
-		// maxValNum = Math.max(maxValNum, valNum);
-		// totalValNum += valNum;
-		// }
-		// buf += minValNum + "\t" + maxValNum + "\t" + (1. * totalValNum /
-		// ftrNum());
-		// AAI_IO.saveFile(m_dataDir + m_dataName + ".ds_summary.txt", buf);
-		// // System.out.println("Data Summary: " + buf);
-		// }
+		if (debug()) {
+			String buf = "data_set\tobj_num\tftr_num\tcls_num\tmin_val_num\tmax_val_num\ttotal_val_num\n";
+			buf += m_dataName + "\t" + objNum() + "\t" + ftrNum() + "\t" + clsNum() + "\t";
+			int minValNum = Integer.MAX_VALUE, maxValNum = Integer.MIN_VALUE, totalValNum = 0;
+			for (int j = 0; j < m_ftrSet.size(); j++) {
+				Feature ftr = m_ftrSet.get(j);
+				int valNum = ftr.size();
+				minValNum = Math.min(minValNum, valNum);
+				maxValNum = Math.max(maxValNum, valNum);
+				totalValNum += valNum;
+			}
+			buf += minValNum + "\t" + maxValNum + "\t" + (1. * totalValNum / ftrNum());
+			AAI_IO.saveFile(m_dataDir + m_dataName + ".ds_summary.txt", buf);
+			System.out.println("Data Summary: " + buf);
+		}
 	}
 
 	public String dataSummary() {
 		return "##### " + m_dataName + ", " + objNum() + "_objs_" + ftrNum() + "_ftrs_" + clsNum() + "classes";
+	}
+
+	/** save ARFF to file (for DEBUG) */
+	public void saveArff(String arffFile) throws Exception {
+		output("Started saving ARFF to " + arffFile);
+		Timer timer = new Timer();
+		BufferedWriter bw = new BufferedWriter(new FileWriter(arffFile));
+		try {
+			// 1. @RELATION
+			bw.write("# ARFF data file created by " + this.getClass().getSimpleName() + "\n");
+			bw.write(RELATION + " " + m_dataName + "\n\n");
+			// 2. @ATTRIBUTE
+			for (Feature ftr : ftrSet().ftrLst()) {
+				bw.write(ATTRIBUTE + " " + ftr.toArff() + "\n");
+			}
+			// class ATTRIBUTE (if any)
+			if (m_class != null) {
+				bw.write(ATTRIBUTE + " " + m_class.toArff() + "\n");
+			}
+
+			// 3. @DATA
+			bw.write("\n" + DATA + "\n");
+			for (int i = 0; i < objNum(); i++) {
+				progress(i + 1, objNum());
+				Obj obj = getObj(i);
+				// obj[i] to @DATA
+				for (int j = 0; j < ftrSet().size(); j++) {
+					Feature ftr = ftrSet().get(j);
+					Value val = obj.value(ftr);
+					String valStr = (val == null) ? "" : val.toString();
+					bw.write(((j == 0) ? "" : ",") + valStr);
+				}
+				// label (if any)
+				Value label = obj.label();
+				bw.write(((label == null) ? "" : ("," + label.valueStr())) + "\n");
+			}
+		} finally {
+			AAI_IO.close(bw);
+			output("Finished saving ARFF to " + arffFile + ". " + timer);
+		}
 	}
 
 	/** output data set to Matlab matrix format: A = {'t','n','won';... } */
@@ -321,7 +377,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-		buf.append("cls_num = " + clsNum() + "\n" + m_clsSet.toString() + "\n");
+		buf.append("cls_num = " + clsNum() + "\n" + m_class.toString() + "\n");
 		buf.append("ftr_num = " + ftrNum() + "\n" + m_ftrSet.toString() + "\n");
 		buf.append("obj_num = " + objNum() + "\n");
 		buf.append(m_objLst.toString());

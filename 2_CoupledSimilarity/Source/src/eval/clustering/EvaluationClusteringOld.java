@@ -2,7 +2,6 @@ package eval.clustering;
 
 import _Discarded.evalClustering.EvalClusterMatlab;
 import allen.base.common.*;
-import allen.clusterer.Clusterer;
 import allen.clusterer.ClustererInterfaceToDEL;
 import allen.clusterer.kmodes.Kmodes;
 import allen.clusterer.spectral.matlab.SpecClusterMatlab;
@@ -19,7 +18,7 @@ import matlabcontrol.MatlabProxyFactory;
  * Input: [sim_alg, cluster_alg, data_set]<br>
  * Output: [ACC(accuracy/precision), NMI(Normalized Mutual Information)]
  */
-public class EvaluationClustering {
+public class EvaluationClusteringOld {
 	private String m_matlabDir;
 	private MatlabProxy m_proxy;
 
@@ -104,12 +103,12 @@ public class EvaluationClustering {
 			kmodes.saveClusters(clusterCSV);
 		} else if (clusterName.equalsIgnoreCase("SC")) {
 			// 1. get sim-matrix (for Java SC) or sim-graph (for Matlab SC)
-			Clusterer sc;
+			ClustererInterfaceToDEL sc;
 			String simScoresFile;
 			boolean m_clusterMatlab = true;
 			if (!m_clusterMatlab) {
 				simScoresFile = dataFile + "." + simName + ".simMatrix.txt";
-				simMeasure.saveSimMatrix(simScoresFile);
+				simMeasure.saveSimMatrix(simScoresFile, data);
 				sc = new SpectralWeka();
 			} else {
 				simScoresFile = dataFile + "." + simName + ".simGraph.txt";

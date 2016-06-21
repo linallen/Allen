@@ -27,17 +27,14 @@ import allen.sim.measure.coupling.SimCoupleCosIntra;
  * Base class of similarity measures.
  * 
  * <b>Syntax:</b><br>
- * Java -jar sim_measure.jar -i input_file -s sim_name [-k top_k] [-o
- * output_file]<br>
+ * Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k]<br>
  * <ul>
- * <li><i>-i input_file</i>: [input] the feature table (CSV with no title) with
- * the last column containing labels and others being features (attributes)</li>
+ * <li><i>-i input_arff</i>: [input] the ARFF data file.</li>
  * <li><i>-s sim_name</i>: [para] name of similarity measures: COS, COS_INTRA,
- * COS_INTER, CMS, CMS_INTRA, CMS_INTER.</li>
+ * COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.</li>
  * <li><i>-k top_k</i>: [para] top K similar objects. Default 100.</li>
- * <li><i>-o output_file</i>: [output] objects and similar objects.<br>
- * Format: label[ obj_name cls_size], label[ sim_obj1 score], ...<br>
- * where cls_size is the objects having same label with the target.</li>
+ * <li><i>-c cls_idx</i>: [para] class index. Default -1 meaning the last
+ * feature.</li>
  * </ul>
  * 
  * @author Allen Lin, 25 Mar 2016
@@ -45,26 +42,30 @@ import allen.sim.measure.coupling.SimCoupleCosIntra;
 public class SimMeasure extends AAI_Module {
 	private static final long serialVersionUID = 7217652874275084535L;
 
-	/** -i input_file: [input] the input categorical data file. */
-	private String m_dataFile;
+	/** -i input_arff: [input] the input categorical data file. */
+	private String m_dataArff;
 	/** -k top_k: top K similar objects */
 	private int m_topK = 100;
-	/** -s sim_name: COS, INTRA, INTER */
+	/** -s sim_name: COS, CMS, SMD, etc */
 	private String m_simName;
-	/** -o output_file: [output] objects with top_k similar objects. */
-	private String m_outputFile;
+	/** -c cls_idx: class index */
+	private int m_clsIdx = -1;
 
 	/** [INPUT] input data set */
 	private DataSet m_dataSet;
-
 	/** [TEMP] features[] used for similarity computation */
 	private ArrayList<Feature> m_ftrLSt;
-
 	/** [TEMP] map [Value, Obj] */
 	private HashMap<Value, HashSet<Obj>> m_mapValObjs;
 
 	/** property functions ***************************************/
-	public void dataSet(DataSet dataSet) {
+	/** set similarity measure name (ALL UPPER-CASE) */
+	// @Override
+	// public void name(String simName) {
+	// super.name(simName.toUpperCase().intern());
+	// }
+
+	public void dataSet(DataSet dataSet) throws Exception {
 		m_dataSet = dataSet;
 		m_ftrLSt = dataSet.ftrSet().ftrLst();
 	}
@@ -73,19 +74,25 @@ public class SimMeasure extends AAI_Module {
 		return m_dataSet;
 	}
 
+	public void topK(int topK) {
+		m_topK = topK;
+	}
+
+	public void clsIdx(int clsIdx) {
+		m_clsIdx = (clsIdx == -1) ? (m_ftrLSt.size() - 1) : clsIdx;
+	}
+
+	public int topK() {
+		return m_topK;
+	}
+
 	protected ArrayList<Feature> getFtrs() {
 		return m_ftrLSt;
 	}
 
-	/** set similarity measure name (ALL UPPER-CASE) */
-	@Override
-	public void name(String simName) {
-		super.name(simName.toUpperCase().intern());
-	}
-
 	/**
-	 * TODO build inverted index mapping [Value, Objs[]] indicating which value
-	 * belong to which objs[].
+	 * build inverted index [Value, Objs[]] to record which value belongs to
+	 * which objs[].
 	 */
 	private void buildMapValObj() {
 		m_mapValObjs = new HashMap<Value, HashSet<Obj>>();
@@ -100,7 +107,7 @@ public class SimMeasure extends AAI_Module {
 	}
 
 	/** @return objs[] that contain the specific value */
-	protected Collection<Obj> getOwnerObjs(Value value) {
+	protected final Collection<Obj> getOwnerObjs(Value value) {
 		if (m_mapValObjs == null) {
 			buildMapValObj();
 		}
@@ -108,7 +115,7 @@ public class SimMeasure extends AAI_Module {
 	}
 
 	/**
-	 * Note: override sim() and/or distance functions to define your own
+	 * Note: override sim() and/or distance() functions to define your own
 	 * similarity measure!
 	 */
 	/** @return sim(obj1, obj2). */
@@ -152,24 +159,24 @@ public class SimMeasure extends AAI_Module {
 	 * calculate & output top-k similar objects. Output format:<br>
 	 * label obj_name, label sim_obj1 score, ..., label sim_objk score
 	 */
-	public void calcTopSimObjs(DataSet dataSet, int topK, String outputFile) throws Exception {
-		output("Started calculating top " + topK + " similar objects. " + outputFile);
+	public void saveSimObjs(String outputFile) throws Exception {
+		output("Started calculating top " + m_topK + " similar objects. " + outputFile);
 		Timer timer = new Timer();
 		BufferedWriter bw = null;
 		try {
 			// 1. compute top k similar objects to object[i], i = 0, ..., n-1
 			bw = new BufferedWriter(new FileWriter(outputFile));
-			int objNum = dataSet.objNum();
+			int objNum = dataSet().objNum();
 			for (int x = 0; x < objNum; x++) {
 				progress(x + 1, objNum);
-				Obj objX = dataSet.getObj(x);
+				Obj objX = dataSet().getObj(x);
 				SimObjs simObjs = new SimObjs();
 				// 1. calculate sim(x, *)
 				for (int y = 0; y < objNum; y++) {
 					if (y == x) {
 						continue;
 					}
-					Obj objY = dataSet.getObj(y);
+					Obj objY = dataSet().getObj(y);
 					double sim = sim(objX, objY);
 					if (sim > 0) {
 						simObjs.add(objY, sim);
@@ -181,7 +188,7 @@ public class SimMeasure extends AAI_Module {
 				// bw.write(objX.fullName() + " " + objX.cls().size() + ", ");
 				bw.write(objX.fullName() + ", ");
 				simObjs.sort();
-				int simNum = Math.min(topK, simObjs.size());
+				int simNum = Math.min(m_topK, simObjs.size());
 				for (int i = 0; i < simNum; i++) {
 					bw.write(simObjs.getSimObj(i).fullName() + " ");
 					bw.write(String.format("%.4f", simObjs.getSimScore(i)));
@@ -190,7 +197,7 @@ public class SimMeasure extends AAI_Module {
 			}
 		} finally {
 			AAI_IO.close(bw);
-			output("Finished calculating top " + topK + " similar objects. " + outputFile + ". " + timer);
+			output("Finished calculating top " + m_topK + " similar objects. " + outputFile + ". " + timer);
 		}
 	}
 
@@ -204,7 +211,9 @@ public class SimMeasure extends AAI_Module {
 		for (int i = 0; i < objNum; i++) {
 			progress(i + 1, objNum);
 			for (int j = i + 1; j < objNum; j++) {
-				double sim = sim(dataSet().getObj(i), dataSet().getObj(j));
+				Obj obj1 = dataSet().getObj(i);
+				Obj obj2 = dataSet().getObj(j);
+				double sim = sim(obj1, obj2);
 				if (sim > 0) {
 					String simStr = Common.decimal(sim, 4);
 					bw.write(i + "," + j + "," + simStr + "\n");
@@ -225,7 +234,9 @@ public class SimMeasure extends AAI_Module {
 		for (int i = 0; i < objNum; i++) {
 			progress(i + 1, objNum);
 			for (int j = 0; j < objNum; j++) {
-				double sim = sim(dataSet().getObj(i), dataSet().getObj(j));
+				Obj obj1 = dataSet().getObj(i);
+				Obj obj2 = dataSet().getObj(j);
+				double sim = sim(obj1, obj2);
 				String simStr = Common.decimal(sim, 4);
 				bw.write(((j == 0) ? "" : ",") + simStr);
 			}
@@ -238,37 +249,43 @@ public class SimMeasure extends AAI_Module {
 
 	@Override
 	protected void mainProc() throws Exception {
-		// 1. load categorical data
+		SimMeasure simMeasure = (m_simName != null) ? SimMeasure.getSimMeasure(m_simName.toUpperCase()) : this;
 		m_dataSet = new DataSet();
-		m_dataSet.loadArff(m_dataFile);
-		// 2. calculate coupled similarity between Objects
-		// (or find out top K similar objects to object[i], i = 0 , ..., n-1)
-		// and output to file
-		calcTopSimObjs(m_dataSet, m_topK, m_outputFile);
+		m_dataSet.loadArff(m_dataArff);
+		m_dataSet.setClass(m_clsIdx);
+		simMeasure.dataSet(m_dataSet);
+		simMeasure.topK(m_topK);
+		simMeasure.saveSimObjs(m_dataArff + ".sim_objs.txt");
+		simMeasure.saveSimGraph(m_dataArff + ".sim_graph.txt");
+		simMeasure.saveSimMatrix(m_dataArff + ".sim_matrix.txt");
 	}
 
 	@Override
 	public void setOptions(String[] options) throws Exception {
-		// -i input_file
-		m_dataFile = Common.getOption("i", options);
-		// -k top_k
-		m_topK = Common.getOptionInt("k", options, m_topK);
+		// -i input_arff
+		m_dataArff = Common.getOption("i", options);
+		if (!AAI_IO.fileExist(m_dataArff)) {
+			throw new Exception("File not found. " + m_dataArff);
+		}
 		// -s sim_name
 		m_simName = Common.getOptionString("s", options, m_simName);
-		m_simName = m_simName.toUpperCase();
-		// ¨Co output_file
-		m_outputFile = Common.getOption("o", options);
+		// -k top_k
+		m_topK = Common.getOptionInt("k", options, m_topK);
+		if (m_topK <= 0) {
+			throw new Exception("top K must > 0. " + m_topK);
+		}
+		// -c cls_idx
+		m_topK = Common.getOptionInt("c", options, m_clsIdx);
 		// debug, daemon, etc
 		super.setOptions(options);
 	}
 
 	@Override
 	public String help() {
-		return "Java -jar sim_measure.jar -i input_file -s sim_name [-k top_k] [-o output_file]\n"
-				+ "-i input_file</i>: [input] the feature table (CSV without title) with the last column containing labels and others features (attributes)\n"
-				+ "-s sim_name</i>: [para] name of similarity measures: COS, COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD.\n"
+		return "Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k]\n"
+				+ "-i input_arff</i>: [input] the ARFF data file.\n"
+				+ "-s sim_name</i>: [para] name of similarity measures: COS, COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.\n"
 				+ "-k top_k</i>: [para] top K similar objects. Default 100.\n"
-				+ "-o output_file</i>: [output] objects and similar objects.\n"
 				+ "    Format: label[ obj_name cls_size], label[ sim_obj1 score], ...\n"
 				+ "            where cls_size is the objects having same label with the target.";
 	}

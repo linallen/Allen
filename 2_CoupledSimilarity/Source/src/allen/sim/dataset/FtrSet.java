@@ -2,6 +2,7 @@ package allen.sim.dataset;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 import allen.base.module.AAI_Module;
@@ -52,24 +53,30 @@ public class FtrSet extends AAI_Module implements AllenSet {
 	}
 
 	/** return feature[ftrName] */
-	public Feature getFtr(String ftrName) throws Exception {
+	public Feature get(String ftrName) throws Exception {
 		return m_ftrSet.get(ftrName);
 	}
 
 	/** return feature[i] */
-	public Feature getFtr(int i) throws Exception {
+	public Feature get(int i) throws Exception {
 		String ftrName = m_ftrIdx.get(i);
 		return m_ftrSet.get(ftrName);
 	}
 
 	/** return feature set[] */
-	public Collection<Feature> ftrs() {
+	public Collection<Feature> ftrSet() {
 		return m_ftrSet.values();
 	}
 
 	/** @return feature list[] */
-	public ArrayList<Feature> ftrLst() {
-		return new ArrayList<Feature>(m_ftrSet.values());
+	public ArrayList<Feature> ftrLst() throws Exception {
+		ArrayList<Integer> ftrIds = new ArrayList<Integer>(m_ftrIdx.keySet());
+		Collections.sort(ftrIds);
+		ArrayList<Feature> ftrLst = new ArrayList<Feature>();
+		for (Integer ftrId : ftrIds) {
+			ftrLst.add(this.get(ftrId));
+		}
+		return ftrLst;
 	}
 
 	/** @return feature list[] of a specific type */
@@ -84,9 +91,23 @@ public class FtrSet extends AAI_Module implements AllenSet {
 	}
 
 	/** manipulation functions ***************************************/
-	/** add a feature to the feature set. */
-	public void addFtr(String ftrName, Feature ftr) {
+	/** add a feature to the end of feature set. */
+	public void add(String ftrName, Feature ftr) {
 		m_ftrSet.put(ftrName, ftr);
+		m_ftrIdx.put(m_ftrIdx.size(), ftrName);
+	}
+
+	/** remove a feature from the feature set. */
+	public void remove(String ftrName) {
+		// remove feature from m_ftrSet
+		m_ftrSet.remove(ftrName);
+		// remove feature from m_ftrIdx
+		for (Integer ftrId : m_ftrIdx.keySet()) {
+			if (m_ftrIdx.get(ftrId).equals(ftrName)) {
+				m_ftrIdx.remove(ftrId);
+				break;
+			}
+		}
 	}
 
 	/** set feature's index */
@@ -96,15 +117,6 @@ public class FtrSet extends AAI_Module implements AllenSet {
 		}
 		m_ftrIdx.put(index, ftrName);
 	}
-
-	/** return mapping <value, object> */
-	// public String getValueObjMapping() {
-	// String buf = new String();
-	// for (Feature ftr : m_ftrSet.values()) {
-	// buf += ftr.getValueObjMapping() + "\n";
-	// }
-	// return buf;
-	// }
 
 	public String toString() {
 		String buf = new String();

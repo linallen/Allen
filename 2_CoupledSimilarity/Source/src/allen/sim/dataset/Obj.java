@@ -6,15 +6,18 @@ import java.util.HashMap;
 import allen.base.module.AAI_Module;
 
 /**
- * Object (or Instance) class.
+ * Object (or Instance) class. Obj = values[] + label
  * 
  * @author Allen Lin, 17 June 2016
  */
 public class Obj extends AAI_Module {
 	private static final long serialVersionUID = -2548855417351450132L;
 
-	/** value set -- valid (non-missing, non-null) values ONLY */
+	/** 1. values[] -- valid (non-missing, non-null) values ONLY */
 	private HashMap<Feature, Value> m_values = new HashMap<Feature, Value>();
+
+	/** 2. label */
+	private Value m_label;
 
 	/** property functions ***************************************/
 	/** size of (non-null) value set */
@@ -36,11 +39,15 @@ public class Obj extends AAI_Module {
 		return m_values.values();
 	}
 
-	// public void clear() {
-	// m_values.clear();
-	// }
+	/** specify a feature as class */
+	public void setClass(Feature cls) {
+		m_label = m_values.get(cls);
+		m_values.remove(cls);
+	}
 
-	/** manipulation functions ***************************************/
+	public Value label() {
+		return m_label;
+	}
 
 	/** output functions ***************************************/
 	private String valuesStr() {

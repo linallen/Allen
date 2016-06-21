@@ -20,7 +20,7 @@ public class SimCoupleCos extends SimCouple {
 
 	/** COS intra-coupled sim(val1, val2). */
 	@Override
-	protected double intraSim(Value val1, Value val2) throws Exception {
+	protected final double intraSim(Value val1, Value val2) throws Exception {
 		int objNum1 = getOwnerObjs(val1).size();
 		int objNum2 = getOwnerObjs(val2).size();
 		double product = 1. * objNum1 * objNum2;
@@ -29,7 +29,7 @@ public class SimCoupleCos extends SimCouple {
 
 	/** COS inter-coupled sim(val1, val2). */
 	@Override
-	protected double interSim(Value val1, Value val2) throws Exception {
+	protected final double interSim(Value val1, Value val2) throws Exception {
 		Common.Assert(val1.ftr() == val2.ftr());
 		Common.Assert(val1.ftr().type() == FtrType.CATEGORICAL);
 		double wt = 1. / (getFtrs().size() - 1);
@@ -59,7 +59,7 @@ public class SimCoupleCos extends SimCouple {
 	 * calculate the IRSI similarity between values A and B (of the same
 	 * feature) based on Feature[k]. EQ(5.8)
 	 */
-	private double IRSI(Value val1, Value val2, Feature ftrK) throws Exception {
+	private final double IRSI(Value val1, Value val2, Feature ftrK) throws Exception {
 		// 1. get the intersection of values 1 and 2 on feature[k]
 		HashSet<Value> interValK = IIF(val1, ftrK);
 		interValK.retainAll(IIF(val2, ftrK));

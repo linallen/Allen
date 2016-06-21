@@ -46,6 +46,14 @@ public class Value extends AAI_Module {
 		}
 	}
 
+	public Object value() {
+		return m_value;
+	}
+
+	public String valueStr() {
+		return m_value.toString();
+	}
+
 	public Feature ftr() {
 		return m_feature;
 	}

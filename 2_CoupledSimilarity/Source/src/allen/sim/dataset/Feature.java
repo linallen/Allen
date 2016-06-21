@@ -20,6 +20,10 @@ public class Feature extends AAI_Module {
 	private HashMap<String, Value> m_valSet = new HashMap<String, Value>();
 
 	/** property functions ***************************************/
+	public int size() {
+		return m_valSet.size();
+	}
+
 	/** set feature type */
 	public void type(FtrType type) {
 		m_type = type;
@@ -57,55 +61,40 @@ public class Feature extends AAI_Module {
 		return m_valSet.values();
 	}
 
-	/** add value strings to value set, and return value list */
-	// public ArrayList<Value> addValues(String valueStrs[]) {
-	// ArrayList<Value> values = new ArrayList<Value>();
-	// for (String valueStr : valueStrs) {
-	// values.add(addValue(valueStr));
-	// }
-	// return values;
-	// }
-
-	// public ArrayList<Value> valLst() {
-	// return new ArrayList<Value>(m_valSet.values());
-	// }
-
-	// public int getValueNum() {
-	// return m_valSet.size();
-	// }
-
-	/** return mapping <value, object> */
-	// public String getValueObjMapping() {
-	// String buf = new String();
-	// for (Value value : m_valSet.values()) {
-	// buf += m_name + ":" + value.toString() + "\n";
-	// }
-	// return buf;
-	// }
-
+	/** output functions ***************************************/
 	/** return "ftr_name[value1(2)value2(4)...]" */
 	public String getValueCounts() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(name() + "[");
 		for (Value value : this.values()) {
 			if (value.count() > 0) {
-				sb.append(value.name() + "(" + value.count() + ")");
+				sb.append(value.valueStr() + "(" + value.count() + ")");
 			}
 		}
 		return sb.append("]").toString();
 	}
 
-	public String toString() {
-		String buf = name() + " (" + type() + ")";
-		return buf + "<" + strValues() + ">";
-	}
-
-	/** get representation of feature value set */
-	private String strValues() {
+	/** get representation of Categorical features' value set */
+	private String valsStr() {
 		String buf = new String();
 		for (String value : m_valSet.keySet()) {
-			buf += value + ",";
+			buf += (buf.isEmpty() ? "" : ",") + value;
 		}
 		return buf;
+	}
+
+	public String toArff() {
+		String buf = name() + " ";
+		if (type() == FtrType.CATEGORICAL) {
+			buf += "{" + valsStr() + "}";
+		} else {
+			buf += type().toString();
+		}
+		return buf;
+	}
+
+	public String toString() {
+		String buf = name() + " (" + type() + ")";
+		return buf + "<" + valsStr() + ">";
 	}
 }

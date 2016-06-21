@@ -40,7 +40,7 @@ public abstract class SimCouple extends SimMeasure {
 	 * return the values dstValues that the objects have on Feature[k].<br>
 	 * See EQ(3.3) of COS paper.
 	 */
-	protected HashSet<Value> IIF(Value srcVal, Feature ftrK) {
+	protected final HashSet<Value> IIF(Value srcVal, Feature ftrK) {
 		HashSet<Value> valsK = new HashSet<Value>();
 		for (Obj obj : getOwnerObjs(srcVal)) {
 			valsK.add(obj.value(ftrK));
@@ -52,14 +52,14 @@ public abstract class SimCouple extends SimMeasure {
 	 * calculate ICP(set1, set2) = |set1 n set2|/|set2|.<br>
 	 * See EQ(3.4) of COS paper.
 	 */
-	protected static double ICP(Collection<Obj> objs1, Collection<Obj> objs2) {
+	protected final double ICP(Collection<Obj> objs1, Collection<Obj> objs2) {
 		Collection<Obj> inter = new HashSet<Obj>(objs1);
 		inter.retainAll(objs2);
 		return 1. * inter.size() / objs2.size();
 	}
 
 	/** @return Sim(val1, val2) */
-	protected double getValSim(Value val1, Value val2) throws Exception {
+	protected final double getValSim(Value val1, Value val2) throws Exception {
 		// 1. sort val1 and val2 by id
 		if (val1.id() > val2.id()) {
 			Value temp = val1;
@@ -80,7 +80,7 @@ public abstract class SimCouple extends SimMeasure {
 
 	/** compute Sim(obj1, obj2) */
 	@Override
-	public double sim(Obj objX, Obj objY) throws Exception {
+	public final double sim(Obj objX, Obj objY) throws Exception {
 		double sim = 0;
 		for (Feature ftr : getFtrs()) {
 			Value valX = objX.value(ftr);

@@ -47,9 +47,9 @@ public class Main {
 		for (String dataName : dataNames) {
 			String dataDir = WORK_DIR + dataName + "/";
 			String dataFile = dataDir + dataName + ".data";
-			DataSet data = new DataSet();
-			data.loadData(dataFile);
-			data.dbgOutputSummary();
+			DataSet dataSet = new DataSet();
+			dataSet.loadArff(dataFile);
+			dataSet.dbgOutputSummary();
 			// 2. similarity measure
 			for (String simName : simNames) {
 				SimMeasure simMeasure = SimMeasure.getSimMeasure(simName);
@@ -62,7 +62,7 @@ public class Main {
 					// 3) output: [data_set, sim_alg, cluster_alg, AC, NMI]
 					double sumACC = 0, sumNMI = 0;
 					for (int round = 0; round < ROUND; round++) {
-						eva.evaluate(simMeasure, clusterName, data, round);
+						eva.evaluate(simMeasure, clusterName, dataSet, round);
 						sumACC += eva.m_ACC;
 						sumNMI += eva.m_NMI;
 						System.out.print(simName + ", " + clusterName + ", " + AAI_IO.getFileNamePre(dataFile) + ", "

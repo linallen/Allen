@@ -33,36 +33,37 @@ public class Test {
 	/** Experiment 2: output obj-obj similarity graph (matrix) */
 	public static void TestSimMatrix(String dataFile, String simName) throws Exception {
 		SimMeasure simMeasure = SimMeasure.getSimMeasure(simName);
-		DataSet data = new DataSet();
-		data.loadArff(dataFile);
-		data.dbgOutputSummary();
-		String simGraphFile = m_dataFile + "." + simName + ".simGraph.txt";
+		simMeasure.debug(true);
 		System.out.println("\"" + simMeasure.name() + " " + simName + "\" on " + AAI_IO.getFileName(dataFile));
-		simMeasure.saveSimGraph(simGraphFile);
-
+		DataSet dataSet = new DataSet();
+		dataSet.debug(true);
+		dataSet.loadArff(dataFile);
+		dataSet.setClass(-1);
+		dataSet.saveArff(dataFile + ".copy.arff");
+		dataSet.dbgOutputSummary();
+		simMeasure.dataSet(dataSet);
+		// simMeasure.saveSimObjs(dataFile + "." + simName + ".sim_objs.txt");
+		simMeasure.saveSimGraph(dataFile + "." + simName + ".sim_graph.txt");
+		// simMeasure.saveSimMatrix(dataFile + "." + simName +
+		// ".sim_matrix.txt");
 	}
 
 	///////////////////////////////////////////////////////////////////
 	// data sets
-	// private static String DATA_NAME = "shuttle";
-	// private static String DATA_NAME = "TestExample1";
-	private static String DATA_NAME = "zoo";
-	// private static String DATA_NAME = "example1";
+	private static String DATA_NAME = "zoo"; // CMS same with Jian
+	// private static String DATA_NAME = "balloons"; // CMS same with Jian
+	// private static String DATA_NAME = "test"; // CMS same with Jian
+	// private static String DATA_NAME = "shuttle"; // CMS same with Jian
 	///////////////////////////////////////////////////////////////////
-	private static String WORK_DIR = "D:/GoogleDrive/UTS/SourceCode/1_CoupledSimilarity/1_coupling/_datasets/";
-	private static String m_dataFile = WORK_DIR + DATA_NAME + "/" + DATA_NAME + ".data";
+	private static String WORK_DIR = "../Datasets/";
+	private static String m_dataFile = WORK_DIR + DATA_NAME + "/" + DATA_NAME + ".arff";
 
 	public static void main(String[] args) throws Exception {
-		// TODO DEBUG
-		TestSimMatrix(m_dataFile, "CMS");
-		TestSimMatrix(m_dataFile, "CMS_intra");
-		TestSimMatrix(m_dataFile, "CMS_inter");
 		TestSimMatrix(m_dataFile, "COS");
-		TestSimMatrix(m_dataFile, "CoS_intra");
-		TestSimMatrix(m_dataFile, "CoS_inter");
-		// TODO DEBUG
-		// TestSimMatrix(m_dataFile, "INTRA");
-		// TestSimMatrix(m_dataFile, "INTER");
-		System.out.println("\nAll done");
+		// TestSimMatrix(m_dataFile, "CoS_intra");
+		// TestSimMatrix(m_dataFile, "CoS_inter");
+		TestSimMatrix(m_dataFile, "CMS");
+		// TestSimMatrix(m_dataFile, "CMS_intra");
+		// TestSimMatrix(m_dataFile, "CMS_inter");
 	}
 }
