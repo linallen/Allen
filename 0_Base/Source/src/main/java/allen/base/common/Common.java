@@ -778,6 +778,11 @@ public class Common {
 	}
 
 	/** convert double to string with given precision */
+	public static String decimal(double number) throws Exception {
+		return decimal(number, 4);
+	}
+
+	/** convert double to string with given precision */
 	public static String decimal(double number, int precision) throws Exception {
 		return String.format("%." + precision + "f", number);
 	}

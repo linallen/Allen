@@ -796,7 +796,6 @@ public class AAI_Module implements Runnable, Serializable {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String className = Thread.currentThread().getStackTrace()[1].getClassName();
-		getModule(className).Main(args);
+		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
 	}
 }
