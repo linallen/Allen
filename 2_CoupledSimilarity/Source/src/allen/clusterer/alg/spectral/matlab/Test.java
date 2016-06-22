@@ -1,4 +1,4 @@
-package allen.clusterer.spectral.matlab;
+package allen.clusterer.alg.spectral.matlab;
 
 public class Test {
 	public static void main(String[] args) {

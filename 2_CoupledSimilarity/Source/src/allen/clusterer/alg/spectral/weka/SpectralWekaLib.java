@@ -1,4 +1,4 @@
-package allen.clusterer.spectral.weka;
+package allen.clusterer.alg.spectral.weka;
 
 import cern.colt.matrix.*;
 import cern.colt.matrix.linalg.*;

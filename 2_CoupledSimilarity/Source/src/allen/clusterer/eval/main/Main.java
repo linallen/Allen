@@ -1,139 +1,85 @@
-package eval.clustering;
+package allen.clusterer.eval.main;
 
-import _Discarded.evalClustering.EvalClusterMatlab;
-import allen.base.common.*;
-import allen.clusterer.Clusterer;
-import allen.clusterer.ClustererInterfaceToDEL;
-import allen.clusterer.kmodes.Kmodes;
-import allen.clusterer.spectral.matlab.SpecClusterMatlab;
-import allen.clusterer.spectral.weka.SpectralWeka;
-import allen.sim.dataset.DataSet;
-import allen.sim.measure.SimMeasure;
-import matlabcontrol.MatlabProxy;
-import matlabcontrol.MatlabProxyFactory;
+import java.util.ArrayList;
+
+import allen.base.common.AAI_IO;
+import allen.clusterer.alg.Clusterer;
+import allen.clusterer.alg.kmodes.Kmodes;
+import allen.clusterer.alg.spectral.jian.SpecClusterJian;
+import allen.clusterer.eval.metrics.Metrics;
 
 /**
  * Evaluating a similarity measure's clustering performance for multiple rounds
  * to get the average performance.
  * <p>
- * Input: [sim_alg, cluster_alg, data_set]<br>
+ * Input: [sim_alg, cluster_alg, input_arff]<br>
  * Output: [ACC(accuracy/precision), NMI(Normalized Mutual Information)]
  */
-public class EvaluationClustering {
-	private String m_matlabDir;
-	private MatlabProxy m_proxy;
+public class Main {
+	static String DATA_DIR = "../Datasets/";
 
-	// Output: [ACC(accuracy/precision), NMI(Normalized Mutual Information)]
-	public double m_ACC, m_NMI;
-
-	public void useMatlab(String matlabDir, MatlabProxy proxy) throws Exception {
-		m_matlabDir = matlabDir;
-		m_proxy = (proxy == null) ? new MatlabProxyFactory().getProxy() : proxy;
+	static void evalClustering(String clustererName, String simName, String inputArff, int round) throws Exception {
+		ArrayList<Metrics> metricsLst = new ArrayList<Metrics>();
+		for (int i = 0; i < round; i++) {
+			// Clusterer clusterer = Clusterer.getClusterer(clustererName);
+			Clusterer clusterer = Clusterer.getInstance(clustererName);
+			String options = " -i " + inputArff + " -s " + simName + "" + " -debug ";
+			clusterer.addOptions(options.split(" "));
+			clusterer.start();
+			clusterer.join();
+			Metrics metrics = Metrics.getMetrics(clusterer.labels(), clusterer.clusters());
+			metricsLst.add(metrics);
+		}
+		for (Metrics metrics : metricsLst) {
+			System.out.println(metrics.toString());
+		}
+		System.out.println("All done\n");
 	}
 
-	public void evaluate(SimMeasure simMeasure, String clusterName, DataSet data, int round) throws Exception {
-		// 3. clustering evaluation. Input: [sim_alg, cluster_alg, data_set]
-		// Run clustering(simMeasure, dataSet)
-		// Clustering are KM (k-modes) and SC (spectral clustering)
-		// 1) input for KM: similarity measure
-		// 2) input for SC: similarity matrix/graph file
-		// 3) Output: [ACC, NMI]
-		int k = data.clsNum(); // cluster number
-		int clusterNum = k;
-		String clusterCSV = dataFile + "." + simName + "." + clusterName + "." + round + ".csv";
-		if (clusterName.equalsIgnoreCase("KM")) {
-			Kmodes kmodes = new Kmodes();
-			// kmodes.debug(true); // deubg
-			kmodes.kModes(k, data, simMeasure, true); // TODO DEBUG
-			kmodes.saveClusters(clusterCSV);
-		} else if (clusterName.equalsIgnoreCase("SC")) {
-			// 1. get sim-matrix (for Java SC) or sim-graph (for Matlab SC)
-			ClustererInterfaceToDEL sc;
-			String simScoresFile;
-			boolean m_clusterMatlab = true;
-			if (!m_clusterMatlab) {
-				simScoresFile = dataFile + "." + simName + ".simMatrix.txt";
-				simMeasure.saveSimMatrix(simScoresFile, data);
-				sc = new SpectralWeka();
-			} else {
-				simScoresFile = dataFile + "." + simName + ".simGraph.txt";
-				simMeasure.saveSimGraph(simScoresFile, data);
-				sc = new SpecClusterMatlab(m_proxy);
-				((SpecClusterMatlab) sc).matlabCodeDir(m_matlabDir + "SpectralClustering/");
-			}
-			// 2. cluster on similarity matrix (KM) or graph (SC)
-			int cluster[] = sc.clustering(simScoresFile, k);
-			// 3. save cluster[] to clusterCSV
-			if (cluster != null) {
-				clusterNum = sc.clusterNum();
-				System.out.println("SC cluster number = " + sc.clusterNum());
-				sc.saveClusters(cluster, clusterCSV, data);
-			}
-		} else {
-			throw new Exception("Clustering algorithm is not supported");
-		}
-		// Save ACC and NMI to evaluation file
-		if (AAI_IO.fileExist(clusterCSV)) {
-			EvalClusterMatlab evalCluster = new EvalClusterMatlab(m_proxy);
-			evalCluster.calcClusterMetrics(clusterCSV, m_matlabDir + "Evaluation/");
-			m_ACC = evalCluster.getAC();
-			m_NMI = evalCluster.getNMI();
-		}
-	}
+	// LEI GU: 就用了shuttle,balloon,zoo,soybean-small,
+	// 我的结果（精度），普遍都是50%一下。就在那几个数据集上。
 
-	public void evaluate(String simName, String clusterName, String dataFile, int round) throws Exception {
-		// 1. data set DS
-		DataSet data = new DataSet();
-		data.loadArff(dataFile);
-		data.dbgOutputSummary();
-		// 2. similarity measure
-		SimMeasure simMeasure = SimMeasure.getSimMeasure(simName);
-		// 3. clustering evaluation. Input: [sim_alg, cluster_alg, data_set]
-		// Run clustering(simMeasure, dataSet)
-		// Clustering are KM (k-modes) and SC (spectral clustering)
-		// 1) input for KM: similarity measure
-		// 2) input for SC: similarity matrix/graph file
-		// 3) Output: [ACC, NMI]
-		int k = data.clsNum(); // cluster number
-		int clusterNum = k;
-		String clusterCSV = dataFile + "." + simName + "." + clusterName + "." + round + ".csv";
-		if (clusterName.equalsIgnoreCase("KM")) {
-			Kmodes kmodes = new Kmodes();
-			// kmodes.debug(true); // deubg
-			kmodes.kModes(k, data, simMeasure, true); // TODO DEBUG
-			kmodes.saveClusters(clusterCSV);
-		} else if (clusterName.equalsIgnoreCase("SC")) {
-			// 1. get sim-matrix (for Java SC) or sim-graph (for Matlab SC)
-			Clusterer sc;
-			String simScoresFile;
-			boolean m_clusterMatlab = true;
-			if (!m_clusterMatlab) {
-				simScoresFile = dataFile + "." + simName + ".simMatrix.txt";
-				simMeasure.saveSimMatrix(simScoresFile);
-				sc = new SpectralWeka();
-			} else {
-				simScoresFile = dataFile + "." + simName + ".simGraph.txt";
-				simMeasure.saveSimGraph(simScoresFile, data);
-				sc = new SpecClusterMatlab(m_proxy);
-				((SpecClusterMatlab) sc).matlabCodeDir(m_matlabDir + "SpectralClustering/");
+	// balloons Balloons20_objs_4_ftrs_2classes
+	// Soybean_small47_objs_35_ftrs_4classes
+	// Zoo101_objs_17_ftrs_7classes
+	// ?? Lymphography (Empty)
+	// ?? Audiology200_objs_70_ftrs_24classes, SC crashed, too many classes?
+	// Soybean_large307_objs_35_ftrs_19classes
+	// Dermatology366_objs_34_ftrs_6_classes done
+	// BreastCancer699_objs_10_ftrs_2classes done
+	//
+	// ?? shuttle15_objs_6_ftrs_2classes, SC crashed
+
+	// "balloons", "Soybean_small47_objs_35_ftrs_4classes",
+	// "Voting_records435_objs_16_ftrs_2classes",
+	// "Zoo101_objs_17_ftrs_7classes",
+	// "BreastCancer699_objs_10_ftrs_2classes",
+	// "Dermatology366_objs_34_ftrs_6_classes",
+	// "Soybean_large307_objs_35_ftrs_19classes"
+	public static void main(String[] args) throws Exception {
+		String dataNames[] = { "shuttle" };
+		// "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA",
+		// "SMD", "OFD"
+		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "SMD", "OFD" };
+		String clustererNames[] = { "SC_JIAN" };
+
+		// 1. register clusterers
+		Clusterer.register("SC_JIAN", SpecClusterJian.class);
+		Clusterer.register("KMODES", Kmodes.class);
+
+		// 3. set Metrics matlab directory
+		Metrics.setMatlabDir(AAI_IO.getAbsDir("../Matlab/CMS/functions/"));
+
+		// evaluation
+		for (String clustererName : clustererNames) {
+			for (String simName : simNames) {
+				for (String dataName : dataNames) {
+					String inputArff = DATA_DIR + dataName + "/" + dataName + ".arff";
+					evalClustering(clustererName, simName, inputArff, 20);
+				}
 			}
-			// 2. cluster on similarity matrix (KM) or graph (SC)
-			int cluster[] = sc.clustering(simScoresFile, k);
-			// 3. save cluster[] to clusterCSV
-			if (cluster != null) {
-				clusterNum = sc.clusterNum();
-				System.out.println("SC cluster number = " + sc.clusterNum());
-				sc.saveClusters(cluster, clusterCSV, data);
-			}
-		} else {
-			throw new Exception("Clustering algorithm is not supported");
 		}
-		// Save ACC and NMI to evaluation file
-		if (AAI_IO.fileExist(clusterCSV)) {
-			EvalClusterMatlab evalCluster = new EvalClusterMatlab(m_proxy);
-			evalCluster.calcClusterMetrics(clusterCSV, m_matlabDir + "Evaluation/");
-			m_ACC = evalCluster.getAC();
-			m_NMI = evalCluster.getNMI();
-		}
+
+		System.out.println("\nAll finished.");
 	}
 }

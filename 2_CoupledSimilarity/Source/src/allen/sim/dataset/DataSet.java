@@ -48,11 +48,11 @@ public class DataSet extends AAI_Module implements AllenSet {
 		return m_objLst.size();
 	}
 
-	public String getDataFile() {
+	public String dataFile() {
 		return m_dataFile;
 	}
 
-	public String getDataDir() {
+	public String dataDir() {
 		return m_dataDir;
 	}
 
@@ -90,6 +90,23 @@ public class DataSet extends AAI_Module implements AllenSet {
 
 	public FtrSet ftrSet() {
 		return m_ftrSet;
+	}
+
+	public String dataName() {
+		return m_dataName;
+	}
+
+	public void dataName(String dataName) {
+		m_dataName = dataName;
+	}
+
+	/** get label ids[] */
+	public int[] getLabelIds() {
+		int labels[] = new int[objNum()];
+		for (int i = 0; i < objNum(); i++) {
+			labels[i] = getObj(i).label().id();
+		}
+		return labels;
 	}
 
 	// public Feature cls(String clsName) throws Exception {

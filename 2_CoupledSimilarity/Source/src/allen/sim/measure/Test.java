@@ -1,8 +1,8 @@
 package allen.sim.measure;
 
 import allen.base.common.*;
+import allen.clusterer.eval.searching.PrecRecall;
 import allen.sim.dataset.DataSet;
-import eval.searching.PrecRecall;
 
 public class Test {
 	/** Experiment 1: testing algorithm on Precision, Recall, and F metrics */
@@ -50,10 +50,11 @@ public class Test {
 
 	///////////////////////////////////////////////////////////////////
 	// data sets
-	private static String DATA_NAME = "zoo"; // CMS same with Jian
+	// private static String DATA_NAME = "zoo"; // CMS same with Jian
 	// private static String DATA_NAME = "balloons"; // CMS same with Jian
 	// private static String DATA_NAME = "test"; // CMS same with Jian
 	// private static String DATA_NAME = "shuttle"; // CMS same with Jian
+	private static String DATA_NAME = "soybean-s"; // CMS same with Jian
 	///////////////////////////////////////////////////////////////////
 	private static String WORK_DIR = "../Datasets/";
 	private static String m_dataFile = WORK_DIR + DATA_NAME + "/" + DATA_NAME + ".arff";

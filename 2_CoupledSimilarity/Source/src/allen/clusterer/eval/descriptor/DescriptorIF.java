@@ -1,4 +1,4 @@
-package eval.descriptor;
+package allen.clusterer.eval.descriptor;
 
 import allen.sim.dataset.DataSet;
 import allen.sim.measure.SimMeasure;

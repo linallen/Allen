@@ -1,4 +1,4 @@
-package allen.clusterer.kmodes;
+package allen.clusterer.alg.kmodes;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import allen.base.common.Common;
 import allen.base.common.Timer;
-import allen.clusterer.Clusterer;
+import allen.clusterer.alg.Clusterer;
 import allen.sim.dataset.DataSet;
 import allen.sim.dataset.Obj;
 

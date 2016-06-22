@@ -58,6 +58,31 @@ public class SimMeasure extends AAI_Module {
 	/** [TEMP] map [Value, Obj] */
 	private HashMap<Value, HashSet<Obj>> m_mapValObjs;
 
+	/** similarity measures: COS, CMS, (_INTRA, _INTER), SMD, OFD */
+	public static SimMeasure getSimMeasure(String simName) throws Exception {
+		switch (simName.toUpperCase().trim()) {
+		case "COS":
+			return new SimCoupleCos();
+		case "COS_INTRA":
+			return new SimCoupleCosIntra();
+		case "COS_INTER":
+			return new SimCoupleCosInter();
+		case "CMS":
+			return new SimCoupleCms();
+		case "CMS_INTRA":
+			return new SimCoupleCmsIntra();
+		case "CMS_INTER":
+			return new SimCoupleCmsInter();
+		case "SMD":
+			return new SimSMD();
+		case "OFD":
+			return new SimOFD();
+		case "ADD":
+			// TODO
+		}
+		throw new Exception("Similarity measure not supported: " + simName);
+	}
+
 	/** property functions ***************************************/
 	/** set similarity measure name (ALL UPPER-CASE) */
 	// @Override
@@ -128,31 +153,6 @@ public class SimMeasure extends AAI_Module {
 		double sim = sim(obj1, obj2);
 		// return (sim < 1e-6) ? Double.MAX_VALUE : (1 / sim - 1);
 		return (sim < 1e-6) ? Double.MAX_VALUE : (1 / sim);
-	}
-
-	/** similarity measures: COS, CMS, (_INTRA, _INTER), SMD, OFD */
-	public static SimMeasure getSimMeasure(String simName) throws Exception {
-		switch (simName.toUpperCase().trim()) {
-		case "COS":
-			return new SimCoupleCos();
-		case "COS_INTRA":
-			return new SimCoupleCosIntra();
-		case "COS_INTER":
-			return new SimCoupleCosInter();
-		case "CMS":
-			return new SimCoupleCms();
-		case "CMS_INTRA":
-			return new SimCoupleCmsIntra();
-		case "CMS_INTER":
-			return new SimCoupleCmsInter();
-		case "SMD":
-			return new SimSMD();
-		case "OFD":
-			return new SimOFD();
-		case "ADD":
-			// TODO
-		}
-		throw new Exception("Similarity measure not supported: " + simName);
 	}
 
 	/**

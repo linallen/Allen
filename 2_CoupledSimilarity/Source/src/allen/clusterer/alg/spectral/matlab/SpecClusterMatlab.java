@@ -1,9 +1,9 @@
-package allen.clusterer.spectral.matlab;
+package allen.clusterer.alg.spectral.matlab;
 
 import allen.base.common.AAI_IO;
 import allen.base.common.Common;
 import allen.base.common.Timer;
-import allen.clusterer.Clusterer;
+import allen.clusterer.alg.Clusterer;
 import allen.matlab.Matlab;
 import matlabcontrol.MatlabProxy;
 

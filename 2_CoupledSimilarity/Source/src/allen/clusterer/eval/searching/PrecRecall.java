@@ -1,4 +1,4 @@
-package eval.searching;
+package allen.clusterer.eval.searching;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

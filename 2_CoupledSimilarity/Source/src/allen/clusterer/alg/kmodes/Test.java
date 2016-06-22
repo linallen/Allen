@@ -1,4 +1,4 @@
-package allen.clusterer.kmodes;
+package allen.clusterer.alg.kmodes;
 
 public class Test {
 	static String WORK_DIR = "C:/Allen/UTS/UTS_SourceCode/2_CoupledSimilarity/_experiments/datasets/";

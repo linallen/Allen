@@ -1,4 +1,4 @@
-package allen.clusterer.kmodes;
+package allen.clusterer.alg.kmodes;
 
 import java.util.HashSet;
 
