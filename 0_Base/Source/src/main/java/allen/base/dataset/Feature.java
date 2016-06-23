@@ -1,4 +1,4 @@
-package allen.sim.dataset;
+package allen.base.dataset;
 
 import java.util.Collection;
 import java.util.HashMap;

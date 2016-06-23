@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import allen.base.common.AAI_IO;
+import allen.base.common.ClassManager;
 import allen.base.common.Common;
 import allen.base.common.Timer;
 
@@ -758,6 +759,43 @@ public class AAI_Module implements Runnable, Serializable {
 		}
 	}
 
+	/** create object from class name */
+	private static Object getObj(String className) throws Exception {
+		Class<?> cls = Class.forName(className);
+		Object obj = cls.newInstance();
+		return obj;
+	}
+
+	/** create object from class name */
+	public static AAI_Module getModule(String className) throws Exception {
+		return (AAI_Module) getObj(className);
+	}
+
+	public static void main(String[] args) throws Exception {
+		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+	/** global registered mappings [clsName, clsClass] */
+	private static ClassManager s_clsManager = new ClassManager();
+
+	/**
+	 * register [clsName, clsClass].
+	 * 
+	 * @param clsName
+	 *            a unique name for the class.
+	 * @param clsClass
+	 *            must has default constructor
+	 */
+	public static void register(String clsName, Class<?> clsClass) {
+		s_clsManager.register(clsName.trim().toUpperCase(), clsClass);
+	}
+
+	public static Object getInstance(String clsName) throws Exception {
+		return s_clsManager.getInstance(clsName.trim().toUpperCase());
+	}
+	////////////////////////////////////////////////////////////////////////////
+
 	/** [STUB] return help */
 	public String help() {
 		return "-debug output debug information.\n" + "-deamon daemon version which can add options at run time.";
@@ -765,7 +803,7 @@ public class AAI_Module implements Runnable, Serializable {
 
 	/** [STUB] return revision history */
 	public String version() {
-		return "v0.0.1, 19 June 2016, Allen Lin.";
+		return "v0.0.1, 19 June 2016, Allen Lin.\n" + "v0.0.2, 23 June 2016, Allen Lin, added ClassManager.";
 	};
 
 	/** the main() function of all AAI_Module sub-classes */
@@ -781,21 +819,5 @@ public class AAI_Module implements Runnable, Serializable {
 		start();
 		join();
 		System.out.println("Finished task " + name() + ". Total time " + timer);
-	}
-
-	/** create object from class name */
-	private static Object getObj(String className) throws Exception {
-		Class<?> cls = Class.forName(className);
-		Object obj = cls.newInstance();
-		return obj;
-	}
-
-	/** create object from class name */
-	public static AAI_Module getModule(String className) throws Exception {
-		return (AAI_Module) getObj(className);
-	}
-
-	public static void main(String[] args) throws Exception {
-		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
 	}
 }

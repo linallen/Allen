@@ -1,11 +1,11 @@
-package test.matlab;
+package allen.matlab;
 
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
 
-public class MatlabTest {
+public class MatlabTest2 {
 
 	public static void main(String[] args) throws MatlabInvocationException, MatlabConnectionException {
 		MatlabProxyFactory factory = null;
@@ -17,28 +17,30 @@ public class MatlabTest {
 			// cd is matlab command to change working directory, change the
 			// current
 			// working directory to path where your matlab scripts are hosted
-			proxy.eval("cd C:/Allen/UTS/UTS_SourceCode/2_CoupledSimilarity/_experiments/matlab_src/Evaluation/");
+			proxy.eval("cd D:/GoogleDrive/UTS/SourceCode/1_CoupledSimilarity/_cluster/_matlab");
 			// Setting up matrices in Java, basically its 2D object array
-			int[] gnd = new int[] { 2, 5, 5 };
-			int[] res = new int[] { 0, 2, 2 };
+			int[] gnd = new int[] { 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1, 1, 1 };
+			int[] res = new int[] { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+			double result[];
 			// Set up the variables in MATLAB
 			// sets up a matrix 'a' which is your 2D array a in Java
 			proxy.setVariable("gnd", gnd);
 			proxy.setVariable("res", res);
 			// foo is your matlab script foo.m, lets say the expected result is
 			// a boolean - true or false
-			proxy.eval("map = bestMap(gnd,res)");
-			// proxy.returningFeval(functionName, nargout, args)
+			proxy.eval("res = bestMap(gnd,res);");
+			proxy.eval("gnd=gnd';");
+			proxy.eval("AC = length(find(gnd == res))/length(gnd);");
+			proxy.eval("MIhat = MutualInfo(gnd,res);");
+			// proxy.returningFeval("evaluation", 2, res, gnd);
 			// By default everything in matlab is a matrix, here you get 1 x 1
 			// matrix as a Result variabke from matrix, which you need to
 			// convert into java boolean
-			Object map = proxy.getVariable("map");
-			System.out.println("map is " + map.getClass().getSimpleName());
-			double[] result = (double[]) map;
-			for (int i = 0; i < result.length; i++) {
-				System.out.println("result[" + i + "] = " + result[i]);
-			}
-			System.out.println("Matlab finished.");
+			Object ObjAC = proxy.getVariable("AC");
+			Object ObjMIhat = proxy.getVariable("MIhat");
+			double AC = ((double[]) ObjAC)[0];
+			double MIhat = ((double[]) ObjMIhat)[0];
+			System.out.println("AC = " + AC + ", MIhat = " + MIhat);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

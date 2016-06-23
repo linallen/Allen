@@ -1,4 +1,4 @@
-package allen.sim.dataset;
+package allen.base.dataset;
 
 import allen.base.common.Common;
 import allen.base.module.AAI_Module;
@@ -98,15 +98,6 @@ public class Value extends AAI_Module {
 
 	/** output functions ***************************************/
 	public String toString() {
-		return name();
+		return m_value.toString();
 	}
-
-	/** get representation of object set */
-	// private String strObjs() {
-	// String buf = new String();
-	// for (Obj obj : m_objs) {
-	// buf += obj.name() + ",";
-	// }
-	// return buf;
-	// }
 }

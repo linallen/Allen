@@ -1,4 +1,4 @@
-package allen.sim.dataset;
+package allen.base.dataset;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,7 +50,7 @@ public class Obj extends AAI_Module {
 	}
 
 	/** output functions ***************************************/
-	private String valuesStr() {
+	public String valuesStr() {
 		String buf = new String();
 		// TODO need to sort values by feature index
 		for (Value value : m_values.values()) {
