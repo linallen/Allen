@@ -410,7 +410,7 @@ public class Arff extends AAI_Module {
 					Feature ftr = readAttribute(line.trim());
 					Common.Assert(ftr != null);
 					m_features.add(ftr);
-					dbgPrint(ftr.toString());
+					outputDbg(ftr.toString());
 				}
 			}
 
@@ -486,7 +486,7 @@ public class Arff extends AAI_Module {
 					Feature ftr = readAttribute(line.trim());
 					Common.Assert(ftr != null);
 					m_features.add(ftr);
-					dbgPrint(ftr.toString());
+					outputDbg(ftr.toString());
 				}
 			}
 
@@ -577,15 +577,28 @@ public class Arff extends AAI_Module {
 		return sb.toString();
 	}
 
+	/** return help */
+	public static String help() {
+		return "Arff class for manipulating Arff objects, including loading and saving ARFF file, alerting, splitting, swapping, and deleting features, etc..";
+	};
+
+	/** return revision history */
+	public static String version() {
+		return "v0.0.1, 29 Jan 2015, Allen Lin.";
+	};
+
 	public static void main(String[] args) throws Exception {
-		Arff module = new Arff(null);
-		System.out.println("\n" + Arff.version());
-		if (args.length == 0) {
-			System.out.println(Arff.help() + "\n");
-			return;
-		}
-		module.setOptions(args);
-		module.start();
-		module.join();
+		exec(Thread.currentThread().getStackTrace()[1].getClassName(), args);
 	}
+	// public static void main(String[] args) throws Exception {
+	// Arff module = new Arff(null);
+	// System.out.println("\n" + Arff.version());
+	// if (args.length == 0) {
+	// System.out.println(Arff.help() + "\n");
+	// return;
+	// }
+	// module.setOptions(args);
+	// module.start();
+	// module.join();
+	// }
 }
