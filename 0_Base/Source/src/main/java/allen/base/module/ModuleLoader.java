@@ -65,8 +65,7 @@ public class ModuleLoader extends URLClassLoader {
 			m_mainMethod = m_mainClass.getMethod("main", String[].class);
 			m_mainMethod.setAccessible(true);
 			int mods = m_mainMethod.getModifiers();
-			if ((m_mainMethod.getReturnType() != void.class)
-					|| !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
+			if ((m_mainMethod.getReturnType() != void.class) || !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
 				m_mainMethod = null;
 			}
 		} catch (Exception e) {
@@ -136,8 +135,7 @@ public class ModuleLoader extends URLClassLoader {
 			Method mainMethod = mainClass.getMethod("main", String[].class);
 			mainMethod.setAccessible(true);
 			int mods = mainMethod.getModifiers();
-			if ((mainMethod.getReturnType() == void.class)
-					&& Modifier.isStatic(mods) && Modifier.isPublic(mods)) {
+			if ((mainMethod.getReturnType() == void.class) && Modifier.isStatic(mods) && Modifier.isPublic(mods)) {
 				return mainMethod;
 			}
 			return null;
@@ -152,8 +150,7 @@ public class ModuleLoader extends URLClassLoader {
 			Method mainMethod = mainClass.getMethod("main", String[].class);
 			mainMethod.setAccessible(true);
 			int mods = mainMethod.getModifiers();
-			if ((mainMethod.getReturnType() == void.class)
-					&& Modifier.isStatic(mods) && Modifier.isPublic(mods)) {
+			if ((mainMethod.getReturnType() == void.class) && Modifier.isStatic(mods) && Modifier.isPublic(mods)) {
 				return mainMethod;
 			}
 			return null;
@@ -171,16 +168,14 @@ public class ModuleLoader extends URLClassLoader {
 			Method mainMethod = mainClass.getMethod("main", String[].class);
 			mainMethod.setAccessible(true);
 			int mods = mainMethod.getModifiers();
-			return ((mainMethod.getReturnType() == void.class)
-					&& Modifier.isStatic(mods) && Modifier.isPublic(mods));
+			return ((mainMethod.getReturnType() == void.class) && Modifier.isStatic(mods) && Modifier.isPublic(mods));
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
 	/** invoke a public static method of a class */
-	public static Object invoke(Class<?> cls, String methodName, Object... args)
-			throws Exception {
+	public static Object invoke(Class<?> cls, String methodName, Object... args) throws Exception {
 		// 1. get method object from class
 		String methodStr = new String();
 		Class<?>[] argTypes = new Class[args.length];
@@ -203,4 +198,29 @@ public class ModuleLoader extends URLClassLoader {
 		return method.invoke(null, args);
 	}
 
+	public static Class<?> getClass(String clsName) {
+		try {
+			return Class.forName(clsName);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/** create object from class name */
+	public static Object newInstance(String clsName) throws Exception {
+		try {
+			return newInstance(Class.forName(clsName));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/** create object from class name */
+	public static Object newInstance(Class<?> cls) throws Exception {
+		try {
+			return cls.newInstance();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

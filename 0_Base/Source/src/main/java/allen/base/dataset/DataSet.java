@@ -401,7 +401,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 		return buf.toString();
 	}
 
-	public String version() {
+	public static String version() {
 		return "Created by Allen Lin, 24 Mar 2016.\n" + "Changed to operate ARFF only. 16 June 2016, Allen";
 	}
 }

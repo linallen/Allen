@@ -34,7 +34,7 @@ import allen.base.common.Timer;
  * 
  * @author Allen Lin, 22 Oct 2014.
  */
-public class AAI_Module implements Runnable, Serializable {
+public class AAI_Module_org implements Runnable, Serializable {
 	private static final long serialVersionUID = -2260425849446619100L;
 
 	/** constant characters */
@@ -57,7 +57,7 @@ public class AAI_Module implements Runnable, Serializable {
 	/**
 	 * owner (parent) of this module. use owner's out-stream if owner != null.
 	 */
-	protected transient AAI_Module m_owner;
+	protected transient AAI_Module_org m_owner;
 
 	/** commonly used timer */
 	protected transient Timer m_timer = new Timer();
@@ -84,11 +84,11 @@ public class AAI_Module implements Runnable, Serializable {
 		m_lockThread = new Object();
 	}
 
-	public AAI_Module() {
+	public AAI_Module_org() {
 		init();
 	}
 
-	public AAI_Module(AAI_Module owner) {
+	public AAI_Module_org(AAI_Module_org owner) {
 		init();
 		owner(owner);
 	}
@@ -99,25 +99,25 @@ public class AAI_Module implements Runnable, Serializable {
 	}
 
 	public static boolean isAAI_Module(Object module) {
-		return Common.subInstance(AAI_Module.class, module);
+		return Common.subInstance(AAI_Module_org.class, module);
 	}
 
 	public static boolean isAAI_Module(Class<?> sub) {
-		return Common.subClass(AAI_Module.class, sub);
+		return Common.subClass(AAI_Module_org.class, sub);
 	}
 
 	/** 8. set owner */
-	public void owner(AAI_Module owner) {
+	public void owner(AAI_Module_org owner) {
 		m_owner = owner;
 	}
 
 	/** 8. get owner */
-	public AAI_Module owner() {
+	public AAI_Module_org owner() {
 		return m_owner;
 	}
 
 	/** 9. get this */
-	public AAI_Module getThis() {
+	public AAI_Module_org getThis() {
 		return this;
 	}
 
@@ -464,7 +464,7 @@ public class AAI_Module implements Runnable, Serializable {
 	 * AAI_Module: [module_name, owner_name, status, creation_time, module_jar]
 	 */
 	public String description() {
-		AAI_Module owner = owner();
+		AAI_Module_org owner = owner();
 		String ownerName = ((owner != null) ? owner.name() : "System");
 		return fullName() + ", " + ownerName + ", " + statusStr() + ", " + runningTime() + "s" + ", ";
 	}
@@ -785,47 +785,43 @@ public class AAI_Module implements Runnable, Serializable {
 	////////////////////////////////////////////////////////////////////////////
 
 	/** [STUB] return help */
-	public static String help() {
+	public String help() {
 		return "-debug output debug information.\n" + "-deamon daemon version which can add options at run time.";
 	};
 
 	/** [STUB] return revision history */
-	public static String version() {
+	public String version() {
 		return "v0.0.1, 19 June 2016, Allen Lin.\n" + "v0.0.2, 23 June 2016, Allen Lin, added ClassManager.";
 	};
 
-	/** the Entry function of all AAI_Module sub-classes */
-	protected static final void exec(String clsName, String[] args) throws Exception {
-		// 1. get AAI_Module class from clsName
-		Class<?> clsClass = ModuleLoader.getClass(clsName);
-		if (clsClass == null) {
-			throw new Exception(clsName + ": failed to get this Class!");
-		}
-		if (!isAAI_Module(clsClass)) {
-			throw new Exception(clsName + ": not an AAI Class!");
-		}
-		// 2. display help() and version() of class
-		String help = (String) ModuleLoader.invoke(clsClass, "help");
-		String version = (String) ModuleLoader.invoke(clsClass, "version");
-		System.out.println(version + "\n");
+	/** the main() function of all AAI_Module sub-classes */
+	public final void Main(String[] args) throws Exception {
+		System.out.println(version() + "\n");
 		if (args.length == 0) {
-			System.out.println(help + "\n");
+			System.out.println(help() + "\n");
 			return;
 		}
-		// 3. create an Instance from class and pass args[] to it
-		AAI_Module module = (AAI_Module) ModuleLoader.newInstance(clsClass);
-		if (module != null) {
-			System.out.println("Started task " + module.name() + ". ");
-			Timer timer = new Timer();
-			module.setOptions(args);
-			module.start();
-			module.join();
-			System.out.println("Finished task " + module.name() + ". " + timer);
-		}
+		System.out.println("Started task " + name() + ". ");
+		Timer timer = new Timer();
+		setOptions(args);
+		start();
+		join();
+		System.out.println("Finished task " + name() + ". Total time " + timer);
 	}
 
-	/** copy this function to sub-classes */
+	/** create object from class name */
+	private static Object getObj(String className) throws Exception {
+		Class<?> cls = Class.forName(className);
+		Object obj = cls.newInstance();
+		return obj;
+	}
+
+	/** create object from class name */
+	public static AAI_Module_org getModule(String className) throws Exception {
+		return (AAI_Module_org) getObj(className);
+	}
+
 	public static void main(String[] args) throws Exception {
-		exec(Thread.currentThread().getStackTrace()[1].getClassName(), args);
+		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
 	}
 }
