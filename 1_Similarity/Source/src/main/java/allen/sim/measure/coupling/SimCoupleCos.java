@@ -73,15 +73,13 @@ public class SimCoupleCos extends SimCouple {
 		return delta;
 	}
 
-	@Override
-	public String help() {
+	public static String help() {
 		return "COS (Coupled Object Similarity) algorithm for measuring object-object similarities based on value-value similarities.\n"
-				+ "COS was proposed in TNNLS-2013 paper: \"Coupled Attribute Similarity Learning on Categorical Data\" authored by Can Wang et al.\n"
-				+ super.help();
+				+ "COS was proposed in TNNLS-2013 paper: \"Coupled Attribute Similarity Learning on Categorical Data\" authored by Can Wang et al.\n\n"
+				+ SimCouple.help();
 	}
 
-	@Override
-	public String version() {
+	public static String version() {
 		return "v1.0, No buffer version. Created on 20 Jan 2016, Allen Lin.\n"
 				+ "v2.0, Buffered version. 3 Feb 2016, Allen Lin.\n"
 				+ "v2.1, draw obj-obj similarity matrix in Matlab. 5 Feb 2016, Allen Lin.\n"
@@ -91,6 +89,6 @@ public class SimCoupleCos extends SimCouple {
 	}
 
 	public static void main(String[] args) throws Exception {
-		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
+		exec(Thread.currentThread().getStackTrace()[1].getClassName(), args);
 	}
 }

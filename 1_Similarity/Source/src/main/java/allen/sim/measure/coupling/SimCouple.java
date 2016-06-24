@@ -30,12 +30,7 @@ public abstract class SimCouple extends SimMeasure {
 	/** define intra-coupled sim(val1, val2). */
 	protected abstract double intraSim(Value val1, Value val2) throws Exception;
 
-	/**
-	 * define inter-coupled sim(val1, val2).
-	 * 
-	 * @param cateFtrs
-	 *            collection of all categorical features.
-	 */
+	/** define inter-coupled sim(val1, val2). */
 	protected abstract double interSim(Value val1, Value val2) throws Exception;
 
 	/** define sim(val1, val2). */
@@ -89,19 +84,21 @@ public abstract class SimCouple extends SimMeasure {
 		return sim;
 	}
 
-	@Override
-	public String help() {
-		return "Coupling-based similarity measures for calculating object-object similarities based on value-value similarities.\n"
-				+ super.help();
+	public static String help() {
+		return "A coupling-based similarity measure for calculating object-object similarities based on value-value similarities.\n\n"
+				+ SimMeasure.help();
 	}
 
-	@Override
-	public String version() {
+	public static String version() {
 		return "v1.0, No buffer version. Created on 20 Jan 2016, Allen Lin.\n"
 				+ "v2.0, Buffered version. 3 Feb 2016, Allen Lin.\n"
 				+ "v2.1, draw obj-obj similarity matrix in Matlab. 5 Feb 2016, Allen Lin.\n"
 				+ "v2.2, added \"-t sim_type\" to support intra- and inter- similarity scores. 25 Feb 2016, Allen Lin.\n"
 				+ "v2.3, extracted DataSet class from CoupleSim class, so that the DataSet class can be shared among similarity measures. 24 Mar 2016, Allen Lin\n"
 				+ "v2.4, major revision. 19 June 2016, Allen Lin";
+	}
+
+	public static void main(String[] args) throws Exception {
+		exec(Thread.currentThread().getStackTrace()[1].getClassName(), args);
 	}
 }

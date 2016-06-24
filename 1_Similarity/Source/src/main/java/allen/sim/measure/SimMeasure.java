@@ -33,7 +33,7 @@ import allen.base.module.AAI_Module;
  * 
  * @author Allen Lin, 25 Mar 2016
  */
-public class SimMeasure extends AAI_Module {
+public abstract class SimMeasure extends AAI_Module {
 	private static final long serialVersionUID = 7217652874275084535L;
 
 	/** define if the similarity measure is symmetric */
@@ -129,7 +129,7 @@ public class SimMeasure extends AAI_Module {
 	}
 
 	/**
-	 * calculate & output top-k similar objects. Output format:<br>
+	 * calculate and output top-k similar objects. Output format:<br>
 	 * label obj_name, label sim_obj1 score, ..., label sim_objk score
 	 */
 	public void saveSimObjs(String outputFile) throws Exception {
@@ -254,8 +254,7 @@ public class SimMeasure extends AAI_Module {
 		super.setOptions(options);
 	}
 
-	@Override
-	public String help() {
+	public static String help() {
 		return "Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k]\n"
 				+ "-i input_arff</i>: [input] the ARFF data file.\n"
 				+ "-s sim_name</i>: [para] name of similarity measures: COS, COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.\n"
@@ -264,12 +263,11 @@ public class SimMeasure extends AAI_Module {
 				+ "            where cls_size is the objects having same label with the target.";
 	}
 
-	@Override
-	public String version() {
+	public static String version() {
 		return "v0.0.1, 19 June 2016, Allen Lin.";
 	}
 
 	public static void main(String[] args) throws Exception {
-		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
+		exec(Thread.currentThread().getStackTrace()[1].getClassName(), args);
 	}
 }

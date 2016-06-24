@@ -84,18 +84,17 @@ public class SimCoupleCms extends SimCouple {
 		return (maxSum == 0) ? 0 : maxSum / (2 * maxSum - minSum);
 	}
 
-	public String help() {
+	public static String help() {
 		return "CMS (Coupled Metrics Similarity) algorithm for measuring object-object similarities based on value-value similarities.\n"
-				+ "CMS was proposed in paper: \"Coupled Metric Similarity Learning for Non-IID Categorical Data\" authored by Songlei Jian et al.\n"
-				+ super.help();
+				+ "CMS was proposed in paper: \"Coupled Metric Similarity Learning for Non-IID Categorical Data\" authored by Songlei Jian et al.\n\n"
+				+ SimCouple.help();
 	}
 
-	@Override
-	public String version() {
+	public static String version() {
 		return "v2.4, major revision, re-organize source code, create SimCouple as an abstract class of coupling similarity measures. 19 June 2016, Allen Lin";
 	}
 
 	public static void main(String[] args) throws Exception {
-		getModule(Thread.currentThread().getStackTrace()[1].getClassName()).Main(args);
+		exec(Thread.currentThread().getStackTrace()[1].getClassName(), args);
 	}
 }

@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>allen</groupId>
-	<artifactId>similarity</artifactId>
+	<artifactId>sim.measure</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 </project>
 
