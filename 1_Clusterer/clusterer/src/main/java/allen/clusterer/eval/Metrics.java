@@ -1,5 +1,8 @@
 package allen.clusterer.eval;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 import allen.base.common.Common;
 import allen.matlab.Matlab;
 import matlabcontrol.MatlabProxy;
@@ -14,8 +17,8 @@ import matlabcontrol.MatlabProxy;
 public class Metrics {
 	private static String s_matlabDir;
 
-	/** metrics */
-	public Double m_NMI, m_prec, m_rec;
+	/** [metric_name, metric_value] */
+	private HashMap<String, Double> m_metrics = new HashMap<String, Double>();
 
 	public static void setMatlabDir(String matlabDir) {
 		s_matlabDir = matlabDir;
@@ -29,8 +32,40 @@ public class Metrics {
 		return buf + "]";
 	}
 
+	private Collection<String> getMetricNames() {
+		return m_metrics.keySet();
+	}
+
+	private void setMetric(String metricName, Double metricValue) {
+		m_metrics.put(metricName, metricValue);
+	}
+
+	private Double getValue(String metricName) {
+		return m_metrics.get(metricName);
+	}
+
+	private void addMetric(String metricName, Double metricValue) {
+		if (metricValue != null) {
+			Double orgValue = m_metrics.get(metricName);
+			metricValue += ((orgValue != null) ? orgValue : 0);
+			m_metrics.put(metricName, metricValue);
+		}
+	}
+
+	public void addMetrics(Metrics metrics) {
+		for (String metricName : metrics.getMetricNames()) {
+			addMetric(metricName, metrics.getValue(metricName));
+		}
+	}
+
+	public void divide(double divisor) {
+		for (String metricName : getMetricNames()) {
+			setMetric(metricName, getValue(metricName) / divisor);
+		}
+	}
+
 	/**
-	 * TODO evaluate the clusterer by metrics: NMI, Precision, and Recall, etc.
+	 * evaluate the clusterer by metrics: NMI, Precision, and Recall, etc.
 	 * 
 	 * @param labels
 	 *            class labels[]
@@ -53,9 +88,9 @@ public class Metrics {
 			proxy.eval("NMI_spec = NMI(flag_spec',label');");
 			proxy.eval("[precision, recall, ri, fscore] = TFPN(flag_spec,label');");
 			// get metrics NMI, prec
-			metric.m_NMI = ((double[]) proxy.getVariable("NMI_spec"))[0];
-			metric.m_prec = ((double[]) proxy.getVariable("precision"))[0];
-			metric.m_rec = ((double[]) proxy.getVariable("recall"))[0];
+			metric.setMetric("NMI_spec", ((double[]) proxy.getVariable("NMI_spec"))[0]);
+			metric.setMetric("precision", ((double[]) proxy.getVariable("precision"))[0]);
+			metric.setMetric("recall", ((double[]) proxy.getVariable("recall"))[0]);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -64,12 +99,22 @@ public class Metrics {
 
 	public String toString() {
 		String buf = new String();
-		try {
-			buf += ((m_NMI != null) ? ("NMI=" + Common.decimal(m_NMI)) : "") + " ";
-			buf += ((m_prec != null) ? ("Prec=" + Common.decimal(m_prec)) : "") + " ";
-			buf += ((m_rec != null) ? ("Recall=" + Common.decimal(m_rec)) : "") + " ";
-		} catch (Exception e) {
-			e.printStackTrace();
+		for (String metricName : getMetricNames()) {
+			try {
+				buf += (metricName + "=" + Common.decimal(getValue(metricName)) + " ");
+			} catch (Exception e) {
+			}
+		}
+		return buf;
+	}
+
+	public String toCSV() {
+		String buf = new String();
+		for (String metricName : getMetricNames()) {
+			try {
+				buf += Common.decimal(getValue(metricName)) + "，";
+			} catch (Exception e) {
+			}
 		}
 		return buf;
 	}

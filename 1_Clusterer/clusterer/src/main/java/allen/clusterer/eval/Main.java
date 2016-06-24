@@ -24,25 +24,7 @@ import allen.sim.measure.coupling.SimCoupleCosIntra;
  * Output: [ACC(accuracy/precision), NMI(Normalized Mutual Information)]
  */
 public class Main {
-	static String DATA_DIR = "../Datasets/";
-
-	static void evalClustering(String clustererName, String simName, String inputArff, int round) throws Exception {
-		ArrayList<Metrics> metricsLst = new ArrayList<Metrics>();
-		for (int i = 0; i < round; i++) {
-			// Clusterer clusterer = Clusterer.getClusterer(clustererName);
-			Clusterer clusterer = (Clusterer) Clusterer.getInstance(clustererName);
-			String options = " -i " + inputArff + " -s " + simName + "" + " -debug ";
-			clusterer.addOptions(options.split(" "));
-			clusterer.start();
-			clusterer.join();
-			Metrics metrics = Metrics.getMetrics(clusterer.labels(), clusterer.clusters());
-			metricsLst.add(metrics);
-		}
-		for (Metrics metrics : metricsLst) {
-			System.out.println(metrics.toString());
-		}
-		System.out.println("All done\n");
-	}
+	static String outputDbg = "c:/tmp/debug.txt";
 
 	private static void register() {
 		// 0. register clusterers[]
@@ -58,6 +40,30 @@ public class Main {
 		SimMeasure.register("COS_INTER", SimCoupleCosInter.class);
 		SimMeasure.register("SMD", SimSMD.class);
 		SimMeasure.register("OFD", SimOFD.class);
+	}
+
+	static String DATA_DIR = "../Datasets/";
+
+	static void evalClustering(String clustererName, String simName, String inputArff, int round) throws Exception {
+		ArrayList<Metrics> metricsLst = new ArrayList<Metrics>();
+		for (int i = 0; i < round; i++) {
+			// Clusterer clusterer = Clusterer.getClusterer(clustererName);
+			Clusterer clusterer = (Clusterer) Clusterer.getInstance(clustererName);
+			String options = " -i " + inputArff + " -s " + simName + " -debug ";
+			clusterer.addOptions(options.split(" "));
+			clusterer.start();
+			clusterer.join();
+			Metrics metrics = Metrics.getMetrics(clusterer.labels(), clusterer.clusters());
+			metricsLst.add(metrics);
+		}
+		Metrics sumMetrics = new Metrics();
+		for (Metrics metrics : metricsLst) {
+			System.out.println(metrics.toString());
+			sumMetrics.addMetrics(metrics);
+		}
+		sumMetrics.divide(metricsLst.size());
+		AAI_IO.saveFile(outputDbg, sumMetrics.toCSV() + "\n", true);
+		System.out.println("All done\n");
 	}
 
 	// LEI GU: ������shuttle,balloon,zoo,soybean-small,
@@ -83,25 +89,24 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		// register clusterers[] and v[]
 		register();
-
 		// set Metrics matlab directory
 		Metrics.setMatlabDir(AAI_IO.getAbsDir("../Matlab/CMS/functions/"));
-
 		// evaluation
 		String dataNames[] = { "shuttle" };
 		// "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA",
 		// "SMD", "OFD"
-		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "SMD", "OFD" };
-		String clustererNames[] = { "SC_JIAN" };
+		String simNames[] = { "CMS", "CMS_INTER", "CMS_INTRA", "COS", "COS_INTER", "COS_INTRA", "SMD", "OFD" };
+		String clustererNames[] = { "KMODES" }; // "SC_JIAN"
+		AAI_IO.saveFile(outputDbg, "cluster,sim_measure,dataset\n");
 		for (String clustererName : clustererNames) {
 			for (String simName : simNames) {
 				for (String dataName : dataNames) {
 					String inputArff = DATA_DIR + dataName + "/" + dataName + ".arff";
+					AAI_IO.saveFile(outputDbg, clustererName + "," + simName + "," + dataName + ",", true);
 					evalClustering(clustererName, simName, inputArff, 20);
 				}
 			}
 		}
-
 		System.out.println("\nAll finished.");
 	}
 }
