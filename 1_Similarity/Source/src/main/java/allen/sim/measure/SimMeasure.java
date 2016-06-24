@@ -255,7 +255,7 @@ public abstract class SimMeasure extends AAI_Module {
 	}
 
 	public static String help() {
-		return "Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k]\n"
+		return "[A similarity measure.]\n\n" + "Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k]\n"
 				+ "-i input_arff</i>: [input] the ARFF data file.\n"
 				+ "-s sim_name</i>: [para] name of similarity measures: COS, COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.\n"
 				+ "-k top_k</i>: [para] top K similar objects. Default 100.\n"
