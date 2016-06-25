@@ -108,5 +108,6 @@ public class Main {
 			}
 		}
 		System.out.println("\nAll finished.");
+
 	}
 }

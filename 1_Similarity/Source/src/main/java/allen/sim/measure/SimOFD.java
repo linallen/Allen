@@ -12,8 +12,8 @@ public class SimOFD extends SimMeasure {
 	public double sim(Obj objX, Obj objY) throws Exception {
 		double objSim = 0, N = dataSet().objNum();
 		for (Feature ftr : this.getFtrs()) {
-			Value valX = objX.value(ftr);
-			Value valY = objY.value(ftr);
+			Value valX = objX.getValue(ftr);
+			Value valY = objY.getValue(ftr);
 			if (valX == valY) {
 				objSim += 1.;
 			} else {

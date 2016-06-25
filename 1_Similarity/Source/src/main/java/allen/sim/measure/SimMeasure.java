@@ -65,7 +65,7 @@ public abstract class SimMeasure extends AAI_Module {
 
 	public void dataSet(DataSet dataSet) throws Exception {
 		m_dataSet = dataSet;
-		m_ftrLSt = dataSet.ftrSet().ftrLst();
+		m_ftrLSt = dataSet.ftrSet().getFtrLst();
 	}
 
 	public DataSet dataSet() {
@@ -95,7 +95,7 @@ public abstract class SimMeasure extends AAI_Module {
 	private void buildMapValObj() {
 		m_mapValObjs = new HashMap<Value, HashSet<Obj>>();
 		for (Obj obj : m_dataSet.getObjs()) {
-			for (Value value : obj.values()) {
+			for (Value value : obj.getValues()) {
 				if (m_mapValObjs.keySet().contains(value) == false) {
 					m_mapValObjs.put(value, new HashSet<Obj>());
 				}

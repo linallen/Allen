@@ -44,7 +44,7 @@ public abstract class SimCouple extends SimMeasure {
 	protected final HashSet<Value> IIF(Value srcVal, Feature ftrK) {
 		HashSet<Value> valsK = new HashSet<Value>();
 		for (Obj obj : getOwnerObjs(srcVal)) {
-			valsK.add(obj.value(ftrK));
+			valsK.add(obj.getValue(ftrK));
 		}
 		return valsK;
 	}
@@ -77,8 +77,8 @@ public abstract class SimCouple extends SimMeasure {
 	public final double sim(Obj objX, Obj objY) throws Exception {
 		double sim = 0;
 		for (Feature ftr : getFtrs()) {
-			Value valX = objX.value(ftr);
-			Value valY = objY.value(ftr);
+			Value valX = objX.getValue(ftr);
+			Value valY = objY.getValue(ftr);
 			sim += getWeightedValSim(valX, valY);
 		}
 		return sim;

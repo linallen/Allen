@@ -13,8 +13,8 @@ public class SimSMD extends SimMeasure {
 	public double sim(Obj objX, Obj objY) throws Exception {
 		double sim = 0;
 		for (Feature ftr : this.getFtrs()) {
-			Value valX = objX.value(ftr);
-			Value valY = objY.value(ftr);
+			Value valX = objX.getValue(ftr);
+			Value valY = objY.getValue(ftr);
 			sim += ((valX == valY) ? 1 : 0);
 		}
 		return sim;

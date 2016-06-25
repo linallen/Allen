@@ -35,11 +35,11 @@ public class SimCoupleCms extends SimCouple {
 	/** inter-coupled sim(val1, val2). */
 	@Override
 	protected final double interSim(Value val1, Value val2) throws Exception {
-		Common.Assert(val1.ftr() == val2.ftr());
-		Common.Assert(val1.ftr().type() == FtrType.CATEGORICAL);
+		Common.Assert(val1.getFtr() == val2.getFtr());
+		Common.Assert(val1.getFtr().type() == FtrType.CATEGORICAL);
 		double interSim = 0;
 		for (Feature ftrK : getFtrs()) {
-			if (ftrK != val1.ftr()) {
+			if (ftrK != val1.getFtr()) {
 				double interAttrSim = interFtrK(val1, val2, ftrK);
 				interSim += interAttrSim;
 			}
