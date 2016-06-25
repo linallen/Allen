@@ -163,6 +163,13 @@ public abstract class Clusterer extends AAI_Module {
 		output("Started " + text + ", k = " + m_k);
 		Timer timer = new Timer();
 		m_clusters = clusteringAlg();
+		if (debug()) {
+			String debug = "Clusters[]: ";
+			for (int cluster : m_clusters) {
+				debug += cluster;
+			}
+			outputDbg(debug);
+		}
 		output("Finished " + text + ", produced " + clusterNum() + " clusters. " + timer);
 		return m_clusters;
 	}
@@ -175,7 +182,8 @@ public abstract class Clusterer extends AAI_Module {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < m_dataSet.objNum(); i++) {
 			Obj obj = m_dataSet.getObj(i);
-			buf.append(obj.name() + "," + obj.valuesStr() + "," + obj.label().toString() + "," + m_clusters[i] + "\n");
+			buf.append(
+					obj.name() + "," + obj.valuesStr() + "," + obj.getLabel().toString() + "," + m_clusters[i] + "\n");
 		}
 		AAI_IO.saveFile(clusterCSV, buf.toString());
 	}

@@ -49,7 +49,7 @@ public class Main {
 		for (int i = 0; i < round; i++) {
 			// Clusterer clusterer = Clusterer.getClusterer(clustererName);
 			Clusterer clusterer = (Clusterer) Clusterer.getInstance(clustererName);
-			String options = " -i " + inputArff + " -s " + simName + " -debug ";
+			String options = " -i " + inputArff + " -s " + simName + " -r " + " -debug ";
 			clusterer.addOptions(options.split(" "));
 			clusterer.start();
 			clusterer.join();
@@ -92,7 +92,7 @@ public class Main {
 		// set Metrics matlab directory
 		Metrics.setMatlabDir(AAI_IO.getAbsDir("../Matlab/CMS/functions/"));
 		// evaluation
-		String dataNames[] = { "shuttle" };
+		String dataNames[] = { "zoo" }; // "shuttle"
 		// "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA",
 		// "SMD", "OFD"
 		String simNames[] = { "CMS", "CMS_INTER", "CMS_INTRA", "COS", "COS_INTER", "COS_INTRA", "SMD", "OFD" };
@@ -108,6 +108,5 @@ public class Main {
 			}
 		}
 		System.out.println("\nAll finished.");
-
 	}
 }

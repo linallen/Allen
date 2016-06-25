@@ -1,11 +1,10 @@
 package allen.clusterer.alg.kmodes;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import allen.base.common.AAI_IO;
 import allen.base.common.Common;
 import allen.base.common.Timer;
 import allen.base.dataset.DataSet;
@@ -52,19 +51,21 @@ public class Kmodes extends Clusterer {
 		ArrayList<Obj> seedObjs = seedObjs(k, dataSet, random);
 		// 2. transfer k objects to k modes
 		m_modes = new ArrayList<Mode>();
-		for (Obj seedObj : seedObjs) {
+		for (int i = 0; i < seedObjs.size(); i++) {
+			Obj seedObj = seedObjs.get(i);
 			Mode mode = new Mode();
+			mode.name("mode_" + (i + 1));
 			mode.addObj(seedObj);
 			m_mapObjSim.put(seedObj, Double.MAX_VALUE);
 			m_mapObjMode.put(seedObj, mode);
 			m_modes.add(mode);
 		}
 		if (debug()) {
-			outputDbg("initial modes:-----");
+			String debug = "\ninitial modes:-----\n";
 			for (Mode mode : m_modes) {
-				output(mode.toString());
+				debug += mode.toString() + "\n";
 			}
-			outputDbg("--------------------");
+			outputDbg(debug + "--------------------");
 		}
 	}
 
@@ -114,7 +115,7 @@ public class Kmodes extends Clusterer {
 				Mode closestMode = null;
 				double simMax = -1;
 				for (Mode mode : m_modes) {
-					double sim = m_simMeasure.sim(obj, mode.getModeObj());
+					double sim = m_simMeasure.sim(obj, mode.getObj());
 					// obj.m_simMin = Math.min(obj.m_simMin, sim);
 					if (sim > simMax) {
 						simMax = sim;
@@ -156,11 +157,11 @@ public class Kmodes extends Clusterer {
 	/** save clusters to file: [obj_name, obj_class, mode_name, obj_values] */
 	@Override
 	public void saveClusters(String clusterCSV) throws Exception {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(clusterCSV));
+		String buf = new String();
 		for (Mode mode : m_modes) {
-			bw.write(mode.toCSV());
+			buf += mode.toString() + "\n";
 		}
-		bw.close();
+		AAI_IO.saveFile(clusterCSV, buf);
 	}
 
 	public static String help() {
