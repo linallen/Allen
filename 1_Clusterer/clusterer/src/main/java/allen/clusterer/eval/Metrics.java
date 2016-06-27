@@ -91,6 +91,7 @@ public class Metrics {
 			metric.setMetric("NMI_spec", ((double[]) proxy.getVariable("NMI_spec"))[0]);
 			metric.setMetric("precision", ((double[]) proxy.getVariable("precision"))[0]);
 			metric.setMetric("recall", ((double[]) proxy.getVariable("recall"))[0]);
+			metric.setMetric("fscore", ((double[]) proxy.getVariable("fscore"))[0]);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -112,7 +113,7 @@ public class Metrics {
 		String buf = new String();
 		for (String metricName : getMetricNames()) {
 			try {
-				buf += Common.decimal(getValue(metricName)) + "，";
+				buf += "," + Common.decimal(getValue(metricName));
 			} catch (Exception e) {
 			}
 		}

@@ -76,17 +76,18 @@ public class Test {
 	// private static String DATA_NAME = "balloons"; // CMS same with Jian
 	// private static String DATA_NAME = "test"; // CMS same with Jian
 	// private static String DATA_NAME = "shuttle"; // CMS same with Jian
-	private static String DATA_NAME = "soybean-s"; // CMS same with Jian
+	// private static String DATA_NAME = "soybean-s"; // CMS same with Jian
+	private static String DATA_NAME = "soybean-l"; // CMS same with Jian
 	///////////////////////////////////////////////////////////////////
-	private static String WORK_DIR = "../Datasets/";
-	private static String m_dataFile = WORK_DIR + DATA_NAME + "/" + DATA_NAME + ".arff";
+	private static String DATA_DIR = "C:/Allen/UTS/UTS_SourceCode/2016_06_25_CoupleSimExp/Datasets/";
+	private static String m_dataFile = DATA_DIR + DATA_NAME + "/" + DATA_NAME + ".arff";
 
 	public static void main(String[] args) throws Exception {
 		register();
-		TestSimMatrix(m_dataFile, "COS");
+		TestSimMatrix(m_dataFile, "CMS");
 		// TestSimMatrix(m_dataFile, "CoS_intra");
 		// TestSimMatrix(m_dataFile, "CoS_inter");
-		TestSimMatrix(m_dataFile, "CMS");
+		// TestSimMatrix(m_dataFile, "CMS");
 		// TestSimMatrix(m_dataFile, "CMS_intra");
 		// TestSimMatrix(m_dataFile, "CMS_inter");
 	}

@@ -13,7 +13,7 @@ public class Value extends AAI_Module {
 	private Object m_value;
 
 	/** count of this CATEGORICAL value (for frequency statistics) */
-	private int m_count = 1;
+	private int m_count = 1; // TODO DISCARD
 
 	public Value(String valueStr, Feature ftr) throws Exception {
 		valueStr = valueStr.trim().intern();
@@ -30,31 +30,32 @@ public class Value extends AAI_Module {
 		m_feature = ftr;
 	}
 
+	// TODO DISCARD
 	public Value deepCopy() throws Exception {
-		Value valueCopy = new Value(name(), this.ftr());
+		Value valueCopy = new Value(name(), this.getFtr());
 		// TODO return deep copy of Value
-		valueCopy.ftr();
+		valueCopy.getFtr();
 		return valueCopy;
 	}
 
 	/** property functions ***************************************/
-	public void value(String valueStr) throws Exception {
-		if (ftr().type() == FtrType.NUMERIC) {
+	public void setValue(String valueStr) throws Exception {
+		if (getFtr().type() == FtrType.NUMERIC) {
 			m_value = Common.toNumber(valueStr);
 		} else {
 			m_value = valueStr;
 		}
 	}
 
-	public Object value() {
+	public Object getValue() {
 		return m_value;
 	}
 
-	public String valueStr() {
+	public String getValueStr() {
 		return m_value.toString();
 	}
 
-	public Feature ftr() {
+	public Feature getFtr() {
 		return m_feature;
 	}
 

@@ -81,11 +81,11 @@ public class DataSet extends AAI_Module implements AllenSet {
 	}
 
 	public Feature ftr(String ftrName) throws Exception {
-		return m_ftrSet.get(ftrName);
+		return m_ftrSet.getFtr(ftrName);
 	}
 
 	public Collection<Feature> ftrs() {
-		return m_ftrSet.ftrSet();
+		return m_ftrSet.getFtrSet();
 	}
 
 	public FtrSet ftrSet() {
@@ -104,7 +104,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 	public int[] getLabelIds() {
 		int labels[] = new int[objNum()];
 		for (int i = 0; i < objNum(); i++) {
-			labels[i] = getObj(i).label().id();
+			labels[i] = getObj(i).getLabel().id();
 		}
 		return labels;
 	}
@@ -118,8 +118,8 @@ public class DataSet extends AAI_Module implements AllenSet {
 	public void setClass(int clsIdx) throws Exception {
 		// 1. move class feature from ftr_set[] to m_label
 		clsIdx = (clsIdx < 0) ? (m_ftrSet.size() - 1) : clsIdx;
-		m_class = m_ftrSet.get(clsIdx);
-		m_ftrSet.remove(m_class.name());
+		m_class = m_ftrSet.getFtr(clsIdx);
+		m_ftrSet.removeFtr(m_class.name());
 		// 2. update data set[]
 		output("Started seting class. ftr[" + clsIdx + "]: " + m_class);
 		Timer timer = new Timer();
@@ -237,7 +237,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 				if (!isComment(line)) {
 					// parse ATTRIBUTE line to ftr
 					Feature ftr = parseAttrLine(line);
-					m_ftrSet.add(ftr.name(), ftr);
+					m_ftrSet.addFtr(ftr.name(), ftr);
 					m_ftrSet.setFtrIdx(ftr.name(), m_ftrSet.size() - 1);
 					outputDbg(ftr.toString());
 				}
@@ -259,7 +259,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 							String valueStr = values[j].trim();
 							if ((valueStr.length() > 1) || (!valueStr.equals("?"))) {
 								// add value to object's value list
-								Feature ftr = m_ftrSet.get(j);
+								Feature ftr = m_ftrSet.getFtr(j);
 								Value value;
 								if (ftr.type() == FtrType.CATEGORICAL) {
 									value = ftr.getValue(valueStr);
@@ -269,7 +269,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 								} else {
 									value = new Value(valueStr, ftr);
 								}
-								obj.value(ftr, value);
+								obj.setValue(ftr, value);
 							}
 						}
 						// 2. add object to object set
@@ -301,7 +301,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 			buf += m_dataName + "\t" + objNum() + "\t" + ftrNum() + "\t" + clsNum() + "\t";
 			int minValNum = Integer.MAX_VALUE, maxValNum = Integer.MIN_VALUE, totalValNum = 0;
 			for (int j = 0; j < m_ftrSet.size(); j++) {
-				Feature ftr = m_ftrSet.get(j);
+				Feature ftr = m_ftrSet.getFtr(j);
 				int valNum = ftr.size();
 				minValNum = Math.min(minValNum, valNum);
 				maxValNum = Math.max(maxValNum, valNum);
@@ -327,7 +327,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 			bw.write("# ARFF data file created by " + this.getClass().getSimpleName() + "\n");
 			bw.write(RELATION + " " + m_dataName + "\n\n");
 			// 2. @ATTRIBUTE
-			for (Feature ftr : ftrSet().ftrLst()) {
+			for (Feature ftr : ftrSet().getFtrLst()) {
 				bw.write(ATTRIBUTE + " " + ftr.toArff() + "\n");
 			}
 			// class ATTRIBUTE (if any)
@@ -342,14 +342,14 @@ public class DataSet extends AAI_Module implements AllenSet {
 				Obj obj = getObj(i);
 				// obj[i] to @DATA
 				for (int j = 0; j < ftrSet().size(); j++) {
-					Feature ftr = ftrSet().get(j);
-					Value val = obj.value(ftr);
+					Feature ftr = ftrSet().getFtr(j);
+					Value val = obj.getValue(ftr);
 					String valStr = (val == null) ? "" : val.toString();
 					bw.write(((j == 0) ? "" : ",") + valStr);
 				}
 				// label (if any)
-				Value label = obj.label();
-				bw.write(((label == null) ? "" : ("," + label.valueStr())) + "\n");
+				Value label = obj.getLabel();
+				bw.write(((label == null) ? "" : ("," + label.getValueStr())) + "\n");
 			}
 		} finally {
 			AAI_IO.close(bw);

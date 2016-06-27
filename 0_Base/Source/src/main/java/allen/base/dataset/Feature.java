@@ -62,13 +62,13 @@ public class Feature extends AAI_Module {
 	}
 
 	/** output functions ***************************************/
-	/** return "ftr_name[value1(2)value2(4)...]" */
+	/** return "ftr_name[value1(2)value2(4)...]" TODO DEL */
 	public String getValueCounts() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(name() + "[");
 		for (Value value : this.values()) {
 			if (value.count() > 0) {
-				sb.append(value.valueStr() + "(" + value.count() + ")");
+				sb.append(value.getValueStr() + "(" + value.count() + ")");
 			}
 		}
 		return sb.append("]").toString();

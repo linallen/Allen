@@ -53,34 +53,34 @@ public class FtrSet extends AAI_Module implements AllenSet {
 	}
 
 	/** return feature[ftrName] */
-	public Feature get(String ftrName) throws Exception {
+	public Feature getFtr(String ftrName) throws Exception {
 		return m_ftrSet.get(ftrName);
 	}
 
 	/** return feature[i] */
-	public Feature get(int i) throws Exception {
+	public Feature getFtr(int i) throws Exception {
 		String ftrName = m_ftrIdx.get(i);
 		return m_ftrSet.get(ftrName);
 	}
 
 	/** return feature set[] */
-	public Collection<Feature> ftrSet() {
+	public Collection<Feature> getFtrSet() {
 		return m_ftrSet.values();
 	}
 
 	/** @return feature list[] */
-	public ArrayList<Feature> ftrLst() throws Exception {
+	public ArrayList<Feature> getFtrLst() throws Exception {
 		ArrayList<Integer> ftrIds = new ArrayList<Integer>(m_ftrIdx.keySet());
 		Collections.sort(ftrIds);
 		ArrayList<Feature> ftrLst = new ArrayList<Feature>();
 		for (Integer ftrId : ftrIds) {
-			ftrLst.add(this.get(ftrId));
+			ftrLst.add(this.getFtr(ftrId));
 		}
 		return ftrLst;
 	}
 
 	/** @return feature list[] of a specific type */
-	public ArrayList<Feature> ftrLst(FtrType ftrType) {
+	public ArrayList<Feature> getFtrLst(FtrType ftrType) {
 		ArrayList<Feature> ftrLst = new ArrayList<Feature>();
 		for (Feature ftr : m_ftrSet.values()) {
 			if (ftr.type() == ftrType) {
@@ -92,13 +92,13 @@ public class FtrSet extends AAI_Module implements AllenSet {
 
 	/** manipulation functions ***************************************/
 	/** add a feature to the end of feature set. */
-	public void add(String ftrName, Feature ftr) {
+	public void addFtr(String ftrName, Feature ftr) {
 		m_ftrSet.put(ftrName, ftr);
 		m_ftrIdx.put(m_ftrIdx.size(), ftrName);
 	}
 
 	/** remove a feature from the feature set. */
-	public void remove(String ftrName) {
+	public void removeFtr(String ftrName) {
 		// remove feature from m_ftrSet
 		m_ftrSet.remove(ftrName);
 		// remove feature from m_ftrIdx

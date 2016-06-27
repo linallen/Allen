@@ -61,6 +61,9 @@ public abstract class SimCouple extends SimMeasure {
 
 	/** @return Sim(val1, val2) */
 	protected final double getValSim(Value val1, Value val2) throws Exception {
+		if (Value.isMissing(val1) || Value.isMissing(val2)) {
+			return 0.; // TODO DEBUG
+		}
 		Double valSim = (Double) m_matValSim.get(val1, val2);
 		if (valSim == null) {
 			valSim = calcValSim(val1, val2);
@@ -79,7 +82,10 @@ public abstract class SimCouple extends SimMeasure {
 		for (Feature ftr : getFtrs()) {
 			Value valX = objX.getValue(ftr);
 			Value valY = objY.getValue(ftr);
-			sim += getWeightedValSim(valX, valY);
+			// if (!Value.isMissing(valX) && !Value.isMissing(valY))
+			{
+				sim += getWeightedValSim(valX, valY);
+			}
 		}
 		return sim;
 	}

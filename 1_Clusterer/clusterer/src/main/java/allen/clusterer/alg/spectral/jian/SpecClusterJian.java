@@ -18,17 +18,19 @@ public class SpecClusterJian extends Clusterer {
 	private static String s_matlabDir, s_TempDir;
 
 	public SpecClusterJian() throws Exception {
-		if (s_matlabDir == null) {
-			s_matlabDir = workDir() + "../Matlab/CMS/functions/";
-			Common.Assert(AAI_IO.dirExist(s_matlabDir));
-			AAI_IO.createDir(s_TempDir = s_matlabDir + "temp/");
-		}
+		s_matlabDir = "C:/Allen/UTS/UTS_SourceCode/2016_06_25_CoupleSimExp/Matlab/CMS/functions/";
+		Common.Assert(AAI_IO.dirExist(s_matlabDir));
+		AAI_IO.createDir(s_TempDir = s_matlabDir + "temp/");
 	}
 
 	@Override
 	protected int[] clusteringAlg() throws Exception {
 		String simGraphFile = tempDir() + dataSet().dataName() + ".sim_graph.txt";
-		m_simMeasure.saveSimGraph(simGraphFile);
+		//////////////////////////////////////////////////////////////
+		if (!AAI_IO.fileExist(simGraphFile)) {
+			m_simMeasure.saveSimGraph(simGraphFile);
+		}
+		//////////////////////////////////////////////////////////////
 		return clustering(simGraphFile, m_k);
 	}
 
@@ -42,7 +44,8 @@ public class SpecClusterJian extends Clusterer {
 	 * @return clusters[]
 	 */
 	private int[] clustering(String simGraphFile, int k) throws Exception {
-		String simGraphTemp = s_TempDir + AAI_IO.getFileNamePre(simGraphFile).replace(".", "_") + ".m";
+		String simGraphTemp = s_TempDir + AAI_IO.getFileNamePre(simGraphFile).replace(".", "_").replace("-", "_")
+				+ ".m";
 		AAI_IO.fileCopy(simGraphFile, simGraphTemp);
 		try {
 			MatlabProxy proxy = Matlab.getProxy();
@@ -56,6 +59,7 @@ public class SpecClusterJian extends Clusterer {
 				m_clusters[i] = (int) flag_spec[i];
 			}
 		} catch (Exception e) {
+			m_clusters = new int[0];
 			e.printStackTrace();
 		}
 		return m_clusters;

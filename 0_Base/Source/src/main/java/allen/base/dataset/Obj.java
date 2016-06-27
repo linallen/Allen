@@ -26,16 +26,16 @@ public class Obj extends AAI_Module {
 	}
 
 	/** set a feature value */
-	public void value(Feature ftr, Value val) {
+	public void setValue(Feature ftr, Value val) {
 		m_values.put(ftr, val);
 	}
 
 	/** get a feature value */
-	public Value value(Feature ftr) {
+	public Value getValue(Feature ftr) {
 		return m_values.get(ftr);
 	}
 
-	public Collection<Value> values() {
+	public Collection<Value> getValues() {
 		return m_values.values();
 	}
 
@@ -45,7 +45,7 @@ public class Obj extends AAI_Module {
 		m_values.remove(cls);
 	}
 
-	public Value label() {
+	public Value getLabel() {
 		return m_label;
 	}
 
