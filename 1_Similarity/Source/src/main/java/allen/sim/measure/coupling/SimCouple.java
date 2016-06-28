@@ -44,7 +44,13 @@ public abstract class SimCouple extends SimMeasure {
 	protected final HashSet<Value> IIF(Value srcVal, Feature ftrK) {
 		HashSet<Value> valsK = new HashSet<Value>();
 		for (Obj obj : getOwnerObjs(srcVal)) {
-			valsK.add(obj.getValue(ftrK));
+			// TODO DEBUG
+			Value valK = obj.getValue(ftrK);
+			if (valK == null) {
+				// outputDbg("value_k is null");
+				continue;
+			}
+			valsK.add(valK);
 		}
 		return valsK;
 	}

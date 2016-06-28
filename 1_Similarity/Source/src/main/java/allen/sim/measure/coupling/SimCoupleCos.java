@@ -36,8 +36,13 @@ public class SimCoupleCos extends SimCouple {
 		double interSim = 0;
 		for (Feature ftrK : getFtrs()) {
 			if (ftrK != val1.getFtr()) {
-				double interFtrSim = IRSI(val1, val2, ftrK);
-				interSim += wt * interFtrSim;
+				try {
+					double interFtrSim = IRSI(val1, val2, ftrK);
+					interSim += wt * interFtrSim;
+				} catch (Exception e) {
+					outputDbg("DEBUG");
+					double interFtrSim = IRSI(val1, val2, ftrK);
+				}
 			}
 		}
 		return interSim;

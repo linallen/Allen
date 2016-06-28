@@ -15,6 +15,9 @@ public class SimSMD extends SimMeasure {
 		for (Feature ftr : this.getFtrs()) {
 			Value valX = objX.getValue(ftr);
 			Value valY = objY.getValue(ftr);
+			if (Value.isMissing(valX) || Value.isMissing(valY)) {
+				continue;
+			}
 			sim += ((valX == valY) ? 1 : 0);
 		}
 		return sim;

@@ -14,6 +14,9 @@ public class SimOFD extends SimMeasure {
 		for (Feature ftr : this.getFtrs()) {
 			Value valX = objX.getValue(ftr);
 			Value valY = objY.getValue(ftr);
+			if (Value.isMissing(valX) || Value.isMissing(valY)) {
+				continue;
+			}
 			if (valX == valY) {
 				objSim += 1.;
 			} else {
