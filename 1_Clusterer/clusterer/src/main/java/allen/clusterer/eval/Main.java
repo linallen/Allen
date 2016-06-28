@@ -47,8 +47,10 @@ public class Main {
 		ArrayList<Metrics> metricsLst = new ArrayList<Metrics>();
 		for (int i = 0; i < round; i++) {
 			Clusterer clusterer = (Clusterer) Clusterer.getInstance(clustererName);
+			clusterer.name(clustererName + "_" + simName + "_" + AAI_IO.getFileNamePre(inputArff) + "_[" + (i + 1) + "/"
+					+ round + "]");
 			// + " -debug ";
-			String options = " -i " + inputArff + " -s " + simName + " -r ";
+			String options = " -i " + inputArff + " -s " + simName + " -r " + " -debug ";
 			clusterer.addOptions(options.split(" "));
 			clusterer.start();
 			clusterer.join();
@@ -102,8 +104,11 @@ public class Main {
 		// set Metrics matlab directory
 		Metrics.setMatlabDir(MATLAB_DIR);
 		// evaluation (shuttle)
-		int ROUND = 100;
-		String dataNames[] = { "balloons", "zoo", "soybean-s", "soybean-l" };
+		int ROUND = 10;
+		// String dataNames[] = { "balloons", "zoo", "soybean-s", "soybean-l",
+		// lymphography };
+		String dataNames[] = { "Audiology200_objs_70_ftrs_24classes", "Dermatology366_objs_34_ftrs_6_classes",
+				"BreastCancer699_objs_10_ftrs_2classes", "wisconsin" };
 		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA", "SMD", "OFD" };
 		// String simNames[] = { "CMS", "SMD", "OFD" };
 		String clustererNames[] = { "KMODES", "SC_JIAN" };
@@ -114,7 +119,11 @@ public class Main {
 				for (String simName : simNames) {
 					String inputArff = DATA_DIR + dataName + "/" + dataName + ".arff";
 					AAI_IO.saveFile(outputDbg, dataName + "," + clustererName + "-" + simName, true);
-					evalClustering(clustererName, simName, inputArff, ROUND);
+					try {
+						evalClustering(clustererName, simName, inputArff, ROUND);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

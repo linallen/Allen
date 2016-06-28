@@ -199,9 +199,9 @@ public abstract class Clusterer extends AAI_Module {
 		dataSet.setClass(m_clsIdx);
 		simMeasure.dataSet(dataSet);
 		if (debug()) {
-			simMeasure.saveSimObjs(m_dataArff + ".sim_objs.dbg.txt");
-			simMeasure.saveSimGraph(m_dataArff + ".sim_graph.dbg.txt");
-			simMeasure.saveSimMatrix(m_dataArff + ".sim_matrix.dbg.txt");
+			// simMeasure.saveSimObjs(m_dataArff + ".sim_objs.dbg.txt");
+			// simMeasure.saveSimGraph(m_dataArff + ".sim_graph.dbg.txt");
+			// simMeasure.saveSimMatrix(m_dataArff + ".sim_matrix.dbg.txt");
 		}
 		// 2. run clusterer on data set with similarity measure
 		clustering(dataSet, simMeasure, m_k);
