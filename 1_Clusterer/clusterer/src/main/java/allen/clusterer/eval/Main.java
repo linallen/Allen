@@ -103,22 +103,27 @@ public class Main {
 		register();
 		// set Metrics matlab directory
 		Metrics.setMatlabDir(MATLAB_DIR);
-		// evaluation (shuttle)
-		int ROUND = 10;
-		// String dataNames[] = { "balloons", "zoo", "soybean-s", "soybean-l",
-		// lymphography };
-		String dataNames[] = { "Audiology200_objs_70_ftrs_24classes", "Dermatology366_objs_34_ftrs_6_classes",
-				"BreastCancer699_objs_10_ftrs_2classes", "wisconsin" };
+		// evaluation
+		int ROUND = 100;
+		String dataNames[] = { "balloons", "soybean-s", "zoo", "lymphography", "Audiology200_objs_70_ftrs_24classes",
+				"soybean-l", "Dermatology366_objs_34_ftrs_6_classes", "wisconsin",
+				"BreastCancer699_objs_10_ftrs_2classes", "shuttle" };
 		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA", "SMD", "OFD" };
-		// String simNames[] = { "CMS", "SMD", "OFD" };
 		String clustererNames[] = { "KMODES", "SC_JIAN" };
 		// String clustererNames[] = { "SC_JIAN" };
-		AAI_IO.saveFile(outputDbg, "data_set,sim_measure-clusterer,NMI,Prec,Recall,Fscore\n");
+		AAI_IO.saveFile(outputDbg, "data_set,sim_measure-clusterer,Prec,Recall,NMI,Fscore\n");
 		for (String dataName : dataNames) {
 			for (String clustererName : clustererNames) {
 				for (String simName : simNames) {
 					String inputArff = DATA_DIR + dataName + "/" + dataName + ".arff";
 					AAI_IO.saveFile(outputDbg, dataName + "," + clustererName + "-" + simName, true);
+					//////////////////
+					// output data summary to file as data names
+					// DataSet data = new DataSet();
+					// data.loadArff(inputArff);
+					// data.setClass(-1);
+					// System.out.println(data.dataSummary());
+					//////////////////
 					try {
 						evalClustering(clustererName, simName, inputArff, ROUND);
 					} catch (Exception e) {
