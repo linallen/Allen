@@ -25,7 +25,9 @@ public class SpecClusterJian extends Clusterer {
 
 	@Override
 	protected int[] clusteringAlg() throws Exception {
-		String simGraphFile = tempDir() + dataSet().dataName() + ".sim_graph.txt";
+		// TODO
+		String simGraphFile = tempDir() + dataSet().dataName() + "." + moduleName() + "." + simMeasure().moduleName()
+				+ ".sim_graph.txt";
 		//////////////////////////////////////////////////////////////
 		if (!AAI_IO.fileExist(simGraphFile)) {
 			m_simMeasure.saveSimGraph(simGraphFile);
@@ -44,19 +46,22 @@ public class SpecClusterJian extends Clusterer {
 	 * @return clusters[]
 	 */
 	private int[] clustering(String simGraphFile, int k) throws Exception {
-		String simGraphTemp = s_TempDir + AAI_IO.getFileNamePre(simGraphFile).replace(".", "_").replace("-", "_")
-				+ ".m";
+		String simGraphTemp = s_TempDir + "sim_graph" + ".m";
 		AAI_IO.fileCopy(simGraphFile, simGraphTemp);
 		try {
 			MatlabProxy proxy = Matlab.getProxy();
+			proxy.eval("clear all");
 			proxy.eval("cd " + s_TempDir);
 			proxy.eval(AAI_IO.getFileNamePre(simGraphTemp));
 			proxy.eval("cd " + s_matlabDir);
 			proxy.eval("flag_spec = SpectralClustering_Normalized(double(SimGraph), " + k + ");");
-			double flag_spec[] = ((double[]) proxy.getVariable("flag_spec"));
+			double flags[] = ((double[]) proxy.getVariable("flag_spec"));
+			if (flags.length != m_dataSet.objNum()) {
+				throw new Exception("flags[] is not same length with objects[] ");
+			}
 			m_clusters = new int[m_dataSet.objNum()];
 			for (int i = 0; i < m_dataSet.objNum(); i++) {
-				m_clusters[i] = (int) flag_spec[i];
+				m_clusters[i] = (int) flags[i];
 			}
 		} catch (Exception e) {
 			m_clusters = new int[0];
