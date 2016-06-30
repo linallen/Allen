@@ -1,4 +1,4 @@
-package allen.clusterer.descriptor;
+package allen.clusterer.eval.descriptor;
 
 import allen.base.common.Common;
 import allen.base.dataset.DataSet;

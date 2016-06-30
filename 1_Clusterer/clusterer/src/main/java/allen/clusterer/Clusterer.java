@@ -233,7 +233,7 @@ public abstract class Clusterer extends AAI_Module {
 	}
 
 	public static String help() {
-		return "[A clusterer implementation.]\n\n"
+		return "[Clusterer]\n\n"
 				+ "Java -jar clusterer_xxx.jar -i input_arff -s sim_name [-k top_k] [-r] -o output_csv\n"
 				+ "-i input_arff: [input] the ARFF data file.\n"
 				+ "-s sim_name: [para] name of similarity measures: COS, COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.\n"

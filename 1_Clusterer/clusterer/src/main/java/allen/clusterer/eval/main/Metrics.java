@@ -1,4 +1,4 @@
-package allen.clusterer.eval;
+package allen.clusterer.eval.main;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -77,6 +77,9 @@ public class Metrics {
 	 * @return metrics: NMI, Precision, and Recall, etc
 	 */
 	public static Metrics getMetrics(int[] labels, int[] flags) throws Exception {
+		if (labels.length != flags.length) {
+			System.out.println("labels[] != flags[] !!!");
+		}
 		Metrics metric = new Metrics();
 		try {
 			MatlabProxy proxy = Matlab.getProxy();

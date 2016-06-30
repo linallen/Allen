@@ -1,6 +1,7 @@
-package allen.clusterer.eval;
+package allen.clusterer.eval.main;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import allen.base.common.AAI_IO;
 import allen.base.common.Timer;
@@ -109,14 +110,23 @@ public class Main {
 				"soybean-l", "Dermatology366_objs_34_ftrs_6_classes", "wisconsin",
 				"BreastCancer699_objs_10_ftrs_2classes", "shuttle" };
 		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA", "SMD", "OFD" };
+		// String simNames[] = { "CMS" };
 		String clustererNames[] = { "KMODES", "SC_JIAN" };
-		// String clustererNames[] = { "SC_JIAN" };
-		AAI_IO.saveFile(outputDbg, "data_set,sim_measure-clusterer,Prec,Recall,NMI,Fscore\n");
+		// AAI_IO.saveFile(outputDbg,
+		// "data_set,sim_measure-clusterer,Prec,Recall,NMI,Fscore\n");
+		String finishedFile = "c:/temp/finished.txt";
+		String finishedExps = AAI_IO.readFile(finishedFile);
+		HashSet<String> finishedSet = new HashSet<String>();
+		for (String finishedExp : finishedExps.split("\n")) {
+			if (finishedExp.trim().isEmpty() == false) {
+				finishedSet.add(finishedExp);
+			}
+		}
+
 		for (String dataName : dataNames) {
 			for (String clustererName : clustererNames) {
 				for (String simName : simNames) {
 					String inputArff = DATA_DIR + dataName + "/" + dataName + ".arff";
-					AAI_IO.saveFile(outputDbg, dataName + "," + clustererName + "-" + simName, true);
 					//////////////////
 					// output data summary to file as data names
 					// DataSet data = new DataSet();
@@ -124,13 +134,22 @@ public class Main {
 					// data.setClass(-1);
 					// System.out.println(data.dataSummary());
 					//////////////////
+
+					String expIdString = dataName + "," + clustererName + "-" + simName;
+					if (finishedSet.contains(expIdString)) {
+						continue;
+					}
+					AAI_IO.saveFile(outputDbg, expIdString, true);
 					try {
 						evalClustering(clustererName, simName, inputArff, ROUND);
+						finishedSet.add(inputArff);
+						AAI_IO.saveFile(finishedFile, expIdString + "\n", true);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			}
+			System.out.println("Finished data " + dataName);
 		}
 		System.out.println("\nAll finished. Totoal time: " + timer);
 	}

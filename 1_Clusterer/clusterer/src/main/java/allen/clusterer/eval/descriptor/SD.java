@@ -1,4 +1,4 @@
-package allen.clusterer.descriptor;
+package allen.clusterer.eval.descriptor;
 
 /**
  * Used for evaluating similarity measures, Descriptor SD (Sum-Dissimilarity) is
