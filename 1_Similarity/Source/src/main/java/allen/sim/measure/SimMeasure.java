@@ -55,6 +55,17 @@ public abstract class SimMeasure extends AAI_Module {
 	/** [TEMP] map [Value, Obj] */
 	private HashMap<Value, HashSet<Obj>> m_mapValObjs;
 
+	private String m_uniqueName = name();
+
+	/** property functions ******************************/
+	public void setUniqeName(String uniqueName) {
+		m_uniqueName = uniqueName;
+	}
+
+	public String getUniqeName() {
+		return m_uniqueName;
+	}
+
 	protected void symmetric(boolean symmetric) {
 		m_symmetric = symmetric;
 	}

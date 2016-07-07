@@ -18,6 +18,8 @@ import allen.base.dataset.Value;
 public class SimCoupleCms extends SimCouple {
 	private static final long serialVersionUID = 562579004732926584L;
 
+	public double m_alpha = 0.5;
+
 	/** intra-coupled sim(val1, val2). */
 	@Override
 	protected final double intraSim(Value val1, Value val2) throws Exception {
@@ -50,7 +52,7 @@ public class SimCoupleCms extends SimCouple {
 	/** CMS sim(val1, val2). */
 	@Override
 	protected double calcValSim(Value val1, Value val2) throws Exception {
-		return intraSim(val1, val2) / 2 + interSim(val1, val2) / 2;
+		return m_alpha * interSim(val1, val2) + (1 - m_alpha) * intraSim(val1, val2);
 	}
 
 	/** define weighted Sim(val1, val2) */
@@ -82,6 +84,14 @@ public class SimCoupleCms extends SimCouple {
 			}
 		}
 		return (maxSum == 0) ? 0 : maxSum / (2 * maxSum - minSum);
+	}
+
+	@Override
+	public void setOptions(String[] options) throws Exception {
+		// -a alpha
+		m_alpha = Common.getOptionDouble("a", options, m_alpha);
+		// debug, daemon, etc
+		super.setOptions(options);
 	}
 
 	public static String help() {

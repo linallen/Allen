@@ -1,7 +1,5 @@
 package allen.sim.measure.coupling;
 
-import allen.base.dataset.Value;
-
 /**
  * CMS-INTRA algorithm.
  * 
@@ -10,9 +8,7 @@ import allen.base.dataset.Value;
 public class SimCoupleCmsIntra extends SimCoupleCms {
 	private static final long serialVersionUID = 8765296586456377630L;
 
-	/** calculate sim(val1, val2). */
-	@Override
-	protected double calcValSim(Value val1, Value val2) throws Exception {
-		return intraSim(val1, val2) / 2;
+	public SimCoupleCmsIntra() {
+		m_alpha = 0;
 	}
 }
