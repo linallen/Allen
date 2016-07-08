@@ -1,5 +1,7 @@
 package allen.clusterer.alg.kmodes;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -98,14 +100,27 @@ public class Mode extends AAI_Module implements AllenSet {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		// 1. objs[]
-		sb.append(name() + " has " + size() + " objs: ");
+		sb.append(name() + "(" + size() + " objs): ");
+		ArrayList<String> objNameLst = new ArrayList<String>();
 		for (Obj obj : m_objs) {
-			sb.append(obj.name() + " ");
+			objNameLst.add(obj.name());
+		}
+		Collections.sort(objNameLst);
+		for (String objNam : objNameLst) {
+			sb.append(objNam + "_");
 		}
 		// 2. value and counts[]
-		sb.append(", mode = |");
+		sb.append(", mode = ");
+		ArrayList<String> valStrLst = new ArrayList<String>();
 		for (Value value : m_mapValCount.keySet()) {
-			sb.append(value.getFtr().name() + "~" + value.name() + "(" + getCount(value) + ")|");
+			String valStr = value.getFtr().name() + "_" + value.getValueStr() + "_" + getCount(value);
+			valStrLst.add(valStr);
+			// sb.append(value.getFtr().name() + "~" + value.name() + "(" +
+			// getCount(value) + ")|");
+		}
+		Collections.sort(valStrLst);
+		for (String valStr : valStrLst) {
+			sb.append(valStr + "_");
 		}
 		return sb.toString();
 	}

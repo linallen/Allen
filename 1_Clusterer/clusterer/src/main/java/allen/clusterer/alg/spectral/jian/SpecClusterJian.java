@@ -2,8 +2,10 @@ package allen.clusterer.alg.spectral.jian;
 
 import allen.base.common.AAI_IO;
 import allen.base.common.Common;
+import allen.base.dataset.DataSet;
 import allen.clusterer.Clusterer;
 import allen.matlab.Matlab;
+import allen.sim.measure.SimMeasure;
 import matlabcontrol.MatlabProxy;
 
 /**
@@ -18,19 +20,19 @@ public class SpecClusterJian extends Clusterer {
 	private static String s_matlabDir, s_TempDir;
 
 	public SpecClusterJian() throws Exception {
-		s_matlabDir = "C:/Allen/UTS/UTS_SourceCode/2016_06_25_CoupleSimExp/Matlab/CMS/functions/";
+		s_matlabDir = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Matlab/CMS/functions/";
 		Common.Assert(AAI_IO.dirExist(s_matlabDir));
 		AAI_IO.createDir(s_TempDir = s_matlabDir + "temp/");
 	}
 
 	@Override
-	protected int[] clusteringAlg() throws Exception {
+	protected int[] clusteringAlg(final DataSet dataSet, SimMeasure simMeasure) throws Exception {
 		// TODO
-		String simGraphFile = tempDir() + dataSet().dataName() + "." + moduleName() + "." + simMeasure().moduleName()
+		String simGraphFile = tempDir() + dataSet.dataName() + "." + moduleName() + "." + simMeasure.getUniqeName()
 				+ ".sim_graph.txt";
 		//////////////////////////////////////////////////////////////
 		if (!AAI_IO.fileExist(simGraphFile)) {
-			m_simMeasure.saveSimGraph(simGraphFile);
+			simMeasure.saveSimGraph(simGraphFile);
 		}
 		//////////////////////////////////////////////////////////////
 		return clustering(simGraphFile, m_k);
@@ -57,7 +59,7 @@ public class SpecClusterJian extends Clusterer {
 			proxy.eval("flag_spec = SpectralClustering_Normalized(double(SimGraph), " + k + ");");
 			double flags[] = ((double[]) proxy.getVariable("flag_spec"));
 			if (flags.length != m_dataSet.objNum()) {
-				throw new Exception("flags[] is not same length with objects[] ");
+				throwException("flags[] is not same length with objects[] ");
 			}
 			m_clusters = new int[m_dataSet.objNum()];
 			for (int i = 0; i < m_dataSet.objNum(); i++) {

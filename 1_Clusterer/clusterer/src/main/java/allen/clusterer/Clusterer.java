@@ -24,7 +24,6 @@ import allen.sim.measure.SimMeasure;
  * classes).</li>
  * <li><i>-c cls_idx</i>: [para] class index. Default -1 (the last feature).
  * </li>
- * <li><i>-r</i>: [para] randomized algorithm (e.g., for k-modes).</li>
  * <li><i>-o output_csv</i>: [output, debug] objects and modes.<br>
  * Format: [obj_name, obj_class, mode_name + values]</li>
  * </ul>
@@ -43,8 +42,6 @@ public abstract class Clusterer extends AAI_Module {
 	/** -c cls_idx: class index */
 	protected int m_clsIdx = -1;
 
-	/** -r randomize: [parameter] randomize the algorithm, default NO */
-	protected boolean m_randomize;
 	/** -o output_file: [output] objects with top_k similar objects. */
 	protected String m_outputCSV;
 
@@ -58,9 +55,9 @@ public abstract class Clusterer extends AAI_Module {
 	/** property functions ***************************************/
 	/** set similarity measure, data set, and k */
 	public void setParams(DataSet dataSet, SimMeasure simMeasure, int k) throws Exception {
-		m_simMeasure = simMeasure;
-		if (m_simMeasure != null) {
+		if ((m_simMeasure = simMeasure) != null) {
 			m_simMeasure.owner(this);
+			m_simMeasure.dataSet(dataSet);
 		}
 		dataSet(dataSet);
 		if (dataSet() != null) {
@@ -153,16 +150,17 @@ public abstract class Clusterer extends AAI_Module {
 	 *            cluster number
 	 * @return cluster id array, starting from 0
 	 */
-	public int[] clustering(DataSet dataSet, SimMeasure simMeasure, int k) throws Exception {
+	public int[] clustering(final DataSet dataSet, SimMeasure simMeasure, int k) throws Exception {
 		setParams(dataSet, simMeasure, k);
 		return clustering();
 	}
 
 	public int[] clustering() throws Exception {
-		String text = moduleName() + " clustering on " + m_dataSet.dataName() + " with " + m_simMeasure.moduleName();
+		String text = moduleName() + " clustering on " + m_dataSet.dataName() + " with " + m_simMeasure.getUniqeName();
 		output("Started " + text + ", k = " + m_k);
 		Timer timer = new Timer();
-		m_clusters = clusteringAlg();
+		Common.Assert((m_dataSet != null) && (m_simMeasure != null));
+		m_clusters = clusteringAlg(m_dataSet, m_simMeasure);
 		if (debug()) {
 			String debug = "Clusters[]: ";
 			for (int cluster : m_clusters) {
@@ -175,7 +173,7 @@ public abstract class Clusterer extends AAI_Module {
 	}
 
 	/** Main function of clustering algorithm */
-	protected abstract int[] clusteringAlg() throws Exception;
+	protected abstract int[] clusteringAlg(final DataSet dataSet, SimMeasure simMeasure) throws Exception;
 
 	/** save [obj_name, obj_values, obj_label, obj_flag] */
 	public void saveClusters(String clusterCSV) throws Exception {
@@ -224,9 +222,7 @@ public abstract class Clusterer extends AAI_Module {
 		m_k = Common.getOptionInt("k", options, m_k);
 		// -c cls_idx
 		m_clsIdx = Common.getOptionInt("c", options, m_clsIdx);
-		// -r
-		m_randomize = Common.getOptionBool("r", options);
-		// �Co output_file
+		// -o output_file
 		m_outputCSV = Common.getOption("o", options);
 		// debug, daemon, etc
 		super.setOptions(options);

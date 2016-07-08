@@ -111,7 +111,7 @@ public class Main {
 				"BreastCancer699_objs_10_ftrs_2classes", "shuttle" };
 		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA", "SMD", "OFD" };
 		// String simNames[] = { "CMS" };
-		String clustererNames[] = { "KMODES", "SC_JIAN" };
+		String clustererNames[] = { "SC_JIAN" }; // "KMODES",
 		// AAI_IO.saveFile(outputDbg,
 		// "data_set,sim_measure-clusterer,Prec,Recall,NMI,Fscore\n");
 		String finishedFile = "c:/temp/finished.txt";
