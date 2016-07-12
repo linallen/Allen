@@ -11,7 +11,8 @@ import allen.sim.measure.SimMeasure;
 /**
  * Davies¨CBouldin index (DBI) is a metric for evaluating clustering/similarity
  * algorithms. See the definition in Wiki
- * https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index
+ * https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index<br>
+ * Higher better.
  * 
  * @author Allen Lin, 12 July 2016
  */
@@ -23,18 +24,16 @@ public class DBI extends Descriptor {
 	/** inter-cluster similarities */
 	private HashMap<String, Double> m_interClusterSim;
 
-	protected double getIntraClusterSim(String label) {
-		Double sim = m_intraClusterSim.get(label);
-		return sim == null ? 0 : sim;
+	protected Double getIntraClusterSim(String label) {
+		return m_intraClusterSim.get(label);
 	}
 
-	protected double getInterClusterSim(String label1, String label2) {
-		Double sim = m_interClusterSim.get(label1 + " " + label2);
-		return sim == null ? 0 : sim;
+	protected Double getInterClusterSim(String label1, String label2) {
+		return m_interClusterSim.get(label1 + " " + label2);
 	}
 
 	/** return sim(C) = ave(sim(a1,a2)), for all a1, a2 in C */
-	private static double calcIntraClusterSim(SimMeasure simMeasure, ArrayList<Obj> objLst) throws Exception {
+	private static Double calcIntraClusterSim(SimMeasure simMeasure, ArrayList<Obj> objLst) throws Exception {
 		Common.Assert(!objLst.isEmpty());
 		double sum = 0;
 		int n = objLst.size();
@@ -45,11 +44,11 @@ public class DBI extends Descriptor {
 				sum += simMeasure.sim(obj1, obj2);
 			}
 		}
-		return (n < 2) ? 0 : (2 * sum / (n * (n - 1)));
+		return (n < 2) ? Double.NaN : (2 * sum / (n * (n - 1)));
 	}
 
 	/** return sim(C1, C2) = ave(sim(a1,a2)), for all a1 in C1, a2 in C2 */
-	private static double calcInterClusterSim(SimMeasure simMeasure, ArrayList<Obj> objLst1, ArrayList<Obj> objLst2)
+	private static Double calcInterClusterSim(SimMeasure simMeasure, ArrayList<Obj> objLst1, ArrayList<Obj> objLst2)
 			throws Exception {
 		Common.Assert(!objLst1.isEmpty() && !objLst2.isEmpty());
 		double sum = 0;
@@ -70,9 +69,6 @@ public class DBI extends Descriptor {
 		// 1. calculate intra-cluster similarity sim(C)
 		for (String label : labelLst) {
 			Double intraClusterSim = calcIntraClusterSim(simMeasure, dataSet.getClsObjs(label));
-			if (intraClusterSim.isNaN()) {
-				throw new Exception("NaN");
-			}
 			m_intraClusterSim.put(label, intraClusterSim);
 		}
 		// 2. calculate inter-cluster similarity sim(C1, C2)
@@ -97,18 +93,27 @@ public class DBI extends Descriptor {
 		ArrayList<String> labelLst = new ArrayList<String>(dataSet.getCls().getValStrSet());
 		int n = labelLst.size();
 		Common.Assert(n > 0);
-		double sumDBI = 0;
+		Double sumDBI = 0.;
 		for (int i = 0; i < n; i++) {
 			// Di = max(Rij) = max{(Si+Sj)/Mij}
 			String labeli = labelLst.get(i);
-			double Si = getIntraClusterSim(labeli);
-			double Di = 0;
+			Double Si = getIntraClusterSim(labeli);
+			if (Si.isNaN()) {
+				continue;
+			}
+			Double Di = 0.;
 			for (int j = 0; j < n; j++) {
 				if (j != i) {
 					String labelj = labelLst.get(j);
-					double Sj = getIntraClusterSim(labelj);
-					double Mij = getInterClusterSim(labeli, labelj);
-					double Rij = (Si + Sj) / Mij;
+					Double Sj = getIntraClusterSim(labelj);
+					if (Sj.isNaN()) {
+						continue;
+					}
+					Double Mij = getInterClusterSim(labeli, labelj);
+					if (Mij.isNaN() || (Mij == 0.)) {
+						continue;
+					}
+					Double Rij = (Si + Sj) / Mij;
 					Di = Math.max(Di, Rij);
 				}
 			}

@@ -21,8 +21,9 @@ public class Main {
 		// 0. register sim_measures[]
 		SimMeasureRegister.register();
 		// 1. register descriptors[]
-		Descriptor.register("DBI", DBI.class);
 		Descriptor.register("RD", RD.class);
+		Descriptor.register("DI", DI.class);
+		Descriptor.register("DBI", DBI.class);
 	}
 
 	static void evalSimMeasure(String simName, String inputArff, String[] metricNames, String outputFile)
@@ -60,7 +61,7 @@ public class Main {
 				"soybean-l", "Dermatology366_objs_34_ftrs_6_classes", "wisconsin",
 				"BreastCancer699_objs_10_ftrs_2classes" };
 		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA", "SMD", "OFD" };
-		String metricNames[] = { "DBI", "RD" }; // , "DI"
+		String metricNames[] = { "RD", "DI", "DBI" }; // "RD", "DI", "DBI"
 		// 1. write CSV title row
 		if (!AAI_IO.fileExist(outputDbg)) {
 			String buf = "data_set,sim_measure";
