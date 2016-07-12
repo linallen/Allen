@@ -17,15 +17,13 @@ import allen.sim.measure.SimMeasure;
  * @author Allen Lin, 29 Mar 2016
  */
 public class RD extends Descriptor {
+	private static final long serialVersionUID = -8803745591316191273L;
+
 	protected double m_interSum;
 	protected double m_intraSum;
 
 	protected double m_interNum;
 	protected double m_intraNum;
-
-	public String getSimName() {
-		return getClass().getSimpleName();
-	}
 
 	/** calculate common statistics such as sum of inter/intra similarities */
 	protected final void calcInterIntra(SimMeasure simMeasure, DataSet dataSet) throws Exception {
@@ -49,7 +47,7 @@ public class RD extends Descriptor {
 	}
 
 	/** return descriptor value */
-	public double getDescriptor(SimMeasure simMeasure, DataSet dataSet) throws Exception {
+	public double getMetric(SimMeasure simMeasure, DataSet dataSet) throws Exception {
 		calcInterIntra(simMeasure, dataSet);
 		double interAve = Descriptor.divide(m_interSum, m_interNum);
 		double intraAve = Descriptor.divide(m_intraSum, m_intraNum);

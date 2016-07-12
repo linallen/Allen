@@ -40,8 +40,8 @@ public class SimCoupleCos extends SimCouple {
 					double interFtrSim = IRSI(val1, val2, ftrK);
 					interSim += wt * interFtrSim;
 				} catch (Exception e) {
-					outputDbg("DEBUG");
 					double interFtrSim = IRSI(val1, val2, ftrK);
+					outputDbg("DEBUG: " + interFtrSim);
 				}
 			}
 		}

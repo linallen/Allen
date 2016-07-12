@@ -782,10 +782,12 @@ public class AAI_Module implements Runnable, Serializable {
 	 * @param clsClass
 	 *            must has default constructor
 	 */
-	public static void register(String clsName, Class<?> clsClass) {
-		s_clsManager.register(clsName.trim().toUpperCase(), clsClass);
+	public static boolean register(String clsName, Class<?> clsClass) {
+		clsName = clsName.trim().toUpperCase();
+		return s_clsManager.register(clsName, clsClass);
 	}
 
+	/** return an instance of a registered class */
 	public static Object getInstance(String clsName) throws Exception {
 		Object instance = s_clsManager.getInstance(clsName.trim().toUpperCase());
 		if (instance == null) {

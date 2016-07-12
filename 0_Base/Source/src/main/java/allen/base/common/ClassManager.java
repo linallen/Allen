@@ -11,8 +11,16 @@ public class ClassManager {
 	/** global registered objects[] */
 	private HashMap<String, Class<?>> s_classes = new HashMap<String, Class<?>>();
 
-	public void register(String clsName, Class<?> clsClass) {
-		s_classes.put(clsName, clsClass);
+	public boolean registered(String clsName) {
+		return s_classes.get(clsName) != null;
+	}
+
+	public boolean register(String clsName, Class<?> clsClass) {
+		if (!registered(clsName)) {
+			s_classes.put(clsName, clsClass);
+			return true;
+		}
+		return false;
 	}
 
 	public Object getInstance(String clsName) throws Exception {

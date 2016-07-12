@@ -50,6 +50,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 
 	/** build map[class, objs[]] */
 	public void buildMapClsObjs() {
+		m_mapClsObjs = new HashMap<String, ArrayList<Obj>>();
 		for (int i = 0; i < m_objLst.size(); i++) {
 			Obj obj = m_objLst.getObj(i);
 			String label = obj.getLabel().getValueStr();

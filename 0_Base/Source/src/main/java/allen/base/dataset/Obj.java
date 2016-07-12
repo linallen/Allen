@@ -57,10 +57,14 @@ public class Obj extends AAI_Module {
 			String valStr = Value.isMissing(value) ? "?" : value.name();
 			buf += valStr + "|";
 		}
-		return buf;
+		return buf.isEmpty() ? buf : ("|" + buf);
 	}
 
 	public String toString() {
-		return name() + ": [" + valuesStr() + "]";
+		String buf = name() + ": " + valuesStr();
+		if (m_label != null) {
+			buf += ", " + m_label.getValueStr();
+		}
+		return buf;
 	}
 }

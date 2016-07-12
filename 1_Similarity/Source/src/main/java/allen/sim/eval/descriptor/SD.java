@@ -12,7 +12,7 @@ import allen.sim.measure.SimMeasure;
  */
 public class SD extends Descriptor {
 	/** return descriptor value SD: the bigger, the better */
-	public double getDescriptor(SimMeasure simMeasure, DataSet dataSet) throws Exception {
+	public double getMetric(SimMeasure simMeasure, DataSet dataSet) throws Exception {
 		// calcInterIntra(simMeasure, dataSet);
 		// assert (m_intraSum > 0);
 		// return m_intraSum;
