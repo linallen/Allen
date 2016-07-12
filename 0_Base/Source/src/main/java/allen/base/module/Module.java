@@ -325,9 +325,9 @@ public class Module extends AAI_Module {
 
 	/** return exception */
 	@Override
-	public String exception() {
+	public String getException() {
 		if (isAAI_Module(m_module)) {
-			return ((AAI_Module) m_module).exception();
+			return ((AAI_Module) m_module).getException();
 		}
 		return "NA";
 	}

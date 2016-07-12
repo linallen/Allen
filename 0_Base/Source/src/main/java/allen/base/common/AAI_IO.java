@@ -166,7 +166,7 @@ public class AAI_IO {
 		try {
 			return readFileEx(fileName);
 		} catch (Exception e) {
-			return null;
+			return new String();
 		}
 	}
 

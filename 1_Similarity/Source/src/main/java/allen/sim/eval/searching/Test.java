@@ -1,4 +1,4 @@
-package allen.clusterer.eval.searching;
+package allen.sim.eval.searching;
 
 public class Test {
 	private static String WORK_DIR = "F:/3_GoogleDrive/UTS/SourceCode/1_CoupledSimilarity/_datasets/_test/";

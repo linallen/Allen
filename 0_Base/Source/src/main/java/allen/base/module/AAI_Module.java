@@ -441,12 +441,12 @@ public class AAI_Module implements Runnable, Serializable {
 	}
 
 	/** output a warning message for DEBUG */
-	public synchronized void warning(String msg) {
+	public synchronized void outputWarning(String msg) {
 		output("Warning: " + msg);
 	}
 
 	/** output a error message for DEBUG */
-	public synchronized void error(String msg) {
+	public synchronized void outputError(String msg) {
 		output("Error: " + msg);
 	}
 
@@ -587,8 +587,19 @@ public class AAI_Module implements Runnable, Serializable {
 		return Common.execPoint(this.thread());
 	}
 
+	/** throws an exception */
+	public void throwException(String msg) throws Exception {
+		outputError(msg);
+		throw new Exception(msg);
+	}
+
 	/** return exception */
 	public String exception() {
+		return getException();
+	}
+
+	/** return exception */
+	public String getException() {
 		if (status() == Status.EXCEPTION) {
 			return Common.exception(m_exception);
 		}
@@ -652,7 +663,7 @@ public class AAI_Module implements Runnable, Serializable {
 					output("Added options " + optLine);
 					return true;
 				} else {
-					warning("Failed to add options " + optLine);
+					outputWarning("Failed to add options " + optLine);
 				}
 			}
 			return false;
@@ -689,7 +700,7 @@ public class AAI_Module implements Runnable, Serializable {
 		String excessOpts = Common.strArraytoStr(options, SPACE);
 		excessOpts = excessOpts.trim();
 		if (!excessOpts.isEmpty()) {
-			warning("excess options " + Common.quote(excessOpts));
+			outputWarning("excess options " + Common.quote(excessOpts));
 		}
 	}
 

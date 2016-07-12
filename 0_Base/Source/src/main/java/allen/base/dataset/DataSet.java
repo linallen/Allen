@@ -6,8 +6,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import allen.base.common.AAI_IO;
+import allen.base.common.Common;
 import allen.base.common.Timer;
 import allen.base.module.AAI_Module;
 import allen.base.set.AllenSet;
@@ -32,7 +34,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 	private ObjLst m_objLst = new ObjLst();
 	/** features[m] (i.e., attributes[m]) */
 	private FtrSet m_ftrSet = new FtrSet();
-	/** class label */
+	/** class feature */
 	private Feature m_class;
 
 	/** file name of data set */
@@ -41,6 +43,33 @@ public class DataSet extends AAI_Module implements AllenSet {
 	private String m_dataDir;
 	/** name (@relation) of data set */
 	private String m_dataName;
+
+	/////////////////////////////////////////////////////////////////
+	/** map[class, objs[]] */
+	private HashMap<String, ArrayList<Obj>> m_mapClsObjs;
+
+	/** build map[class, objs[]] */
+	public void buildMapClsObjs() {
+		for (int i = 0; i < m_objLst.size(); i++) {
+			Obj obj = m_objLst.getObj(i);
+			String label = obj.getLabel().getValueStr();
+			ArrayList<Obj> objs = m_mapClsObjs.get(label);
+			if (objs == null) {
+				objs = new ArrayList<Obj>();
+				m_mapClsObjs.put(label, objs);
+			}
+			objs.add(obj);
+		}
+	}
+
+	public ArrayList<Obj> getClsObjs(String label) {
+		Common.Assert(m_class != null);
+		if ((m_mapClsObjs == null) || m_mapClsObjs.isEmpty()) {
+			buildMapClsObjs();
+		}
+		return m_mapClsObjs.get(label);
+	}
+	/////////////////////////////////////////////////////////////////
 
 	/** property functions ***************************************/
 	@Override
@@ -76,6 +105,10 @@ public class DataSet extends AAI_Module implements AllenSet {
 		return m_class.size();
 	}
 
+	public Feature getCls() {
+		return m_class;
+	}
+
 	public Obj getObj(int i) {
 		return m_objLst.getObj(i);
 	}
@@ -90,6 +123,11 @@ public class DataSet extends AAI_Module implements AllenSet {
 
 	public FtrSet ftrSet() {
 		return m_ftrSet;
+	}
+
+	/** @return feature list[] of a specific type */
+	public ArrayList<Feature> getFtrLst(FtrType ftrType) {
+		return m_ftrSet.getFtrLst(ftrType);
 	}
 
 	public String dataName() {
@@ -116,10 +154,18 @@ public class DataSet extends AAI_Module implements AllenSet {
 	/** manipulation functions ***************************************/
 	/** TODO set class feature of the data set */
 	public void setClass(int clsIdx) throws Exception {
-		// 1. move class feature from ftr_set[] to m_label
 		clsIdx = (clsIdx < 0) ? (m_ftrSet.size() - 1) : clsIdx;
-		m_class = m_ftrSet.getFtr(clsIdx);
-		m_ftrSet.removeFtr(m_class.name());
+		Feature newClass = m_ftrSet.getFtr(clsIdx);
+		if (newClass == m_class) {
+			return;
+		}
+		// 0. move old class to features[]
+		if (m_class != null) {
+			m_ftrSet.addFtr(m_class.name(), m_class);
+		}
+		// 1. move class feature from ftr_set[] to m_label
+		m_class = newClass;
+		m_ftrSet.removeFtr(newClass.name());
 		// 2. update data set[]
 		output("Started seting class. ftr[" + clsIdx + "]: " + m_class);
 		Timer timer = new Timer();
@@ -250,7 +296,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 					if (!isComment(line)) {
 						String[] values = line.trim().split(",");
 						if (values.length > m_ftrSet.size()) {
-							warning("Too many values: " + line);
+							outputWarning("Too many values: " + line);
 						}
 						// 1. add values[] to object
 						Obj obj = new Obj();
@@ -283,13 +329,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 		}
 	}
 
-	/** Test */
-	public static void main(String[] args) throws Exception {
-		DataSet module = new DataSet();
-		module.debug(true);
-		module.loadArff("c:/test.arff", false);
-	}
-
+	/** output functions ***************************************/
 	/**
 	 * output summary of data set: (for debug only)<br>
 	 * [ds_name obj_num(M) ftr_num(N) cls_num min_val_num max_val_num
@@ -314,7 +354,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 	}
 
 	public String dataSummary() {
-		return "##### " + m_dataName + ", " + objNum() + "_objs_" + ftrNum() + "_ftrs_" + clsNum() + "classes";
+		return "##### " + m_dataName + objNum() + "_objs_" + ftrNum() + "_ftrs_" + clsNum() + "classes";
 	}
 
 	/** save ARFF to file (for DEBUG) */
@@ -324,7 +364,7 @@ public class DataSet extends AAI_Module implements AllenSet {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(arffFile));
 		try {
 			// 1. @RELATION
-			bw.write("# ARFF data file created by " + this.getClass().getSimpleName() + "\n");
+			bw.write("% ARFF data file created by " + this.getClass().getSimpleName() + "\n");
 			bw.write(RELATION + " " + m_dataName + "\n\n");
 			// 2. @ATTRIBUTE
 			for (Feature ftr : ftrSet().getFtrLst()) {
@@ -357,43 +397,9 @@ public class DataSet extends AAI_Module implements AllenSet {
 		}
 	}
 
-	/** output data set to Matlab matrix format: A = {'t','n','won';... } */
-	public void dbgOutputData2Matlab() throws Exception {
-		// String matlabFile = m_dataDir + m_dataName + ".m";
-		// output("Outputing Matlab data started. " + matlabFile);
-		// Timer timer = new Timer();
-		// BufferedWriter bw = new BufferedWriter(new FileWriter(matlabFile));
-		// try {
-		// bw.write("clc;\nclear;\nA = {");
-		// // String buf = "clc;\nclear;\nA = {";
-		// int objNum = objNum();
-		// for (int i = 0; i < objNum; i++) {
-		// Obj obj = getObj(i);
-		// int valNum = obj.values().size();
-		// progress(i + 1, objNum);
-		// for (int j = 0; j < valNum; j++) {
-		// Value val = obj.getValue(j);
-		// bw.write(Common.quote(val.getValue(), '\''));
-		// if (j < valNum - 1) {
-		// bw.write(",");
-		// }
-		// }
-		// // bw.write(Common.quote(obj.getCls().getName(), '\'') +
-		// // ";...\n");
-		// bw.write(";...\n");
-		// }
-		// bw.write("};\n");
-		// } finally {
-		// AAI_IO.close(bw);
-		// output("Loading data finished. " + timer);
-		// }
-		// // AAI_IO.saveFile(, buf);
-		// // System.out.println("Data Summary: " + buf);
-		// output("Outputing Matlab data finished. " + timer);
-	}
-
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
+		buf.append(m_dataName + "\n");
 		buf.append("cls_num = " + clsNum() + "\n" + m_class.toString() + "\n");
 		buf.append("ftr_num = " + ftrNum() + "\n" + m_ftrSet.toString() + "\n");
 		buf.append("obj_num = " + objNum() + "\n");
@@ -401,7 +407,15 @@ public class DataSet extends AAI_Module implements AllenSet {
 		return buf.toString();
 	}
 
+	public static String help() {
+		return "A data set containing a feature table.";
+	}
+
 	public static String version() {
 		return "Created by Allen Lin, 24 Mar 2016.\n" + "Changed to operate ARFF only. 16 June 2016, Allen";
+	}
+
+	public static void main(String[] args) throws Exception {
+		exec(Thread.currentThread().getStackTrace()[1].getClassName(), args);
 	}
 }

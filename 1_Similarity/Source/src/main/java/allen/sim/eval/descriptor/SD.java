@@ -1,4 +1,7 @@
-package allen.clusterer.eval.descriptor;
+package allen.sim.eval.descriptor;
+
+import allen.base.dataset.DataSet;
+import allen.sim.measure.SimMeasure;
 
 /**
  * Used for evaluating similarity measures, Descriptor SD (Sum-Dissimilarity) is
@@ -9,8 +12,11 @@ package allen.clusterer.eval.descriptor;
  */
 public class SD extends Descriptor {
 	/** return descriptor value SD: the bigger, the better */
-	@Override
-	protected String getDescriptor() {
-		return m_intraSum + "";
+	public double getDescriptor(SimMeasure simMeasure, DataSet dataSet) throws Exception {
+		// calcInterIntra(simMeasure, dataSet);
+		// assert (m_intraSum > 0);
+		// return m_intraSum;
+
+		return 0;
 	}
 }

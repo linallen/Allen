@@ -57,6 +57,10 @@ public class Feature extends AAI_Module {
 		return m_valSet.get(valueStr);
 	}
 
+	public Collection<String> getValStrSet() {
+		return m_valSet.keySet();
+	}
+
 	public Collection<Value> values() {
 		return m_valSet.values();
 	}
