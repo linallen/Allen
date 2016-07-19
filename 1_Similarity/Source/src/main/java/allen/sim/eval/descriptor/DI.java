@@ -25,21 +25,24 @@ public class DI extends DBI {
 		int n = labelLst.size();
 		Common.Assert(n > 0);
 		// 2.1 calculate min(inter-cluster) and max(intra-cluster)
-		double maxInterCluster = 0;
-		double minIntraCluster = Double.MAX_VALUE;
+		double maxInter = 0;
+		double minIntra = Double.MAX_VALUE;
 		for (int i = 0; i < n; i++) {
 			String labeli = labelLst.get(i);
-			Double intraCluster = getIntraClusterSim(labeli);
-			if (intraCluster.isNaN()) {
+			Double simIntraCluster = getIntraClusterSim(labeli);
+			if (simIntraCluster == null || simIntraCluster.isNaN()) {
 				continue;
 			}
-			minIntraCluster = Math.min(minIntraCluster, intraCluster);
+			minIntra = Math.min(minIntra, simIntraCluster);
 			for (int j = i + 1; j < n; j++) {
 				String labelj = labelLst.get(j);
-				Double interCluster = getInterClusterSim(labeli, labelj);
-				maxInterCluster = Math.max(maxInterCluster, interCluster);
+				Double simInterCluster = getInterClusterSim(labeli, labelj);
+				if ((simInterCluster == null) || simInterCluster.isNaN()) {
+					continue;
+				}
+				maxInter = Math.max(maxInter, simInterCluster);
 			}
 		}
-		return minIntraCluster / maxInterCluster;
+		return minIntra / maxInter;
 	}
 }

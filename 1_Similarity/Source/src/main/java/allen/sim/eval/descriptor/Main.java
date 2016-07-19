@@ -16,7 +16,7 @@ import allen.sim.measure.SimMeasureRegister;
  */
 public class Main {
 	static String DATA_DIR = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Datasets/";
-	static final String outputDbg = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Experiments/2016_07_01_Evaluation_Clusters_CMS/Evaluation_Descriptor.csv";
+	static final String outputDbg = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Experiments/2016_07_01_Evaluation_Clusters_CMS/Descriptor.csv";
 	static {
 		// 0. register sim_measures[]
 		SimMeasureRegister.register();

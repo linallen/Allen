@@ -1,59 +1,56 @@
 package allen.sim.eval.descriptor;
 
+import java.util.ArrayList;
+
 import allen.base.common.Common;
 import allen.base.dataset.DataSet;
-import allen.base.dataset.Obj;
 import allen.sim.measure.SimMeasure;
 
 /**
- * Used for evaluating similarity measures, Descriptor RD (Relative
- * Dissimilarity) is the ratio of average inter-cluster similarity upon average
- * intra-cluster similarity for all cluster labels. Smaller RD means better
- * similarity measure.
+ * Relative Dissimilarity (RD) is the ratio of average intra-cluster similarity
+ * upon average inter-cluster similarity for all cluster labels. <br>
+ * See the definition in TNNLS'13: Coupled Attribute Similarity Learning on
+ * Categorical Data, on page 11<br>
+ * Higher better.
  * 
- * RD(simMeasure, dataSet) = average(inter-cluster similarity) /
- * average(intra-cluster similarity)
- * 
- * @author Allen Lin, 29 Mar 2016
+ * @author Allen Lin, 14 July 2016
  */
-public class RD extends Descriptor {
-	private static final long serialVersionUID = -8803745591316191273L;
+public class RD extends DBI {
+	private static final long serialVersionUID = -2602212493222353731L;
 
-	protected double m_interSum;
-	protected double m_intraSum;
-
-	protected double m_interNum;
-	protected double m_intraNum;
-
-	/** calculate common statistics such as sum of inter/intra similarities */
-	protected final void calcInterIntra(SimMeasure simMeasure, DataSet dataSet) throws Exception {
-		m_interSum = m_intraSum = m_interNum = m_intraNum = 0;
-		for (int i = 0; i < dataSet.objNum(); i++) {
-			Obj obj1 = (Obj) dataSet.getObj(i);
-			for (int j = i + 1; j < dataSet.objNum(); j++) {
-				Obj obj2 = (Obj) dataSet.getObj(j);
-				double score = simMeasure.sim(obj1, obj2);
-				// System.out.println(obj1.toString() + "\n" + obj2.toString() +
-				// "\n" + "score = " + score);
-				if (obj1.getLabel() == obj2.getLabel()) {
-					m_intraSum += score;
-					m_intraNum++;
-				} else {
-					m_interSum += score;
-					m_interNum++;
+	@Override
+	public double getMetric(SimMeasure simMeasure, DataSet dataSet) throws Exception {
+		// 1. pre-compute sim(C) and sim(C1, C2)
+		buildClusterSim(simMeasure, dataSet);
+		// 2. compute DI = min(intra-cluster sim) / max(inter-cluster sim)
+		ArrayList<String> labelLst = new ArrayList<String>(dataSet.getCls().getValStrSet());
+		int n = labelLst.size();
+		Common.Assert(n > 0);
+		// 2.1 calculate min(inter-cluster) and max(intra-cluster)
+		double sumIntra = 0;
+		double sumInter = 0;
+		int numIntra = 0;
+		int numInter = 0;
+		for (int i = 0; i < n; i++) {
+			String labeli = labelLst.get(i);
+			Double simIntraCluster = getIntraClusterSim(labeli);
+			if (simIntraCluster == null || simIntraCluster.isNaN()) {
+				continue;
+			}
+			sumIntra += simIntraCluster;
+			numIntra++;
+			for (int j = i + 1; j < n; j++) {
+				String labelj = labelLst.get(j);
+				Double simInterCluster = getInterClusterSim(labeli, labelj);
+				if ((simInterCluster == null) || simInterCluster.isNaN()) {
+					continue;
 				}
+				sumInter += simInterCluster;
+				numInter++;
 			}
 		}
-	}
-
-	/** return descriptor value */
-	public double getMetric(SimMeasure simMeasure, DataSet dataSet) throws Exception {
-		calcInterIntra(simMeasure, dataSet);
-		double interAve = Descriptor.divide(m_interSum, m_interNum);
-		double intraAve = Descriptor.divide(m_intraSum, m_intraNum);
-		Common.Assert(m_intraSum > 0);
-		return interAve / intraAve;
-		// return interAve / intraAve + ", (" + Common.decimal(m_interSum, 2) +
-		// "/" + Common.decimal(m_intraSum, 2) + ")";
+		double aveIntra = (numIntra == 0) ? 0 : (sumIntra / numIntra);
+		double aveInter = (numInter == 0) ? 0 : (sumInter / numInter);
+		return aveIntra / aveInter;
 	}
 }

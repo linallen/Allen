@@ -34,7 +34,7 @@ public class DBI extends Descriptor {
 
 	/** return sim(C) = ave(sim(a1,a2)), for all a1, a2 in C */
 	private static Double calcIntraClusterSim(SimMeasure simMeasure, ArrayList<Obj> objLst) throws Exception {
-		Common.Assert(!objLst.isEmpty());
+		Common.Assert(!objLst.isEmpty() && (objLst.size() > 1));
 		double sum = 0;
 		int n = objLst.size();
 		for (int i = 0; i < n; i++) {
@@ -53,7 +53,7 @@ public class DBI extends Descriptor {
 		Common.Assert(!objLst1.isEmpty() && !objLst2.isEmpty());
 		double sum = 0;
 		for (Obj obj1 : objLst1) {
-			for (Obj obj2 : objLst1) {
+			for (Obj obj2 : objLst2) {
 				sum += simMeasure.sim(obj1, obj2);
 			}
 		}
@@ -65,21 +65,31 @@ public class DBI extends Descriptor {
 		output("Started building cluster similarities...");
 		m_intraClusterSim = new HashMap<String, Double>();
 		m_interClusterSim = new HashMap<String, Double>();
-		ArrayList<String> labelLst = new ArrayList<String>(dataSet.getCls().getValStrSet());
+
+		// 0. only consider classes containing 2 or more objects
+		ArrayList<String> labelLst = new ArrayList<String>();
+		for (String label : dataSet.getCls().getValStrSet()) {
+			if (dataSet.getClsObjs(label).size() > 1) {
+				labelLst.add(label);
+			} else {
+				output("ignore label " + label + " of " + dataSet.dataName());
+			}
+		}
+
 		// 1. calculate intra-cluster similarity sim(C)
 		for (String label : labelLst) {
-			Double intraClusterSim = calcIntraClusterSim(simMeasure, dataSet.getClsObjs(label));
-			m_intraClusterSim.put(label, intraClusterSim);
+			Double simIntraCluster = calcIntraClusterSim(simMeasure, dataSet.getClsObjs(label));
+			m_intraClusterSim.put(label, simIntraCluster);
 		}
 		// 2. calculate inter-cluster similarity sim(C1, C2)
 		for (int i = 0; i < labelLst.size(); i++) {
 			String label1 = labelLst.get(i);
 			for (int j = i + 1; j < labelLst.size(); j++) {
 				String label2 = labelLst.get(j);
-				Double intraClusterSim = calcInterClusterSim(simMeasure, dataSet.getClsObjs(label1),
+				Double simIntraCluster = calcInterClusterSim(simMeasure, dataSet.getClsObjs(label1),
 						dataSet.getClsObjs(label2));
-				m_interClusterSim.put(label1 + " " + label2, intraClusterSim);
-				m_interClusterSim.put(label2 + " " + label1, intraClusterSim);
+				m_interClusterSim.put(label1 + " " + label2, simIntraCluster);
+				m_interClusterSim.put(label2 + " " + label1, simIntraCluster);
 			}
 		}
 		output("Finished building cluster similarities...");
@@ -98,7 +108,7 @@ public class DBI extends Descriptor {
 			// Di = max(Rij) = max{(Si+Sj)/Mij}
 			String labeli = labelLst.get(i);
 			Double Si = getIntraClusterSim(labeli);
-			if (Si.isNaN()) {
+			if (Si == null || Si.isNaN()) {
 				continue;
 			}
 			Double Di = 0.;
@@ -106,11 +116,11 @@ public class DBI extends Descriptor {
 				if (j != i) {
 					String labelj = labelLst.get(j);
 					Double Sj = getIntraClusterSim(labelj);
-					if (Sj.isNaN()) {
+					if (Sj == null || Sj.isNaN()) {
 						continue;
 					}
 					Double Mij = getInterClusterSim(labeli, labelj);
-					if (Mij.isNaN() || (Mij == 0.)) {
+					if (Mij == null || Mij.isNaN() || (Mij == 0.)) {
 						continue;
 					}
 					Double Rij = (Si + Sj) / Mij;
