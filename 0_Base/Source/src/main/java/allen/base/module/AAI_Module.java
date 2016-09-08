@@ -836,14 +836,15 @@ public class AAI_Module implements Runnable, Serializable {
 		}
 		// 3. create an Instance from class and pass args[] to it
 		AAI_Module module = (AAI_Module) ModuleLoader.newInstance(clsClass);
-		if (module != null) {
-			System.out.println("Started task " + module.name() + " (" + argsStr.trim() + ")");
-			Timer timer = new Timer();
-			module.addOptions(args);
-			module.start();
-			module.join();
-			System.out.println("Finished task " + module.name() + " (" + argsStr.trim() + "), " + timer);
+		if (module == null) {
+			throw new Exception(clsClass.getName() + ": failed to instance this Class!");
 		}
+		System.out.println("_Started task " + module.name() + " (" + argsStr.trim() + ")");
+		Timer timer = new Timer();
+		module.addOptions(args);
+		module.start();
+		module.join();
+		System.out.println("_Finished task " + module.name() + " (" + argsStr.trim() + "), " + timer);
 		// DEBUG
 		// System.out.println("Finished class " + clsName + "(" + argsStr +
 		// ")");
