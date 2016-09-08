@@ -21,6 +21,8 @@ public class SimCoupleCos extends SimCouple {
 	/** COS intra-coupled sim(val1, val2). */
 	@Override
 	protected final double intraSim(Value val1, Value val2) throws Exception {
+		Common.Assert(val1.getFtr() == val2.getFtr());
+		Common.Assert(val1.getFtr().type() == FtrType.CATEGORICAL);
 		int objNum1 = getOwnerObjs(val1).size();
 		int objNum2 = getOwnerObjs(val2).size();
 		double product = 1. * objNum1 * objNum2;

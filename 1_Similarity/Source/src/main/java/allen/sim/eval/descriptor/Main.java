@@ -16,13 +16,14 @@ import allen.sim.measure.SimMeasureRegister;
  */
 public class Main {
 	static String DATA_DIR = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Datasets/";
-	static final String outputDbg = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Experiments/2016_07_01_Evaluation_Clusters_CMS/Descriptor.csv";
+	static final String outputDbg = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Experiments/2016_07_01_Evaluation_Clusters_CMS/DI_prime.csv";
 	static {
 		// 0. register sim_measures[]
 		SimMeasureRegister.register();
 		// 1. register descriptors[]
 		Descriptor.register("RD", RD.class);
 		Descriptor.register("DI", DI.class);
+		Descriptor.register("DI'", DI_prime.class);
 		Descriptor.register("DBI", DBI.class);
 	}
 
@@ -61,7 +62,8 @@ public class Main {
 				"soybean-l", "Dermatology366_objs_34_ftrs_6_classes", "wisconsin",
 				"BreastCancer699_objs_10_ftrs_2classes" };
 		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA", "SMD", "OFD" };
-		String metricNames[] = { "RD", "DI", "DBI" }; // "RD", "DI", "DBI"
+		// "RD", "DI", "DBI"
+		String metricNames[] = { "DI'" };
 		// 1. write CSV title row
 		if (!AAI_IO.fileExist(outputDbg)) {
 			String buf = "data_set,sim_measure";
