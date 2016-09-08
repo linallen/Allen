@@ -21,7 +21,8 @@ import allen.base.module.AAI_Module;
  * Base class of similarity measures.
  * 
  * <b>Syntax:</b><br>
- * Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k]<br>
+ * Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k] [-c cls_idx]
+ * <br>
  * <ul>
  * <li><i>-i input_arff</i>: [input] the ARFF data file.</li>
  * <li><i>-s sim_name</i>: [para] name of similarity measures: COS, COS_INTRA,
@@ -31,9 +32,11 @@ import allen.base.module.AAI_Module;
  * feature.</li>
  * </ul>
  * 
+ * Output: sim_objs.txt, sim_graph.txt, and sim_matrix.txt
+ * 
  * @author Allen Lin, 25 Mar 2016
  */
-public abstract class SimMeasure extends AAI_Module {
+public class SimMeasure extends AAI_Module {
 	private static final long serialVersionUID = 7217652874275084535L;
 
 	/** define if the similarity measure is symmetric */
@@ -41,10 +44,10 @@ public abstract class SimMeasure extends AAI_Module {
 
 	/** -i input_arff: [input] the input categorical data file. */
 	private String m_dataArff;
-	/** -k top_k: top K similar objects */
-	private int m_topK = 100;
 	/** -s sim_name: COS, CMS, SMD, etc */
 	private String m_simName;
+	/** -k top_k: top K similar objects */
+	private int m_topK = 100;
 	/** -c cls_idx: class index */
 	private int m_clsIdx = -1;
 
@@ -170,12 +173,12 @@ public abstract class SimMeasure extends AAI_Module {
 				// 2. output sim(x, *)
 				// label[ obj_name cls_size], label[ sim_obj1 score], ...
 				// bw.write(objX.fullName() + " " + objX.cls().size() + ", ");
-				bw.write(objX.fullName() + ", ");
+				bw.write(objX.name() + ": ");
 				int simNum = Math.min(m_topK, simObjs.size());
 				for (int i = 0; i < simNum; i++) {
 					Double simScore = simScores.get(i);
 					Obj simObj = simObjs.get(simScore);
-					bw.write(simObj.fullName() + " ");
+					bw.write(simObj.name() + " ");
 					bw.write(String.format("%.4f", simScore));
 					bw.write((i < (simNum - 1)) ? ", " : "\n");
 				}
@@ -234,10 +237,15 @@ public abstract class SimMeasure extends AAI_Module {
 
 	@Override
 	protected void mainProc() throws Exception {
+		// 0. register pre-defined similarity measures
+		SimRegister.register();
+		// 1. get similarity measure object
 		SimMeasure simMeasure = (m_simName != null) ? (SimMeasure) SimMeasure.getInstance(m_simName) : this;
 		m_dataSet = new DataSet();
+		// 2. load source data set and set class attribute
 		m_dataSet.loadArff(m_dataArff);
 		m_dataSet.setClass(m_clsIdx);
+		// 3. set similarity input and parameter k
 		simMeasure.dataSet(m_dataSet);
 		simMeasure.topK(m_topK);
 		simMeasure.saveSimObjs(m_dataArff + ".sim_objs.txt");
@@ -260,18 +268,19 @@ public abstract class SimMeasure extends AAI_Module {
 			throw new Exception("top K must > 0. " + m_topK);
 		}
 		// -c cls_idx
-		m_topK = Common.getOptionInt("c", options, m_clsIdx);
+		m_clsIdx = Common.getOptionInt("c", options, m_clsIdx);
 		// debug, daemon, etc
 		super.setOptions(options);
 	}
 
 	public static String help() {
-		return "[A similarity measure.]\n\n" + "Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k]\n"
-				+ "-i input_arff</i>: [input] the ARFF data file.\n"
-				+ "-s sim_name</i>: [para] name of similarity measures: COS, COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.\n"
-				+ "-k top_k</i>: [para] top K similar objects. Default 100.\n"
-				+ "    Format: label[ obj_name cls_size], label[ sim_obj1 score], ...\n"
-				+ "            where cls_size is the objects having same label with the target.";
+		return "[A similarity measure.]\n\n"
+				+ "Java -jar sim_measure.jar -i input_arff -s sim_name [-k top_k] [-c cls_idx]\n"
+				+ "-i input_arff: [input] the ARFF data file.\n"
+				+ "-s sim_name: [para] name of similarity measures: COS, COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.\n"
+				+ "-k top_k: [para] top K similar objects. Default 100.\n"
+				+ "-c cls_idx: [para] class index. Default -1 meaning the last feature.\n"
+				+ "\nOutput: sim_objs.txt, sim_graph.txt, and sim_matrix.txt.";
 	}
 
 	public static String version() {

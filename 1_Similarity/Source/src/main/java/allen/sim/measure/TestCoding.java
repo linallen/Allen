@@ -9,7 +9,7 @@ import allen.sim.measure.coupling.SimCoupleCos;
 import allen.sim.measure.coupling.SimCoupleCosInter;
 import allen.sim.measure.coupling.SimCoupleCosIntra;
 
-public class Test {
+public class TestCoding {
 	private static void register() {
 		// 0. register sim_measures[]
 		SimMeasure.register("CMS", SimCoupleCms.class);
