@@ -809,6 +809,15 @@ public class AAI_Module implements Runnable, Serializable {
 
 	/** the Entry function of all AAI_Module sub-classes */
 	protected static final void exec(String clsName, String[] args) throws Exception {
+		String argsStr = Common.strArraytoStr(args, " ");
+		// DEBUG
+		// System.out.println("Started class " + clsName + "(" + argsStr + ")");
+		// System.out.println("args.length = " + args.length);
+		// for (String arg : args) {
+		// System.out.println("arg = " + arg);
+		// }
+		// DEBUG
+
 		// 1. get AAI_Module class from clsName
 		Class<?> clsClass = ModuleLoader.getClass(clsName);
 		if (clsClass == null) {
@@ -828,13 +837,17 @@ public class AAI_Module implements Runnable, Serializable {
 		// 3. create an Instance from class and pass args[] to it
 		AAI_Module module = (AAI_Module) ModuleLoader.newInstance(clsClass);
 		if (module != null) {
-			System.out.println("Started task " + module.name() + ". ");
+			System.out.println("Started task " + module.name() + " (" + argsStr.trim() + ")");
 			Timer timer = new Timer();
-			module.setOptions(args);
+			module.addOptions(args);
 			module.start();
 			module.join();
-			System.out.println("Finished task " + module.name() + ". " + timer);
+			System.out.println("Finished task " + module.name() + " (" + argsStr.trim() + "), " + timer);
 		}
+		// DEBUG
+		// System.out.println("Finished class " + clsName + "(" + argsStr +
+		// ")");
+		// DEBUG
 	}
 
 	/** copy this function to sub-classes */
