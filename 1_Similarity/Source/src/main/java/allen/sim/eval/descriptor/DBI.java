@@ -9,7 +9,7 @@ import allen.base.dataset.Obj;
 import allen.sim.measure.SimMeasure;
 
 /**
- * Davies¨CBouldin index (DBI) is a metric for evaluating clustering/similarity
+ * Davies-Bouldin index (DBI) is a metric for evaluating clustering/similarity
  * algorithms. See the definition in Wiki
  * https://en.wikipedia.org/wiki/Davies%E2%80%93Bouldin_index<br>
  * Higher better.

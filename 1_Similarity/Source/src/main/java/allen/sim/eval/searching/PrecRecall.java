@@ -151,7 +151,7 @@ public class PrecRecall extends AAI_Module {
 		m_inputFile = Common.getOption("i", options);
 		// -k top_k
 		m_topK = Common.getOptionInt("k", options, m_topK);
-		// ¨Co output_file
+		// -o output_file
 		m_outputFile = Common.getOption("o", options);
 		// debug, daemon, etc
 		super.setOptions(options);

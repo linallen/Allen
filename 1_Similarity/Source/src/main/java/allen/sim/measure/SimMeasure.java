@@ -288,6 +288,14 @@ public class SimMeasure extends AAI_Module {
 	}
 
 	public static void main(String[] args) throws Exception {
+		// String clsName =
+		// Thread.currentThread().getStackTrace()[1].getClassName();
+		// String argsStr = Common.strArraytoStr(args, "_");
+		// System.out.println("DEBUG start executing class " + clsName + "(" +
+		// argsStr + ")");
+
 		exec(Thread.currentThread().getStackTrace()[1].getClassName(), args);
+		// System.out.println("DEBUG finish executing class " + clsName + "(" +
+		// argsStr + ")");
 	}
 }
