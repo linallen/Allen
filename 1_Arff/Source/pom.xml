@@ -10,5 +10,8 @@
 	<groupId>allen</groupId>
 	<artifactId>arff</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+		<MainClass>allen.arff.Arff</MainClass>
+	</properties>
 </project>
 

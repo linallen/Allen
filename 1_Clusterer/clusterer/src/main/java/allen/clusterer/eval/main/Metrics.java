@@ -24,12 +24,16 @@ public class Metrics {
 		s_matlabDir = matlabDir;
 	}
 
-	private static String getMatlabArray(int[] array) {
+	public static String getMatlabArray(int[] array) {
 		String buf = "[";
 		for (int i = 0; i < array.length; i++) {
 			buf += ((i == 0) ? "" : ";") + array[i];
 		}
 		return buf + "]";
+	}
+
+	public Double getMetric(String metricName) {
+		return m_metrics.get(metricName);
 	}
 
 	private Collection<String> getMetricNames() {
@@ -116,7 +120,8 @@ public class Metrics {
 		String buf = new String();
 		for (String metricName : getMetricNames()) {
 			try {
-				buf += "," + Common.decimal(getValue(metricName));
+				// buf += "," + Common.decimal(getValue(metricName));
+				buf += "," + getValue(metricName);
 			} catch (Exception e) {
 			}
 		}

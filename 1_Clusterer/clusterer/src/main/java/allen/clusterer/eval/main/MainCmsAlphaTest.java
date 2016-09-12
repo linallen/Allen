@@ -65,7 +65,8 @@ public class MainCmsAlphaTest {
 		// output results
 		sumMetrics.divide(metricsLst.size());
 		AAI_IO.saveFile(outputDbg, sumMetrics.toCSV() + "\n", true);
-		if (DEBUG) {
+		// if (DEBUG)
+		{
 			// output results for debug
 			String debugFile = inputArff + "." + clustererName + "_a=" + Common.decimal(alpha, 1) + "_" + round
 					+ ".txt";

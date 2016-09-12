@@ -26,7 +26,7 @@ import allen.sim.measure.coupling.SimCoupleCosIntra;
  * Output: [ACC(accuracy/precision), NMI(Normalized Mutual Information)]
  */
 public class Main {
-	static String outputDbg = "C:/Allen/UTS/UTS_SourceCode/2016_06_25_CoupleSimExp/Experiments/2016_06_22_Evaluation_Clusters_TODO/Evaluation_Clusters.csv";
+	static String outputDbg = "C:/Allen/UTS/UTS_SourceCode/2016_06_25_CoupleSimExp/Experiments/2016_06_22_Evaluation_Clusters_TODO/Evaluation_new.csv";
 
 	private static void register() {
 		// 0. register clusterers[]
@@ -50,12 +50,26 @@ public class Main {
 			Clusterer clusterer = (Clusterer) Clusterer.getInstance(clustererName);
 			clusterer.name(clustererName + "_" + simName + "_" + AAI_IO.getFileNamePre(inputArff) + "_[" + (i + 1) + "/"
 					+ round + "]");
-			// + " -debug ";
 			String options = " -i " + inputArff + " -s " + simName + " -r " + " -debug ";
 			clusterer.addOptions(options.split(" "));
 			clusterer.start();
 			clusterer.join();
 			Metrics metrics = Metrics.getMetrics(clusterer.labels(), clusterer.clusters());
+			// TODO debug
+			boolean isDebug = false;
+			if (isDebug) {
+				// sim_measure,clusterer,labels[],flags[],NMI
+				String debug = clusterer.simMeasure().moduleName() + "," + clusterer.moduleName() + ",";
+				// Double nmi = metrics.getMetric("NMI_spec");
+				// if (nmi == null || nmi.isNaN()) {
+				// System.out.println("nmi == null");
+				// }
+				debug += metrics.getMetric("NMI_spec") + ",";
+				debug += Metrics.getMatlabArray(clusterer.clusters()) + ",";
+				debug += Metrics.getMatlabArray(clusterer.labels()) + "\n";
+				AAI_IO.saveFile("c:/temp/debug.csv", debug, true);
+			}
+			// TODO debug
 			metricsLst.add(metrics);
 		}
 		// output results for debug
@@ -75,28 +89,8 @@ public class Main {
 		AAI_IO.saveFile(debugFile, sumMetrics.toCSV(), true);
 	}
 
-	// LEI GU: ������shuttle,balloon,zoo,soybean-small,
-	// �ҵĽ�������ȣ����ձ鶼��50%һ�¡������Ǽ������ݼ��ϡ�
-
-	// balloons Balloons20_objs_4_ftrs_2classes
-	// Soybean_small47_objs_35_ftrs_4classes
-	// Zoo101_objs_17_ftrs_7classes
-	// ?? Lymphography (Empty)
-	// ?? Audiology200_objs_70_ftrs_24classes, SC crashed, too many classes?
-	// Soybean_large307_objs_35_ftrs_19classes
-	// Dermatology366_objs_34_ftrs_6_classes done
-	// BreastCancer699_objs_10_ftrs_2classes done
-	//
-	// ?? shuttle15_objs_6_ftrs_2classes, SC crashed
-
-	// "balloons", "Soybean_small47_objs_35_ftrs_4classes",
-	// "Voting_records435_objs_16_ftrs_2classes",
-	// "Zoo101_objs_17_ftrs_7classes",
-	// "BreastCancer699_objs_10_ftrs_2classes",
-	// "Dermatology366_objs_34_ftrs_6_classes",
-	// "Soybean_large307_objs_35_ftrs_19classes"
-	private static String DATA_DIR = "C:/Allen/UTS/UTS_SourceCode/2016_06_25_CoupleSimExp/Datasets/";
-	private static String MATLAB_DIR = "C:/Allen/UTS/UTS_SourceCode/2016_06_25_CoupleSimExp/Matlab/CMS/functions/";
+	private static String DATA_DIR = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Datasets/";
+	private static String MATLAB_DIR = "C:/Allen/UTS/1_Work/2016_06_25_CoupleSimExp/Matlab/CMS/functions/";
 
 	public static void main(String[] args) throws Exception {
 		Timer timer = new Timer();
@@ -105,13 +99,13 @@ public class Main {
 		// set Metrics matlab directory
 		Metrics.setMatlabDir(MATLAB_DIR);
 		// evaluation
-		int ROUND = 100;
+		int ROUND = 20;
 		String dataNames[] = { "balloons", "soybean-s", "zoo", "lymphography", "Audiology200_objs_70_ftrs_24classes",
 				"soybean-l", "Dermatology366_objs_34_ftrs_6_classes", "wisconsin",
-				"BreastCancer699_objs_10_ftrs_2classes", "shuttle" };
+				"BreastCancer699_objs_10_ftrs_2classes" };// , "shuttle"
 		String simNames[] = { "COS", "COS_INTER", "COS_INTRA", "CMS", "CMS_INTER", "CMS_INTRA", "SMD", "OFD" };
 		// String simNames[] = { "CMS" };
-		String clustererNames[] = { "SC_JIAN" }; // "KMODES",
+		String clustererNames[] = { "KMODES", "SC_JIAN" }; // "KMODES","SC_JIAN"
 		// AAI_IO.saveFile(outputDbg,
 		// "data_set,sim_measure-clusterer,Prec,Recall,NMI,Fscore\n");
 		String finishedFile = "c:/temp/finished.txt";

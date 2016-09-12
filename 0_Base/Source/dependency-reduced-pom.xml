@@ -54,6 +54,7 @@
     </plugins>
   </build>
   <properties>
+    <MainClass>allen.base.Main</MainClass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>

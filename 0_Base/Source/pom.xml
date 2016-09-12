@@ -8,6 +8,7 @@
 	<description>Base functions for Allen's data mining modules.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<MainClass>allen.base.Main</MainClass>
 	</properties>
 	<build>
 		<plugins>

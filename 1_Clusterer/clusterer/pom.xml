@@ -26,6 +26,14 @@
 			<artifactId>weka-stable</artifactId>
 			<version>3.8.0</version>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
 	</dependencies>
+	<properties>
+		<MainClass>allen.clusterer.Clusterer</MainClass>
+	</properties>
 </project>
 

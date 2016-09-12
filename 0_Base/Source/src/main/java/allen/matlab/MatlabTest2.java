@@ -21,7 +21,7 @@ public class MatlabTest2 {
 			// Setting up matrices in Java, basically its 2D object array
 			int[] gnd = new int[] { 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1, 1, 1 };
 			int[] res = new int[] { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-			double result[];
+			// double result[];
 			// Set up the variables in MATLAB
 			// sets up a matrix 'a' which is your 2D array a in Java
 			proxy.setVariable("gnd", gnd);

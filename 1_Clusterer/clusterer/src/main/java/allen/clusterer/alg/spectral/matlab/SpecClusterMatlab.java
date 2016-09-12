@@ -3,8 +3,10 @@ package allen.clusterer.alg.spectral.matlab;
 import allen.base.common.AAI_IO;
 import allen.base.common.Common;
 import allen.base.common.Timer;
+import allen.base.dataset.DataSet;
 import allen.clusterer.Clusterer;
 import allen.matlab.Matlab;
+import allen.sim.measure.SimMeasure;
 import matlabcontrol.MatlabProxy;
 
 /**
@@ -24,7 +26,7 @@ public class SpecClusterMatlab extends Clusterer {
 	}
 
 	@Override
-	protected int[] clusteringAlg() throws Exception {
+	protected int[] clusteringAlg(DataSet dataSet, SimMeasure simMeasure) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

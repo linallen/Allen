@@ -8,10 +8,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>allen</groupId>
-  <artifactId>arff</artifactId>
+  <artifactId>clusterer</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <properties>
-    <MainClass>allen.arff.Arff</MainClass>
+    <MainClass>allen.clusterer.Clusterer</MainClass>
   </properties>
 </project>
 

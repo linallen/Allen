@@ -9,17 +9,20 @@ import allen.base.dataset.DataSet;
 import allen.base.dataset.Obj;
 import allen.base.module.AAI_Module;
 import allen.sim.measure.SimMeasure;
+import allen.sim.measure.SimMeasureRegister;
 
 /**
  * Base class of clustering algorithms.
  * 
  * <b>Syntax:</b><br>
- * Java -jar cluster_alg.jar -i input_arff -s sim_name [-k top_k] [-r] -o
- * output_csv <br>
+ * Java -jar clusterer.jar -i input_arff [-s sim_name] [-n clusterer_name] [-k
+ * top_k] [-c cls_idx] [-r] -o output_csv <br>
  * <ul>
  * <li><i>-i input_arff</i>: [input] the ARFF data file.</li>
- * <li><i>-s sim_name</i>: [para] name of similarity measures: COS, COS_INTRA,
- * COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.</li>
+ * <li><i>-s sim_name</i>: [para] name of similarity measures: COS (default),
+ * COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.</li>
+ * <li><i>-n clusterer_name</i>: [para] name of clusterers: KMODES (default),
+ * etc.</li>
  * <li><i>-k k</i>: [para] user-defined cluster number. Default -1 (# of
  * classes).</li>
  * <li><i>-c cls_idx</i>: [para] class index. Default -1 (the last feature).
@@ -30,7 +33,7 @@ import allen.sim.measure.SimMeasure;
  * 
  * @author Allen Lin, 14 June 2016
  */
-public abstract class Clusterer extends AAI_Module {
+public class Clusterer extends AAI_Module {
 	private static final long serialVersionUID = -4489564528508002488L;
 
 	/** -i input_arff: [input] the input categorical data file. */
@@ -38,7 +41,9 @@ public abstract class Clusterer extends AAI_Module {
 	/** -k k: user-defined cluster number. Default -1 (# of classes). */
 	protected int m_k = -1;
 	/** -s sim_name: COS, CMS, SMD, etc */
-	protected String m_simName;
+	protected String m_simName = "COS";
+	/** -n clusterer_name: KMODES, etc */
+	protected String m_clustererName = "KMODES";
 	/** -c cls_idx: class index */
 	protected int m_clsIdx = -1;
 
@@ -135,6 +140,9 @@ public abstract class Clusterer extends AAI_Module {
 
 	/** @return object labels[] */
 	public int[] labels() {
+		if (m_dataSet == null) {
+			m_dataSet = null; // TODO DEBUG
+		}
 		return m_dataSet.getLabelIds();
 	}
 
@@ -173,7 +181,9 @@ public abstract class Clusterer extends AAI_Module {
 	}
 
 	/** Main function of clustering algorithm */
-	protected abstract int[] clusteringAlg(final DataSet dataSet, SimMeasure simMeasure) throws Exception;
+	protected int[] clusteringAlg(final DataSet dataSet, SimMeasure simMeasure) throws Exception {
+		return null;
+	};
 
 	/** save [obj_name, obj_values, obj_label, obj_flag] */
 	public void saveClusters(String clusterCSV) throws Exception {
@@ -188,7 +198,12 @@ public abstract class Clusterer extends AAI_Module {
 
 	@Override
 	protected void mainProc() throws Exception {
+		// 0. register similarity measures and clusterers
+		ClustererRegister.register();
+		SimMeasureRegister.register();
 		// 1. prepare objects
+		Clusterer clusterer = (Clusterer) Clusterer.getInstance(m_clustererName.toUpperCase());
+
 		// SimMeasure simMeasure =
 		// SimMeasure.getSimMeasure(m_simName.toUpperCase());
 		SimMeasure simMeasure = (SimMeasure) SimMeasure.getInstance(m_simName.toUpperCase());
@@ -202,12 +217,38 @@ public abstract class Clusterer extends AAI_Module {
 			// simMeasure.saveSimMatrix(m_dataArff + ".sim_matrix.dbg.txt");
 		}
 		// 2. run clusterer on data set with similarity measure
-		clustering(dataSet, simMeasure, m_k);
+		clusterer.clustering(dataSet, simMeasure, m_k);
 		// 3. output results
 		if (Common.validString(m_outputCSV)) {
-			saveClusters(m_outputCSV);
+			clusterer.saveClusters(m_outputCSV);
 		}
 	}
+	// old version
+	// protected void mainProc() throws Exception {
+	// // 0. register similarity measures and clusterers
+	// ClustererRegister.register();
+	// SimMeasureRegister.register();
+	// // 1. prepare objects
+	// // SimMeasure simMeasure =
+	// // SimMeasure.getSimMeasure(m_simName.toUpperCase());
+	// SimMeasure simMeasure = (SimMeasure)
+	// SimMeasure.getInstance(m_simName.toUpperCase());
+	// DataSet dataSet = new DataSet();
+	// dataSet.loadArff(m_dataArff);
+	// dataSet.setClass(m_clsIdx);
+	// simMeasure.dataSet(dataSet);
+	// if (debug()) {
+	// // simMeasure.saveSimObjs(m_dataArff + ".sim_objs.dbg.txt");
+	// // simMeasure.saveSimGraph(m_dataArff + ".sim_graph.dbg.txt");
+	// // simMeasure.saveSimMatrix(m_dataArff + ".sim_matrix.dbg.txt");
+	// }
+	// // 2. run clusterer on data set with similarity measure
+	// clustering(dataSet, simMeasure, m_k);
+	// // 3. output results
+	// if (Common.validString(m_outputCSV)) {
+	// saveClusters(m_outputCSV);
+	// }
+	// }
 
 	@Override
 	public void setOptions(String[] options) throws Exception {
@@ -218,6 +259,8 @@ public abstract class Clusterer extends AAI_Module {
 		}
 		// -s sim_name
 		m_simName = Common.getOptionString("s", options, m_simName);
+		// -n clusterer_name
+		m_clustererName = Common.getOptionString("n", options, m_clustererName);
 		// -k k
 		m_k = Common.getOptionInt("k", options, m_k);
 		// -c cls_idx
@@ -229,10 +272,11 @@ public abstract class Clusterer extends AAI_Module {
 	}
 
 	public static String help() {
-		return "[Clusterer]\n\n"
-				+ "Java -jar clusterer_xxx.jar -i input_arff -s sim_name [-k top_k] [-r] -o output_csv\n"
+		return "Clusterer\n\n"
+				+ "Java -jar clusterer.jar -i input_arff [-s sim_name] [-n clusterer_name]  [-k top_k] [-c cls_idx] [-r] -o output_csv\n"
 				+ "-i input_arff: [input] the ARFF data file.\n"
-				+ "-s sim_name: [para] name of similarity measures: COS, COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.\n"
+				+ "-s sim_name: [para] name of similarity measures: COS (default), COS_INTRA, COS_INTER, CMS, CMS_INTRA, CMS_INTER, SMD, OFD, etc.\n"
+				+ "-n clusterer_name: [para] name of clusterers: KMODES (default), etc."
 				+ "-k k: [para] user-defined cluster number. Default -1 (# of classes).\n"
 				+ "-c cls_idx: [para] class index. Default -1 (the last feature).\n"
 				+ "-r: [para] randomized algorithm (e.g., for k-modes).\n"
