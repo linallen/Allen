@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Allen/UTS/UTS_SourceCode/0_Libs/google gson-2.3.1/gson-2.3.1.jar" sourcepath="C:/Dropbox/UTS/SourceCode/0_Libs/google gson-2.3.1/gson-2.3.1-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Allen/UTS/UTS_SourceCode/0_Libs/json_simple-1.1/lib/json_simple-1.1.jar" sourcepath="C:/Dropbox/UTS/SourceCode/0_Libs/json_simple-1.1"/>
+	<classpathentry kind="lib" path="C:/Allen/UTS/UTS_SourceCode/0_Base/0_Base.jar" sourcepath="C:/Allen/UTS/UTS_SourceCode/0_Base"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

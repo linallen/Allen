@@ -23,4 +23,7 @@
 			<version>4.12</version>
 		</dependency>
 	</dependencies>
+	<properties>
+		<MainClass>allen.csv.converter.CsvConverter</MainClass>
+	</properties>
 </project>
