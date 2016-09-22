@@ -2,7 +2,8 @@ package student;
 
 /**
  * Generate synthetic student behavior data from pre-assumption of behavior
- * distribution of Good and Bad students.
+ * distribution of Good and Bad students.<br>
+ * Autumn session: Monday 2 Mar - Friday 29 May 2016 (13 weeks)
  * 
  * @author Allen Lin, 20 Sep 2016
  */
