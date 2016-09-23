@@ -24,10 +24,11 @@ public class DistExpStudent extends Distribution {
 	 */
 	@Override
 	public void setParas(Object... paras) {
-		assert (paras.length >= 4);
-		m_distNorm.setParas(paras);
-		m_minX = (Double) paras[2];
-		m_maxX = (Double) paras[3];
+		if (paras.length >= 4) {
+			m_distNorm.setParas(paras);
+			m_minX = (Double) paras[2];
+			m_maxX = (Double) paras[3];
+		}
 	}
 
 	private static double exp(double x) {
@@ -42,6 +43,10 @@ public class DistExpStudent extends Distribution {
 		assert ((x >= m_minX) && (x <= m_maxX));
 		double normedExp = (exp(x) - exp(m_minX)) / (exp(m_maxX) - exp(m_minX));
 		double p = normedExp + m_distNorm.P();
-		return Math.min(1., p);
+		return Math.max(Math.min(1., p), 0);
+	}
+
+	public String toString() {
+		return m_distNorm.toString() + ", minX = " + m_minX + ", maxX = " + m_maxX;
 	}
 }

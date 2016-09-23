@@ -21,13 +21,20 @@ public class DistNorm extends Distribution {
 	 */
 	@Override
 	public void setParas(Object... paras) {
-		m_mean = (Double) paras[0];
-		m_sd = (Double) paras[1];
+		if (paras.length >= 2) {
+			m_mean = (Double) paras[0];
+			m_sd = (Double) paras[1];
+		}
 	}
 
 	/** No parameter */
 	@Override
 	public double P(Object... paras) {
-		return m_random.nextGaussian() * m_sd + m_mean;
+		double p = m_random.nextGaussian() * m_sd + m_mean;
+		return Math.max(Math.min(1., p), 0.);
+	}
+
+	public String toString() {
+		return "Mean = " + m_mean + ", StdDev = " + m_sd;
 	}
 }

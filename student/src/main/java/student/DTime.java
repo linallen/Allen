@@ -31,11 +31,12 @@ public class DTime {
 		return buf;
 	}
 
+	static Random r = new Random();
+
 	/** return a random time for a given date */
 	public static DateTime randomTime(DateTime dateTime) {
 		// dateTime's hour, minute, and second properties must be 0s.
-		Random r = new Random();
-		dateTime = dateTime.plusHours(7 + r.nextInt(13)); // 7:00 -20:00
+		dateTime = dateTime.plusHours(7 + r.nextInt(13)); // 7:00 ~ 20:00
 		dateTime = dateTime.plusMinutes(r.nextInt(60));
 		dateTime = dateTime.plusSeconds(r.nextInt(60));
 		return dateTime;
