@@ -1,19 +1,27 @@
 package student;
 
+import java.util.List;
+
+import org.joda.time.DateTime;
+
 import distribution.Distribution;
 
-/** Generate "libgate" <stuId, gate, enter_time, record> */
+/** Generate "libgate" <stuId, enter_time, gate, record> */
 public class GenLibgate {
 
-	public String getTitle() {
-		return "stuId, gate, enter_time, record";
+	public static String getTitle() {
+		return "stuId, enter_time, gate, record";
 	}
 
-	/** generate log */
-	public String genLog(int stuId, Distribution dist, Object... paras) {
-		double p = dist.P(paras);
-		assert ((p >= 0) && (p <= 1));
-
-		return null;
+	/** generate "libgate" logs <stuId, enter_time, gate, record> */
+	public static String genCSV(List<DateTime> between, String stuId, Distribution dist, Object... paras) {
+		StringBuffer sb = new StringBuffer().append(getTitle() + "\n");
+		for (DateTime d : between) {
+			d = DTime.randomTime(d);
+			if (dist.hit(paras)) {
+				sb.append(stuId + DTime.text(d) + ",Gate 1,Record\n");
+			}
+		}
+		return sb.toString();
 	}
 }

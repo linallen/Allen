@@ -12,6 +12,10 @@ public class DistExpStudent extends Distribution {
 	/** perturbation Guassian random number generator */
 	protected DistNorm m_distNorm = new DistNorm();
 
+	public DistExpStudent(Object... paras) {
+		setParas(paras);
+	}
+
 	/**
 	 * paras[0]: perturbation mean<br>
 	 * paras[1]: perturbation standard deviation<br>

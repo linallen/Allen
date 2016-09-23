@@ -1,7 +1,5 @@
 package distribution;
 
-import java.util.Random;
-
 /**
  * Normal (Guassian) distribution. P(x) = Guassian(sd, mean)
  * 
@@ -12,6 +10,10 @@ public class DistNorm extends Distribution {
 	protected Double m_mean;
 	/** standard deviation */
 	protected Double m_sd;
+
+	public DistNorm(Object... paras) {
+		setParas(paras);
+	}
 
 	/**
 	 * paras[0]: mean<br>
@@ -26,7 +28,6 @@ public class DistNorm extends Distribution {
 	/** No parameter */
 	@Override
 	public double P(Object... paras) {
-		Random r = new Random();
-		return r.nextGaussian() * m_sd + m_mean;
+		return m_random.nextGaussian() * m_sd + m_mean;
 	}
 }
