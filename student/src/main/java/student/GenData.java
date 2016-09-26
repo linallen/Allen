@@ -2,6 +2,7 @@ package student;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.joda.time.DateTime;
 
@@ -19,7 +20,7 @@ import distribution.Distribution;
  */
 public class GenData {
 	static String WORK_DIR = "C:/Users/allen/Desktop/2016_09_12 Student Behavior/";
-	static String STUDENT = WORK_DIR + "student_info.csv";
+	static String STUDENT = WORK_DIR + "_student_test.csv";
 	static String LIBGATE = WORK_DIR + "libgate.csv";
 	static String LIBWEB = WORK_DIR + "libweb.csv";
 	static String WORKSTATION = WORK_DIR + "workstation.csv";
@@ -34,82 +35,171 @@ public class GenData {
 	static double pertSd = 0.05;
 	static double startWeek = 1;
 	static double endWeek = (between.size() / 7 + 1) + 0.;
+	static Random r = new Random();
 
 	public static void main(String[] args) {
-		String title;
-		Distribution distNorm = new DistNorm();
-		Distribution distExpStudent = new DistExpStudent();
-
 		// 0. read in student IDs delimited with space
 		ArrayList<Student> students = new ArrayList<Student>();
 		readStuIds(STUDENT, students);
 
-		// 1. "libgate": <stuId, enter_time[, gate, record]>
-		System.out.println("libgate ...");
-		distNorm.setParas(0.7, 0.1);
-		distExpStudent.setParas(0.2, pertSd, startWeek, endWeek);
-		title = "stuId, enter_time, dist, week_of_year, day_of_week";
-		genLogs(LIBGATE, title, students, distNorm, distExpStudent, 0.6);
+		// 1. "libgate": [stuId, enter_time[, gate, record]]
+		AAI_IO.saveFile(LIBGATE, "stuId, label, enter_time, week_of_year, day_of_week, dist_dbg");
+		// 2. "libweb": [stuId, log_time, ip, session, ...]
+		AAI_IO.saveFile(LIBWEB, "stuId, label, log_time, week_of_year, day_of_week, dist_dbg");
+		// 3. "workstation": [stuId, connect_time, [disconnect_time, duration]]
+		AAI_IO.saveFile(WORKSTATION,
+				"stuId, label, connect_time, disconnect_time, duration, week_of_year, day_of_week, dist_dbg");
+		// 4. "roombooking": [stuId, create_time, start_time, end_time, ...]
+		AAI_IO.saveFile(ROOMBOOKING, "stuId, label, create_time, week_of_year, day_of_week, dist_dbg");
+		// 5. "emotion": [stuId, date, emotion(happy/sad)]
+		AAI_IO.saveFile(EMOTION, "stuId, label, date, emotion, week_of_year, day_of_week, dist_dbg");
 
-		// 2. "libweb": <stuId, log_time, ip, session, ...>
-		System.out.println("libweb ...");
-		distNorm.setParas(0.7, 0.1);
-		// distExpStudent.setParas(0.2, pertSd, startWeek, endWeek);
-		title = "stuId, log_time, dist, week_of_year, day_of_week";
-		genLogs(LIBWEB, title, students, distNorm, distExpStudent, 1.);
+		Distribution distNorm = new DistNorm();
+		Distribution distExpStudent = new DistExpStudent();
+		for (int i = 0; i < students.size(); i++) {
+			Student student = students.get(i);
+			if (student.label.equalsIgnoreCase("ONE")) {
+				// 1. "libgate": [stuId, enter_time[, gate, record]]
+				distNorm.setParas(0.7, 0.1);
+				distExpStudent.setParas(0.2, pertSd, startWeek, endWeek);
+				genLogs(LIBGATE, student, distNorm, distExpStudent, 0.6);
 
-		// 3. "workstation": <stuId, connect_time, [disconnect_time, duration]>
-		System.out.println("workstation ...");
-		distNorm.setParas(0.7, 0.1);
-		// distExpStudent.setParas(0.2, pertSd, startWeek, endWeek);
-		title = "stuId, connect_time, dist, week_of_year, day_of_week";
-		genLogs(WORKSTATION, title, students, distNorm, distExpStudent, 1.);
+				// 2. "libweb": [stuId, log_time, ip, session, ...]
+				distNorm.setParas(0.7, 0.1);
+				genLogs(LIBWEB, student, distNorm, distExpStudent, 1.);
 
-		// 4. "roombooking": <stuId, create_time, start_time, end_time, ...>
-		System.out.println("roombooking ...");
-		distNorm.setParas(0.7, 0.1);
-		distExpStudent.setParas(0.1, pertSd, startWeek, endWeek);
-		title = "stuId, create_time, dist, week_of_year, day_of_week";
-		genLogs(ROOMBOOKING, title, students, distNorm, distExpStudent, 0.6);
+				// 3. "workstation": [stuId, connect_time, disconnect_time,
+				// duration]
+				distNorm.setParas(0.7, 0.1);
+				genLogsWorkstation(WORKSTATION, student, distNorm, distExpStudent, 1.);
 
-		// 5. TODO "emotion": <stuId, date, emotion(happy/sad)>
+				// 4. "roombooking": [stuId, create_time, start_time, end_time]
+				distNorm.setParas(0.7, 0.1);
+				distExpStudent.setParas(0.1, pertSd, startWeek, endWeek);
+				genLogs(ROOMBOOKING, student, distNorm, distExpStudent, 0.6);
+
+				// 5. "emotion": [stuId, date, emotion(happy/sad)]
+				distNorm.setParas(0.7, 0.1);
+				genLogsEmotion(EMOTION, student, distNorm);
+			} else { // ZERO
+				distNorm.setParas(0.1, 0.05);
+				genLogs(LIBGATE, student, distNorm, null, 1.);
+				genLogs(LIBWEB, student, distNorm, null, 1.);
+				genLogsWorkstation(WORKSTATION, student, distNorm, null, 1.);
+				distExpStudent.setParas(0.1, pertSd, startWeek, endWeek);
+				genLogs(ROOMBOOKING, student, distNorm, distExpStudent, 0.6);
+				// 5. "emotion": [stuId, date, emotion(happy/sad)]
+				distNorm.setParas(0.3, 0.1);
+				genLogsEmotion(EMOTION, student, distNorm);
+			}
+		}
 		System.out.println("All done.");
+	}
+
+	/**
+	 * emotion logs: [stuId, date, emotion(happy/sad)]
+	 */
+	private static void genLogsEmotion(String logCSV, Student student, Distribution distNorm) {
+		String bufCSV = new String(), log;
+		for (int i = 0; i < between.size(); i++) {
+			DateTime dateTime = DTime.randomTime(between.get(i));
+			int dayOfWeek = dateTime.getDayOfWeek();
+			if (dayOfWeek <= 5) { // skip Sat and Sun
+				log = null;
+				if (r.nextBoolean()) { // 50% sparse rate
+					if (distNorm.hit()) {
+						log = student.stuId + "," + student.label + "," + DTime.text(dateTime) + ",happy";
+					} else {
+						log = student.stuId + "," + student.label + "," + DTime.text(dateTime) + ",sad";
+					}
+				}
+				if (log != null) {
+					bufCSV += "\n" + log;
+					bufCSV += "," + dateTime.getWeekOfWeekyear();
+					bufCSV += "," + dateTime.getDayOfWeek();
+					bufCSV += "," + "Norm";
+				}
+			}
+		}
+		AAI_IO.saveFile(logCSV, bufCSV, true);
+	}
+
+	/**
+	 * workstation logs: [stuId, connect_time, disconnect_time, duration, ...]
+	 */
+	private static void genLogsWorkstation(String logCSV, Student student, Distribution distNorm,
+			Distribution distExpStudent, double pNormal) {
+		String bufCSV = new String(), log;
+		boolean isNormDist = (distExpStudent == null) || Distribution.hitUniform(pNormal);
+		for (int i = 0; i < between.size(); i++) {
+			DateTime dateTime = DTime.randomTime(between.get(i));
+			int dayOfWeek = dateTime.getDayOfWeek();
+			if (dayOfWeek <= 5) { // skip Sat and Sun
+				if (isNormDist) {
+					log = genLog(student, dateTime, distNorm);
+				} else {
+					log = genLog(student, dateTime, distExpStudent, i / 7. + 1);
+				}
+				if (log != null) {
+					bufCSV += "\n" + log;
+					int durMinutes = 60 + r.nextInt(120); // seconds
+					DateTime disconnect_time = dateTime.plusMinutes(durMinutes);
+					bufCSV += "," + DTime.text(disconnect_time);
+					bufCSV += "," + getDurationText(durMinutes);
+					bufCSV += "," + dateTime.getWeekOfWeekyear();
+					bufCSV += "," + dateTime.getDayOfWeek();
+					bufCSV += "," + (isNormDist ? "Norm" : "Exp");
+				}
+			}
+		}
+		AAI_IO.saveFile(logCSV, bufCSV, true);
+	}
+
+	private static String getDurationText(int durMinutes) {
+		String buf = new String();
+		int days = durMinutes / 60 / 24;
+		int remainMinutes = durMinutes - days * 60 * 24;
+		int hours = remainMinutes / 60;
+		int mintues = remainMinutes - hours * 60;
+		buf += (days > 0) ? (days + " days ") : "";
+		buf += (hours > 0) ? (hours + " hours ") : "";
+		buf += (mintues > 0) ? (mintues + " mintues") : "";
+		return buf.trim();
 	}
 
 	/**
 	 * @param pNormal
 	 *            P(student dist is Normal), other Exponential
 	 */
-	private static void genLogs(String logCSV, String title, ArrayList<Student> students, Distribution distNorm,
-			Distribution distExpStudent, double pNormal) {
-		String bufCSV = title, log;
-		for (Student student : students) {
-			boolean isNormDist = Distribution.hitUniform(pNormal);
-			for (int i = 0; i < between.size(); i++) {
-				DateTime dateTime = DTime.randomTime(between.get(i));
-				int dayOfWeek = dateTime.getDayOfWeek();
-				if (dayOfWeek <= 5) { // skip Sat and Sun
-					if (isNormDist) {
-						log = genLog(student.stuId, dateTime, distNorm);
-					} else {
-						log = genLog(student.stuId, dateTime, distExpStudent, i / 7. + 1);
-					}
-					if (log != null) {
-						bufCSV += "\n" + log + "," + (isNormDist ? "Norm" : "Exp");
-						bufCSV += "," + dateTime.getWeekOfWeekyear();
-						bufCSV += "," + dateTime.getDayOfWeek();
-					}
+	private static void genLogs(String logCSV, Student student, Distribution distNorm, Distribution distExpStudent,
+			double pNormal) {
+		String bufCSV = new String(), log;
+		boolean isNormDist = Distribution.hitUniform(pNormal);
+		for (int i = 0; i < between.size(); i++) {
+			DateTime dateTime = DTime.randomTime(between.get(i));
+			int dayOfWeek = dateTime.getDayOfWeek();
+			if (dayOfWeek <= 5) { // skip Sat and Sun
+				if (isNormDist) {
+					log = genLog(student, dateTime, distNorm);
+				} else {
+					log = genLog(student, dateTime, distExpStudent, i / 7. + 1);
+				}
+				if (log != null) {
+					bufCSV += "\n" + log;
+					bufCSV += "," + dateTime.getWeekOfWeekyear();
+					bufCSV += "," + dateTime.getDayOfWeek();
+					bufCSV += "," + (isNormDist ? "Norm" : "Exp");
 				}
 			}
 		}
-		AAI_IO.saveFile(logCSV, bufCSV);
+		AAI_IO.saveFile(logCSV, bufCSV, true);
 	}
 
 	/** generate logs <stuId, time, ...> according to a given distribution */
-	public static String genLog(String stuId, DateTime dateTime, Distribution dist, Object... paras) {
+	public static String genLog(Student student, DateTime dateTime, Distribution dist, Object... paras) {
 		// dateTime = DTime.randomTime(dateTime); // randomize time
 		if (dist.hit(paras)) {
-			return stuId + "," + DTime.text(dateTime);
+			return student.stuId + "," + student.label + "," + DTime.text(dateTime);
 		}
 		return null;
 	}
