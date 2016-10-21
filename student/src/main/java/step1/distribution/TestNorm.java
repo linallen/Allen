@@ -1,4 +1,4 @@
-package distribution;
+package step1.distribution;
 
 public class TestNorm {
 

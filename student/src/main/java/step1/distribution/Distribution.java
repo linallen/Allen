@@ -1,4 +1,4 @@
-package distribution;
+package step1.distribution;
 
 import java.util.Random;
 

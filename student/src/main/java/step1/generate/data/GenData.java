@@ -1,4 +1,4 @@
-package student;
+package step1.generate.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +7,9 @@ import java.util.Random;
 import org.joda.time.DateTime;
 
 import allen.base.common.AAI_IO;
-import distribution.DistExpStudent;
-import distribution.DistNorm;
-import distribution.Distribution;
+import step1.distribution.DistExpStudent;
+import step1.distribution.DistNorm;
+import step1.distribution.Distribution;
 
 /**
  * Generate synthetic student behavior data from pre-assumption of behavior
@@ -20,7 +20,7 @@ import distribution.Distribution;
  */
 public class GenData {
 	static String WORK_DIR = "C:/Users/allen/Desktop/2016_09_12 Student Behavior/";
-	static String STUDENT = WORK_DIR + "_student_test.csv";
+	static String STUDENT = WORK_DIR + "_student_100.csv";
 	static String LIBGATE = WORK_DIR + "libgate.csv";
 	static String LIBWEB = WORK_DIR + "libweb.csv";
 	static String WORKSTATION = WORK_DIR + "workstation.csv";
@@ -43,14 +43,15 @@ public class GenData {
 		readStuIds(STUDENT, students);
 
 		// 1. "libgate": [stuId, enter_time[, gate, record]]
-		AAI_IO.saveFile(LIBGATE, "stuId, label, enter_time, week_of_year, day_of_week, dist_dbg");
+		AAI_IO.saveFile(LIBGATE, "stuId, label, enter_time, week_of_year, day_of_week, dist_dbg, gate, record");
 		// 2. "libweb": [stuId, log_time, ip, session, ...]
-		AAI_IO.saveFile(LIBWEB, "stuId, label, log_time, week_of_year, day_of_week, dist_dbg");
+		AAI_IO.saveFile(LIBWEB, "stuId, label, log_time, week_of_year, day_of_week, dist_dbg, ip, log_browser");
 		// 3. "workstation": [stuId, connect_time, [disconnect_time, duration]]
 		AAI_IO.saveFile(WORKSTATION,
-				"stuId, label, connect_time, disconnect_time, duration, week_of_year, day_of_week, dist_dbg");
+				"stuId, label, connect_time, disconnect_time, duration, week_of_year, day_of_week, dist_dbg, total_traffic (MB), vendor");
 		// 4. "roombooking": [stuId, create_time, start_time, end_time, ...]
-		AAI_IO.saveFile(ROOMBOOKING, "stuId, label, create_time, week_of_year, day_of_week, dist_dbg");
+		AAI_IO.saveFile(ROOMBOOKING,
+				"stuId, label, create_time, week_of_year, day_of_week, dist_dbg, start_time, end_time");
 		// 5. "emotion": [stuId, date, emotion(happy/sad)]
 		AAI_IO.saveFile(EMOTION, "stuId, label, date, emotion, week_of_year, day_of_week, dist_dbg");
 
@@ -149,6 +150,10 @@ public class GenData {
 					bufCSV += "," + dateTime.getWeekOfWeekyear();
 					bufCSV += "," + dateTime.getDayOfWeek();
 					bufCSV += "," + (isNormDist ? "Norm" : "Exp");
+					// add [Total Traffic (MB), Vendor]
+					Double totalTrafic = 0.1 + r.nextDouble() * 100;
+					String vendors[] = { "Apple", "Intel", "Hon Hai", "Legend", "Unknown" };
+					bufCSV += "," + totalTrafic + "," + vendors[r.nextInt(vendors.length)];
 				}
 			}
 		}
@@ -173,22 +178,55 @@ public class GenData {
 	 */
 	private static void genLogs(String logCSV, Student student, Distribution distNorm, Distribution distExpStudent,
 			double pNormal) {
+		logCSV = logCSV.toLowerCase();
 		String bufCSV = new String(), log;
 		boolean isNormDist = Distribution.hitUniform(pNormal);
+		// Added by Allen, 20 Oct 2016, libgate and libweb may have multiple
+		// logs in a day
+		// TODO
+		int dailyTimesMax = 1; // default {0, 1}
+		if (logCSV.endsWith("libgate.csv")) {
+			dailyTimesMax = r.nextInt(5 + 1); // {0, 1, ..., 5}
+		} else if (logCSV.endsWith("libweb.csv")) {
+			dailyTimesMax = r.nextInt(50 + 1);// {0, 1, ..., 50}
+		}
+		// Added by Allen, 20 Oct 2016
 		for (int i = 0; i < between.size(); i++) {
-			DateTime dateTime = DTime.randomTime(between.get(i));
-			int dayOfWeek = dateTime.getDayOfWeek();
-			if (dayOfWeek <= 5) { // skip Sat and Sun
-				if (isNormDist) {
-					log = genLog(student, dateTime, distNorm);
-				} else {
-					log = genLog(student, dateTime, distExpStudent, i / 7. + 1);
-				}
-				if (log != null) {
-					bufCSV += "\n" + log;
-					bufCSV += "," + dateTime.getWeekOfWeekyear();
-					bufCSV += "," + dateTime.getDayOfWeek();
-					bufCSV += "," + (isNormDist ? "Norm" : "Exp");
+			for (int dailyTimes = 0; dailyTimes < dailyTimesMax; dailyTimes++) {
+				DateTime dateTime = DTime.randomTime(between.get(i));
+				int dayOfWeek = dateTime.getDayOfWeek();
+				if (dayOfWeek <= 5) { // skip Sat and Sun
+					if (isNormDist) {
+						log = genLog(student, dateTime, distNorm);
+					} else {
+						log = genLog(student, dateTime, distExpStudent, i / 7. + 1);
+					}
+					if (log != null) {
+						bufCSV += "\n" + log;
+						bufCSV += "," + dateTime.getWeekOfWeekyear();
+						bufCSV += "," + dateTime.getDayOfWeek();
+						bufCSV += "," + (isNormDist ? "Norm" : "Exp");
+						// append additional columns
+						if (logCSV.endsWith("libgate.csv")) {
+							// gate, record
+							int gate_no = (r.nextInt(5) + 1);
+							String gate = "LIBRARY GATE " + gate_no;
+							String record = "Student " + student.stuId + " Access in Gate " + gate_no;
+							bufCSV += "," + gate + "," + record;
+						} else if (logCSV.endsWith("libweb.csv")) {
+							// ip, log_browser
+							String ip = "203.166." + (r.nextInt(250) + 1) + "." + (r.nextInt(250) + 1);
+							String browsers[] = { "Mozilla/5.0", "Chrome 53.0.2785 (64-bit)", "Internet Explorer",
+									"Others" };
+							String log_browser = browsers[r.nextInt(browsers.length)];
+							bufCSV += "," + ip + "," + log_browser;
+						} else if (logCSV.endsWith("roombooking.csv")) {
+							// start_time, end_time
+							DateTime start_time = dateTime.plusHours(12 + r.nextInt(200));
+							DateTime end_time = start_time.plusHours(1 + r.nextInt(3));
+							bufCSV += "," + DTime.text(start_time) + "," + DTime.text(end_time);
+						}
+					}
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-package distribution;
+package step1.distribution;
 
 /**
  * Exponential distribution. P(x) = exp(x)

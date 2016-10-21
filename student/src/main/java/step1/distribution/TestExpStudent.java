@@ -1,4 +1,4 @@
-package distribution;
+package step1.distribution;
 
 public class TestExpStudent {
 	static double minX = 1, maxX = 89;

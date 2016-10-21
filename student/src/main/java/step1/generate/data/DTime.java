@@ -1,4 +1,4 @@
-package student;
+package step1.generate.data;
 
 import java.util.ArrayList;
 import java.util.List;

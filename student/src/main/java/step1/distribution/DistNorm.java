@@ -1,4 +1,4 @@
-package distribution;
+package step1.distribution;
 
 /**
  * Normal (Guassian) distribution. P(x) = Guassian(sd, mean)
