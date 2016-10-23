@@ -10,7 +10,7 @@ public class Spmf {
 	// input
 	static String SEQ_NUMBER = WORK_DIR + "seq_number.txt";
 	// output
-	static String PATN_FILE = WORK_DIR + "patns.txt";
+	static String PATN_FILE = WORK_DIR + "patns_num.txt";
 
 	static double minSupDbl = 0.5;
 	static int maxLen = 100;
