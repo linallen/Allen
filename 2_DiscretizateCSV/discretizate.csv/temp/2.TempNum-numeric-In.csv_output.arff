@@ -1,0 +1,20 @@
+@relation 2.TempNum-numeric-In
+
+@attribute TempNum numeric
+@attribute PlayTennis {No,Yes}
+
+@data
+33,No
+31,No
+36,Yes
+?,Yes
+12,Yes
+13,No
+6,Yes
+?,No
+11,Yes
+20,Yes
+23,Yes
+?,Yes
+36,Yes
+23,No

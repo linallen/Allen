@@ -1,0 +1,21 @@
+@relation 2.TempNum-numeric-In-weka.filters.unsupervised.attribute.Discretize-B3-M-1.0-Rfirst-last
+
+@attribute TempNum {'\'(-inf-16]\'','\'(16-26]\'','\'(26-inf)\''}
+@attribute PlayTennis {No,Yes}
+
+@data
+
+'\'(26-inf)\'',No
+'\'(26-inf)\'',No
+'\'(26-inf)\'',Yes
+?,Yes
+'\'(-inf-16]\'',Yes
+'\'(-inf-16]\'',No
+'\'(-inf-16]\'',Yes
+?,No
+'\'(-inf-16]\'',Yes
+'\'(16-26]\'',Yes
+'\'(16-26]\'',Yes
+?,Yes
+'\'(26-inf)\'',Yes
+'\'(16-26]\'',No
