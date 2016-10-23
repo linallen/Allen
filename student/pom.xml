@@ -20,5 +20,10 @@
   		<artifactId>base</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
+  	<dependency>
+  		<groupId>allen</groupId>
+  		<artifactId>discretizate.csv</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
   </dependencies>
 </project>

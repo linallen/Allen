@@ -28,5 +28,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Allen/UTS/UTS_SourceCode/6_eNSP_Allen/eNSP0.2.jar" sourcepath="/6_eNSP_Allen/src"/>
+	<classpathentry kind="lib" path="C:/Allen/UTS/UTS_SourceCode/6_eNSP_Allen/spmf.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

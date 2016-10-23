@@ -19,7 +19,7 @@ import step1.distribution.Distribution;
  * @author Allen Lin, 20 Sep 2016
  */
 public class GenData {
-	static String WORK_DIR = "C:/Users/allen/Desktop/2016_09_12 Student Behavior/";
+	static String WORK_DIR = "C:/Users/allen/Desktop/2016_09_12_Student_Behavior/";
 	static String STUDENT = WORK_DIR + "_student_100.csv";
 	static String LIBGATE = WORK_DIR + "libgate.csv";
 	static String LIBWEB = WORK_DIR + "libweb.csv";

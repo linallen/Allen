@@ -14,14 +14,18 @@ import allen.base.common.Common;
  * @author Allen Lin, 10 Oct 2016
  */
 public class MergeData {
-	static String WORK_DIR = "C:/Users/allen/Desktop/2016_09_12 Student Behavior/";
+	// input data files
+	static String WORK_DIR = "C:/Users/allen/Desktop/2016_09_12_Student_Behavior/";
 	static String LIBGATE = WORK_DIR + "libgate.csv";
 	static String LIBWEB = WORK_DIR + "libweb.csv";
 	static String WORKSTATION = WORK_DIR + "workstation.csv";
 	static String ROOMBOOKING = WORK_DIR + "roombooking.csv";
 	static String EMOTION = WORK_DIR + "emotion.csv";
+	// input data file
+	static String WEEKLOG = WORK_DIR + "1_weeklogs.csv";
 
 	static String[] behaviours = { "libgate", "libweb", "workstation", "roombooking" };
+	// week log: key = "stuid_week_label"
 	static HashMap<String, WeekLog> weekLogs = new HashMap<String, WeekLog>();
 
 	public static void main(String[] args) {
@@ -31,7 +35,7 @@ public class MergeData {
 			updateWeekLogs(behaviour);
 		}
 		// save weeklogs to file
-		saveWeekLogs(WORK_DIR + "weeklogs.csv");
+		saveWeekLogs(WEEKLOG);
 	}
 
 	static void saveWeekLogs(String file) {
