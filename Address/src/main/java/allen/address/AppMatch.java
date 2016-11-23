@@ -1,5 +1,8 @@
 package allen.address;
 
+import allen.address.keyaddr.Addr;
+import allen.address.keyaddr.KeySet;
+import allen.address.keyaddr.Kwd;
 import allen.base.common.AAI_IO;
 import allen.base.common.Common;
 import allen.base.module.AAI_Module;
@@ -32,7 +35,8 @@ public class AppMatch extends AAI_Module {
 		for (int i = 1; i < lines.length; i++) {
 			progress(i + 1, lines.length);
 			AddrOrg addrOrg = new AddrOrg(lines[i]);
-			Addr addr = new Addr(addrOrg.StdAddr);
+			Addr addr = new Addr();
+			addr.set(addrOrg.StdAddr);
 
 			// 1. update global addrs[]
 			m_addrSet.add(addrOrg.StdAddr, addr);

@@ -1,5 +1,7 @@
 package allen.address;
 
+import allen.address.keyaddr.KeySet;
+
 /** Stores <char ch, int pos, kwds[]>, where kwds[] contain 'ch' at pos. */
 public class CharPosKwds {
 	/** maximum position. position from 0, 1, ..., maxPos-1 */
