@@ -6,13 +6,12 @@ import allen.address.keyaddr.Kwd;
 import allen.base.common.AAI_IO;
 import allen.base.common.Common;
 import allen.base.module.AAI_Module;
-import backup.AddrCSV;
 
 public class AppMatch extends AAI_Module {
 	private static final long serialVersionUID = 7384874700719711854L;
 
 	/** 1. global keyword set[] */
-	public KwdSet m_kwdSet = new KwdSet();
+	public KeySet m_kwdSet = new KeySet();
 
 	/** 2. global address set[] */
 	public KeySet m_addrSet = new KeySet();
@@ -27,7 +26,7 @@ public class AppMatch extends AAI_Module {
 	 * STREET_SUFFIX_TYPE[9], LOCALITY_NAME[10], STATE_ABBREVIATION[11],
 	 * POSTCODE[12], ADDRESS[13]}
 	 */
-	public void mainProc(String addrsCSV) {
+	public void mainProc(String addrsCSV) throws Exception {
 		// Phase 1. Building Indexes from Address Book
 		String buf = AAI_IO.readFile(addrsCSV);
 		buf = buf.replace("\r", "");
@@ -35,19 +34,16 @@ public class AppMatch extends AAI_Module {
 		for (int i = 1; i < lines.length; i++) {
 			progress(i + 1, lines.length);
 			AddrOrg addrOrg = new AddrOrg(lines[i]);
-			Addr addr = new Addr();
-			addr.set(addrOrg.StdAddr);
-
 			// 1. update global addrs[]
-			m_addrSet.add(addrOrg.StdAddr, addr);
+			Addr addr = (Addr) m_addrSet.add(addrOrg.stdAddr(), Addr.class);
+			addr.length(addrOrg.length());
 
 			// 2. update global kwds[] and indexes <kwd, addr>
 			for (String key : addrOrg.keys()) {
-				if (!key.isEmpty()) {
-					Kwd kwd = m_kwdSet.addKwd(key);
-					kwd.addAddr(addr);
-					addr.addKwd(kwd);
-				}
+				Common.Assert(!key.isEmpty());
+				Kwd kwd = (Kwd) m_kwdSet.add(key, Kwd.class);
+				kwd.addIndex(addr);
+				addr.addIndex(kwd);
 			}
 		}
 		// debug
@@ -58,7 +54,7 @@ public class AppMatch extends AAI_Module {
 	public static void main(String[] args) throws Exception {
 		AppMatch appMatch = new AppMatch();
 		appMatch.debug(true);
-		appMatch.mainProc("C:/Allen/Dropbox/2016_11_06 Address/address_v2.csv");
+		appMatch.mainProc("C:/Allen/UTS/UTS_SourceCode/Address/_data/address_v2.csv");
 		System.out.println("\nAll done!");
 	}
 }

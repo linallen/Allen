@@ -28,7 +28,7 @@ public class KeySet {
 	public String toString() {
 		String buf = new String();
 		for (String key : m_keySet.keySet()) {
-			buf += key + ", " + get(key).toString() + "\n";
+			buf += get(key).toString() + "\n";
 		}
 		return buf;
 	}
