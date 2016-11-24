@@ -5,6 +5,8 @@ import java.util.Collection;
 
 /** address object */
 public class Addr extends Key {
+	private static final long serialVersionUID = -1701729465126477598L;
+
 	/** address real length */
 	private int m_length;
 

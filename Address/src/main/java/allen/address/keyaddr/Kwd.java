@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 /** keyword object */
 public class Kwd extends Key {
+	private static final long serialVersionUID = -5757073443172228079L;
 
 	/** addrs[] containing this kwd */
 	private HashSet<Key> m_addrs = new HashSet<Key>();
