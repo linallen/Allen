@@ -1,4 +1,4 @@
-package allen.address;
+package allen.address.keyaddr;
 
 import java.util.HashSet;
 
@@ -40,11 +40,7 @@ public class AddrOrg {
 	// str must be lowercase
 	private void addKwds(String str) {
 		// replace all non-numeric-alphabet characters to spaces
-		String newStr = new String();
-		for (char ch : str.toCharArray()) {
-			newStr += (((ch >= 'a') && (ch <= 'z')) || ((ch >= '0') && (ch <= '9'))) ? ch : " ";
-		}
-		String keys[] = newStr.replace(" +", " ").split(" ");
+		String keys[] = CommFunc.retainAlphaNum(str);
 		for (String key : keys) {
 			if (!key.isEmpty()) {
 				m_keySet.add(key.intern());
