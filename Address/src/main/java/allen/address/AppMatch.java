@@ -2,15 +2,14 @@ package allen.address;
 
 import java.util.ArrayList;
 
+import aai.base.common.AAI_IO;
+import aai.base.common.Common;
+import aai.base.module.AAI_Module;
 import allen.address.fuzzy.FuzzySearch;
 import allen.address.keyaddr.Addr;
 import allen.address.keyaddr.AddrOrg;
-import allen.address.keyaddr.CommFunc;
 import allen.address.keyaddr.KeySet;
 import allen.address.keyaddr.Kwd;
-import allen.base.common.AAI_IO;
-import allen.base.common.Common;
-import allen.base.module.AAI_Module;
 
 public class AppMatch extends AAI_Module {
 	private static final long serialVersionUID = 7384874700719711854L;
@@ -82,7 +81,7 @@ public class AppMatch extends AAI_Module {
 		appMatch.debug(true);
 		appMatch.indexing("C:/Allen/UTS/UTS_SourceCode/Address/_data/address_v2.csv");
 		// Testing
-		appMatch.searching("28/344 pennant hills");
+		appMatch.searching("28/344 pennant hills nsw 2012 nsw good carlingford 3");
 		System.out.println("\nAll done!");
 	}
 }

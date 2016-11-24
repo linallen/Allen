@@ -2,7 +2,7 @@ package allen.address.keyaddr;
 
 import java.util.HashSet;
 
-import allen.base.common.Common;
+import aai.base.common.Common;
 
 public class AddrOrg {
 	// private String ADDRESS_DETAIL_PID;
