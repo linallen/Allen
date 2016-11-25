@@ -6,6 +6,7 @@ import aai.base.module.AAI_Module;
 import allen.address.fuzzy.FuzzySearch;
 import allen.address.keyaddr.Addr;
 import allen.address.keyaddr.AddrOrg;
+import allen.address.keyaddr.CommFunc;
 import allen.address.keyaddr.KeySet;
 import allen.address.keyaddr.Kwd;
 
@@ -58,13 +59,13 @@ public class AppMatch extends AAI_Module {
 	}
 
 	/** Phase 2: search addrs[] with user-input address */
-	public void searching(String searchAddr) throws Exception {
+	public void searching(String searchAddr, int topK) throws Exception {
 		searchAddr = searchAddr.toLowerCase();
 		// TODO Step 1 [exact search]: search in the addrTree
 
 		// Step 2 [fuzzy search]: if can not find in exact search
 		FuzzySearch fuzzySearch = new FuzzySearch();
-		fuzzySearch.search(searchAddr, m_kwdSet, m_addrSet);
+		fuzzySearch.search(searchAddr, m_kwdSet, m_addrSet, topK);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -72,9 +73,18 @@ public class AppMatch extends AAI_Module {
 		appMatch.debug(true);
 		appMatch.indexing("C:/Allen/UTS/UTS_SourceCode/Address/_data/address_v2.csv");
 		// Testing
-		appMatch.searching("ALAN WALKER VILLAGE");
-		// appMatch.searching("28/344 pennant hills nsw 2012 nsw good
-		// carlingford 3");
-		System.out.println("\nAll done!");
+		int topK = 10;
+		byte inputBytes[] = new byte[4096];
+		while (true) {
+			// receive user input
+			int bytes = System.in.read(inputBytes);
+			String searchAddr = new String(inputBytes, 0, bytes);
+			searchAddr = CommFunc.retainAlphaNum(searchAddr);
+			System.out.println("input [" + searchAddr.length() + "]: " + searchAddr);
+			if (searchAddr.length() > 0) {
+				appMatch.searching(searchAddr, topK);
+				// "28/344 pennant hills nsw 2012 nsw good carlingford 3");
+			}
+		}
 	}
 }

@@ -42,9 +42,15 @@ public abstract class Key implements Serializable, Comparable<Key> {
 		return m_key.length();
 	}
 
-	/** sort keys[] by length in ascending order */
+	/** sort keys[] by 1) length in ascending order and 2) dictionary */
 	public int compareTo(Key key) {
-		return (int) Math.signum(this.length() - key.length());
+		// 1. by length
+		int diff = (int) Math.signum(this.length() - key.length());
+		// 2. by key in alphabetical order
+		if (diff == 0) {
+			diff = this.getKey().compareTo(key.getKey());
+		}
+		return diff;
 	}
 
 	public String toString() {

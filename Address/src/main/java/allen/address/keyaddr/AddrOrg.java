@@ -40,7 +40,7 @@ public class AddrOrg {
 	// str must be lowercase
 	private void addKwds(String str) {
 		// replace all non-numeric-alphabet characters to spaces
-		String keys[] = CommFunc.retainAlphaNum(str);
+		String keys[] = CommFunc.retainAlphaNum(str).split(" ");
 		for (String key : keys) {
 			if (!key.isEmpty()) {
 				m_keySet.add(key.intern());
