@@ -1,33 +1,48 @@
 package allen.address;
 
-import allen.address.keyaddr.KeySet;
+import java.util.HashMap;
+import java.util.HashSet;
+
+import allen.address.keyaddr.Key;
 
 /** Stores <char ch, int pos, kwds[]>, where kwds[] contain 'ch' at pos. */
 public class CharPosKwds {
 	/** maximum position. position from 0, 1, ..., maxPos-1 */
-	private int m_maxPos;
-	private KeySet[][] m_kwdSet;
+	private HashMap<String, HashSet<Key>> m_charPosKwds = new HashMap<String, HashSet<Key>>();
 
-	public CharPosKwds(int maxPos) {
-		m_maxPos = maxPos;
-		m_kwdSet = new KeySet[26][m_maxPos];
+	public int size() {
+		return m_charPosKwds.size();
+	}
+
+	private static String genKey(char ch, int pos) {
+		return ch + "_" + pos;
 	}
 
 	/** add a kwd to the kwd set[] at <ch, pos> */
-	public void addKwd(char ch, int pos, Object kwd) throws Exception {
-//		getKwdSet(ch, pos).add(kwd);
-	}
-
-	public KeySet getKwdSet(char ch, int pos) throws Exception {
-		return m_kwdSet[toLower(ch) - 'a'][pos];
-	}
-
-	private char toLower(char ch) throws Exception {
-		if ((ch >= 'a') && (ch <= 'z')) {
-			return ch;
-		} else if ((ch >= 'A') && (ch <= 'Z')) {
-			return (char) ('a' + (ch - 'A'));
+	public void addKwd(char ch, int pos, Key kwd) throws Exception {
+		String key = genKey(ch, pos);
+		HashSet<Key> kwdSet = m_charPosKwds.get(key);
+		if (kwdSet == null) {
+			kwdSet = new HashSet<Key>();
+			m_charPosKwds.put(key, kwdSet);
 		}
-		throw new Exception("Non alphabet character: " + ch);
+		kwdSet.add(kwd);
+	}
+
+	public HashSet<Key> getKwdSet(char ch, int pos) throws Exception {
+		return m_charPosKwds.get(genKey(ch, pos));
+	}
+
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		for (String key : m_charPosKwds.keySet()) {
+			buf.append(key + ", [");
+			HashSet<Key> kwdSet = m_charPosKwds.get(key);
+			for (Key kwd : kwdSet) {
+				buf.append(kwd.getKey() + " ");
+			}
+			buf.append("]\n");
+		}
+		return buf.toString();
 	}
 }

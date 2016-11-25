@@ -1,5 +1,6 @@
 package allen.address.keyaddr;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 /** a general set for storing <key, keyClass> mappings */
@@ -12,6 +13,10 @@ public class KeySet {
 
 	public int size() {
 		return m_keySet.size();
+	}
+
+	public Collection<String> getKeys() {
+		return m_keySet.keySet();
 	}
 
 	public Object add(String key, Class<?> keyClass) throws Exception {
