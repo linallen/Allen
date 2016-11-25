@@ -19,7 +19,7 @@ public class KeySet {
 		Key obj = get(key);
 		if (obj == null) {
 			obj = (Key) keyClass.newInstance();
-			obj.set(key);
+			obj.setKey(key);
 			m_keySet.put(key, obj);
 		}
 		return obj;

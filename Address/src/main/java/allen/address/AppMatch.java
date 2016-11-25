@@ -81,7 +81,9 @@ public class AppMatch extends AAI_Module {
 		appMatch.debug(true);
 		appMatch.indexing("C:/Allen/UTS/UTS_SourceCode/Address/_data/address_v2.csv");
 		// Testing
-		appMatch.searching("28/344 pennant hills nsw 2012 nsw good carlingford 3");
+		appMatch.searching("615/1 CARLINGFORD NSW 2118 (ALAN WALKER VILLAGE)");
+		// appMatch.searching("28/344 pennant hills nsw 2012 nsw good
+		// carlingford 3");
 		System.out.println("\nAll done!");
 	}
 }
