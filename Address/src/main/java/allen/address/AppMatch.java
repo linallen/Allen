@@ -1,12 +1,10 @@
 package allen.address;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import aai.base.common.AAI_IO;
 import aai.base.common.Common;
 import aai.base.module.AAI_Module;
 import allen.address.fuzzy.FuzzySearch;
+import allen.address.fuzzykwd.CharPosKwds;
 import allen.address.keyaddr.Addr;
 import allen.address.keyaddr.AddrOrg;
 import allen.address.keyaddr.CommFunc;
@@ -57,7 +55,7 @@ public class AppMatch extends AAI_Module {
 		// AAI_IO.saveFile(addrsCSV + ".kwds.txt", m_kwdSet.toString());
 		// AAI_IO.saveFile(addrsCSV + ".addrs.txt", m_addrSet.toString());
 
-		// TODO Step 1.2: build <char, pos, kwds[]> for spelling check
+		// Step 1.2: build <char, pos, kwds[]> for spelling check
 		System.out.println("\nStep 1.2: build <char, pos, kwds[]> for spelling check");
 		m_charPosKwds = new CharPosKwds();
 		String[] keys = m_kwdSet.getKeys().toArray(new String[m_kwdSet.size()]);
@@ -83,8 +81,8 @@ public class AppMatch extends AAI_Module {
 		// TODO Step 1 [exact search]: search in the addrTree
 
 		// Step 2 [fuzzy search]: if can not find in exact search
-		FuzzySearch fuzzySearch = new FuzzySearch();
-		fuzzySearch.search(searchAddr, m_kwdSet, m_addrSet, topK);
+		FuzzySearch fuzzySearch = new FuzzySearch(m_kwdSet, m_addrSet, m_charPosKwds, topK);
+		fuzzySearch.search(searchAddr);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -101,11 +99,15 @@ public class AppMatch extends AAI_Module {
 			int bytes = System.in.read(inputBytes);
 			String searchAddr = new String(inputBytes, 0, bytes);
 			searchAddr = CommFunc.retainAlphaNum(searchAddr);
+			if (searchAddr.equals("exit")) {
+				break;
+			}
 			System.out.println("input [" + searchAddr.length() + "]: " + searchAddr);
 			if (searchAddr.length() > 0) {
 				appMatch.searching(searchAddr, topK);
 				// "28/344 pennant hills nsw 2012 nsw good carlingford 3");
 			}
 		}
+		System.out.println("Finished.");
 	}
 }
