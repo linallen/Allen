@@ -91,7 +91,7 @@ public class AppMatch extends AAI_Module {
 		appMatch.indexing("C:/Allen/UTS/UTS_SourceCode/Address/_data/address_v2.csv");
 		System.out.println("Done.\n");
 		// Testing
-		int topK = 10;
+		int topK = 50;
 		byte inputBytes[] = new byte[4096];
 		while (true) {
 			System.out.println("Waiting for input:");
@@ -108,6 +108,6 @@ public class AppMatch extends AAI_Module {
 				// "28/344 pennant hills nsw 2012 nsw good carlingford 3");
 			}
 		}
-		System.out.println("Finished.");
+		System.out.println("\n\nBye!\n");
 	}
 }

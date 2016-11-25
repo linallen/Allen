@@ -96,15 +96,33 @@ public class CharPosKwds {
 			Collections.sort(closedKwdLst);
 			return closedKwdLst.get(0).getKey();
 		}
-		// 4. TODO one missing char: ban, bak, bnk, ank
+		// 4. one missing char: ank, bnk, bak, ban
 		for (int s = 0; s < chars.length; s++) {
 			fuzzyKwds = new FuzzyKwds();
 			for (int i = 0; i < chars.length; i++) {
-				if (i == s) {
-					continue;
-				}
-				int pos = i - ((i >= s) ? 1 : 0);
+				int pos = i + ((i >= s) ? 1 : 0);
 				fuzzyKwds.addKwds(chars[i], m_charPosKwds.get(genKey(chars[i], pos)));
+				if (fuzzyKwds.isEmpty()) {
+					break;
+				}
+			}
+			closedKwdLst.addAll(fuzzyKwds.getKwds());
+		}
+		if (!closedKwdLst.isEmpty()) {
+			Collections.sort(closedKwdLst);
+			return closedKwdLst.get(0).getKey();
+		}
+		// 5. swap one chars: abnk, bnak, bakn
+		for (int s = 0; s < chars.length - 1; s++) {
+			fuzzyKwds = new FuzzyKwds();
+			for (int i = 0; i < chars.length; i++) {
+				if (i == s) {
+					fuzzyKwds.addKwds(chars[i + 1], m_charPosKwds.get(genKey(chars[i + 1], i)));
+					fuzzyKwds.addKwds(chars[i], m_charPosKwds.get(genKey(chars[i], i + 1)));
+					i++;
+				} else {
+					fuzzyKwds.addKwds(chars[i], m_charPosKwds.get(genKey(chars[i], i)));
+				}
 				if (fuzzyKwds.isEmpty()) {
 					break;
 				}
