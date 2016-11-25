@@ -3,8 +3,6 @@ package allen.address.keyaddr;
 import java.io.Serializable;
 import java.util.Collection;
 
-import allen.address.fuzzy.FuzzyGrp;
-
 /**
  * base class of Kwd and Addr. The structure is <key, indexes[]>, where
  * indexes[] are objects (Key sub-class) indexed by key.

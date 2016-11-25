@@ -1,7 +1,5 @@
 package allen.address;
 
-import java.util.ArrayList;
-
 import aai.base.common.AAI_IO;
 import aai.base.common.Common;
 import aai.base.module.AAI_Module;
@@ -59,19 +57,12 @@ public class AppMatch extends AAI_Module {
 		// Step 1.3: build addrTree from global addrs[]
 	}
 
-	public void addrTreeBuild(KeySet m_addrSet) throws Exception {
-	}
-
-	private ArrayList<Addr> exactSearch(String[] kwds) {
-		ArrayList<Addr> exactAddrLst = new ArrayList<Addr>();
-		return exactAddrLst;
-	}
-
-	/** TODO Phase 2: search addrs[] with user-input address */
+	/** Phase 2: search addrs[] with user-input address */
 	public void searching(String searchAddr) throws Exception {
-		// Step 1 [exact search]: search in the addrTree
+		searchAddr = searchAddr.toLowerCase();
+		// TODO Step 1 [exact search]: search in the addrTree
 
-		// Step 2 [fuzzy search]: if search kwds[] / matched kwds[] > 2
+		// Step 2 [fuzzy search]: if can not find in exact search
 		FuzzySearch fuzzySearch = new FuzzySearch();
 		fuzzySearch.search(searchAddr, m_kwdSet, m_addrSet);
 	}
@@ -81,7 +72,7 @@ public class AppMatch extends AAI_Module {
 		appMatch.debug(true);
 		appMatch.indexing("C:/Allen/UTS/UTS_SourceCode/Address/_data/address_v2.csv");
 		// Testing
-		appMatch.searching("615/1 CARLINGFORD NSW 2118 (ALAN WALKER VILLAGE)");
+		appMatch.searching("ALAN WALKER VILLAGE");
 		// appMatch.searching("28/344 pennant hills nsw 2012 nsw good
 		// carlingford 3");
 		System.out.println("\nAll done!");
