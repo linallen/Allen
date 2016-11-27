@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
+import allen.address.fuzzy.FuzzyKwd;
 import allen.address.keyaddr.Key;
 
 /** Stores <char ch, int pos, kwds[]>, where kwds[] contain 'ch' at pos. */
@@ -38,102 +40,102 @@ public class CharPosKwds {
 		return m_charPosKwds.get(genKey(ch, pos));
 	}
 
-	/** get the closet kwd to a given key, which is not in the global kwds[] */
-	public String getClosetKwd(String kwdKey) {
-		// similar idea as the fuzzy-addr matching.
-		// suppose kwdKey="bank" --> bankshill, banksia
+	/**
+	 * return fuzzy kwds[] to a given key. if the key is in the global kwds[],
+	 * return itself.
+	 */
+	public FuzzyKwd getFuzzyKwd(String kwdKey, int topKeyNum) {
+		FuzzyKwd fuzzyKwd = new FuzzyKwd(kwdKey);
+		// 1. search close fuzzy kwds[]
+		List<Key> fuzzyKwdLst = new ArrayList<Key>(getFuzzyKwds(kwdKey, topKeyNum));
+		// 2. sort and trunk fuzzy kwds[]
+		Collections.sort(fuzzyKwdLst);
+		fuzzyKwdLst = fuzzyKwdLst.subList(0, Math.min(fuzzyKwdLst.size(), topKeyNum));
+		// 3. return fuzzy kwds[]
+		fuzzyKwd.addFuzzyKwds(fuzzyKwdLst);
+		return fuzzyKwd;
+	}
+
+	/**
+	 * Similar idea as the fuzzy-addr matching. Suppose kwdKey="bank", then
+	 * fuzzy kwds[] include bankshill, banksia, ...
+	 */
+	private HashSet<Key> getFuzzyKwds(String kwdKey, int topKeyNum) {
+		HashSet<Key> fuzzyKwdSet = new HashSet<Key>();
 		char[] chars = kwdKey.toCharArray();
 		// 1. key is the leftmost part: bank...
-		ArrayList<Key> closedKwdLst = new ArrayList<Key>();
 		FuzzyKwds fuzzyKwds = new FuzzyKwds();
-		for (int i = 0; i < chars.length; i++) {
+		for (int i = 0; (i < chars.length) && (!fuzzyKwds.hasChars() || fuzzyKwds.hasKwds()); i++) {
 			HashSet<Key> kwds = m_charPosKwds.get(genKey(chars[i], i));
 			fuzzyKwds.addKwds(chars[i], kwds);
-			if (fuzzyKwds.isEmpty()) {
-				break;
-			}
 		}
-		if (!fuzzyKwds.isEmpty()) {
-			closedKwdLst.addAll(fuzzyKwds.getKwds());
-			Collections.sort(closedKwdLst);
-			return closedKwdLst.get(0).getKey();
+		fuzzyKwdSet.addAll(fuzzyKwds.getKwds());
+		if (fuzzyKwdSet.size() > 0) {
+			return fuzzyKwdSet;
 		}
 		// 2. one wrong char: *ank, b*nk, ba*k, ban*
-		for (int s = 0; s < chars.length; s++) {
+		List<Key> fuzzyKwdsCase = new ArrayList<Key>();
+		for (int i = 0; i < chars.length; i++) {
 			fuzzyKwds = new FuzzyKwds();
-			for (int i = 0; i < chars.length; i++) {
-				if (i == s) {
-					continue;
-				}
-				HashSet<Key> kwds = m_charPosKwds.get(genKey(chars[i], i));
-				fuzzyKwds.addKwds(chars[i], kwds);
-				if (fuzzyKwds.isEmpty()) {
-					break;
+			for (int j = 0; (j < chars.length) && (!fuzzyKwds.hasChars() || fuzzyKwds.hasKwds()); j++) {
+				if (j != i) {
+					HashSet<Key> kwds = m_charPosKwds.get(genKey(chars[j], j));
+					fuzzyKwds.addKwds(chars[j], kwds);
 				}
 			}
-			closedKwdLst.addAll(fuzzyKwds.getKwds());
+			fuzzyKwdsCase.addAll(fuzzyKwds.getKwds());
 		}
-		if (!closedKwdLst.isEmpty()) {
-			Collections.sort(closedKwdLst);
-			return closedKwdLst.get(0).getKey();
+		fuzzyKwdSet.addAll(fuzzyKwdsCase);
+		if (fuzzyKwdSet.size() >= topKeyNum) {
+			return fuzzyKwdSet;
 		}
 		// 3. one extra char: *bank, b*ank, ba*nk, ban*k,
-		for (int s = 0; s < chars.length; s++) {
+		fuzzyKwdsCase = new ArrayList<Key>();
+		for (int i = 0; i < chars.length; i++) {
 			fuzzyKwds = new FuzzyKwds();
-			for (int i = 0; i < chars.length; i++) {
-				if (i == s) {
-					continue;
-				}
-				int pos = i - ((i >= s) ? 1 : 0);
-				fuzzyKwds.addKwds(chars[i], m_charPosKwds.get(genKey(chars[i], pos)));
-				if (fuzzyKwds.isEmpty()) {
-					break;
+			for (int j = 0; (j < chars.length) && (!fuzzyKwds.hasChars() || fuzzyKwds.hasKwds()); j++) {
+				if (j != i) {
+					int pos = j - ((j >= i) ? 1 : 0);
+					fuzzyKwds.addKwds(chars[j], m_charPosKwds.get(genKey(chars[j], pos)));
 				}
 			}
-			closedKwdLst.addAll(fuzzyKwds.getKwds());
+			fuzzyKwdsCase.addAll(fuzzyKwds.getKwds());
 		}
-		if (!closedKwdLst.isEmpty()) {
-			Collections.sort(closedKwdLst);
-			return closedKwdLst.get(0).getKey();
+		fuzzyKwdSet.addAll(fuzzyKwdsCase);
+		if (fuzzyKwdSet.size() >= topKeyNum) {
+			return fuzzyKwdSet;
 		}
 		// 4. one missing char: ank, bnk, bak, ban
-		for (int s = 0; s < chars.length; s++) {
+		fuzzyKwdsCase = new ArrayList<Key>();
+		for (int i = 0; i < chars.length; i++) {
 			fuzzyKwds = new FuzzyKwds();
-			for (int i = 0; i < chars.length; i++) {
-				int pos = i + ((i >= s) ? 1 : 0);
-				fuzzyKwds.addKwds(chars[i], m_charPosKwds.get(genKey(chars[i], pos)));
-				if (fuzzyKwds.isEmpty()) {
-					break;
-				}
+			for (int j = 0; (j < chars.length) && (!fuzzyKwds.hasChars() || fuzzyKwds.hasKwds()); j++) {
+				int pos = j + ((j >= i) ? 1 : 0);
+				fuzzyKwds.addKwds(chars[j], m_charPosKwds.get(genKey(chars[j], pos)));
 			}
-			closedKwdLst.addAll(fuzzyKwds.getKwds());
+			fuzzyKwdsCase.addAll(fuzzyKwds.getKwds());
 		}
-		if (!closedKwdLst.isEmpty()) {
-			Collections.sort(closedKwdLst);
-			return closedKwdLst.get(0).getKey();
+		fuzzyKwdSet.addAll(fuzzyKwdsCase);
+		if (fuzzyKwdSet.size() >= topKeyNum) {
+			return fuzzyKwdSet;
 		}
 		// 5. swap one chars: abnk, bnak, bakn
-		for (int s = 0; s < chars.length - 1; s++) {
+		fuzzyKwdsCase = new ArrayList<Key>();
+		for (int i = 0; i < chars.length - 1; i++) {
 			fuzzyKwds = new FuzzyKwds();
-			for (int i = 0; i < chars.length; i++) {
-				if (i == s) {
-					fuzzyKwds.addKwds(chars[i + 1], m_charPosKwds.get(genKey(chars[i + 1], i)));
-					fuzzyKwds.addKwds(chars[i], m_charPosKwds.get(genKey(chars[i], i + 1)));
-					i++;
+			for (int j = 0; (j < chars.length) && (!fuzzyKwds.hasChars() || fuzzyKwds.hasKwds()); j++) {
+				if (j == i) {
+					fuzzyKwds.addKwds(chars[j + 1], m_charPosKwds.get(genKey(chars[j + 1], j)));
+					fuzzyKwds.addKwds(chars[j], m_charPosKwds.get(genKey(chars[j], j + 1)));
+					j++;
 				} else {
-					fuzzyKwds.addKwds(chars[i], m_charPosKwds.get(genKey(chars[i], i)));
-				}
-				if (fuzzyKwds.isEmpty()) {
-					break;
+					fuzzyKwds.addKwds(chars[j], m_charPosKwds.get(genKey(chars[j], j)));
 				}
 			}
-			closedKwdLst.addAll(fuzzyKwds.getKwds());
+			fuzzyKwdsCase.addAll(fuzzyKwds.getKwds());
 		}
-		if (!closedKwdLst.isEmpty()) {
-			Collections.sort(closedKwdLst);
-			return closedKwdLst.get(0).getKey();
-		}
-		return null;
+		fuzzyKwdSet.addAll(fuzzyKwdsCase);
+		return fuzzyKwdSet;
 	}
 
 	public String toString() {

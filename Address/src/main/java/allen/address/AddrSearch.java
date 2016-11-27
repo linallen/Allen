@@ -27,7 +27,9 @@ import allen.address.keyaddr.Kwd;
  * BUILDING_NAME, FLAT_NUMBER, NUMBER_FIRST, NUMBER_FIRST_SUFFIX, NUMBER_LAST,
  * NUMBER_LAST_SUFFIX, STREET_NAME, STREET_TYPE_CODE, STREET_SUFFIX_TYPE,
  * LOCALITY_NAME, STATE_ABBREVIATION, POSTCODE]</li>
- * <li><i>-k topk</i> - [para] top k results, default 10.</li>
+ * <li><i>-k topk</i> - [para] top k addresses, default 10.</li>
+ * <li><i>-K topK</i> - [para] top K fuzzy keywords, in spelling check, the
+ * limit on matched kwds[] to a input keyword. default 5.</li>
  * </ul>
  * 
  * @author Allen Lin, 22 Nov 2016
@@ -37,8 +39,10 @@ public class AddrSearch extends AAI_Module {
 
 	/** -i addr_csv: [input] address csv */
 	private String m_addrCSV;
-	/** -k topk: [para] top K results */
-	private int m_topK = 10;
+	/** -k topk: [para] top k addresses */
+	private int m_topk = 10;
+	/** -K topK: [para] top K fuzzy keywords */
+	private int m_topK = 5;
 
 	/** 1. global keyword set[] */
 	private KeySet m_kwdSet = new KeySet();
@@ -117,12 +121,12 @@ public class AddrSearch extends AAI_Module {
 	}
 
 	/** Phase 2: search addrs[] with user-input address */
-	public void searching(String searchAddr, int topK) throws Exception {
+	public void searching(String searchAddr, int topk, int topK) throws Exception {
 		searchAddr = searchAddr.toLowerCase();
 		// TODO Step 1 [exact search]: search in the addrTree
 
 		// Step 2 [fuzzy search]: if can not find in exact search
-		FuzzySearch fuzzySearch = new FuzzySearch(m_kwdSet, m_addrSet, m_charPosKwds, topK);
+		FuzzySearch fuzzySearch = new FuzzySearch(m_kwdSet, m_addrSet, m_charPosKwds, topk, topK);
 		fuzzySearch.owner(this);
 		fuzzySearch.debug(this.debug());
 		fuzzySearch.search(searchAddr);
@@ -135,7 +139,7 @@ public class AddrSearch extends AAI_Module {
 		// 2. searching
 		byte inputBytes[] = new byte[4096];
 		while (true) {
-			System.out.println("Waiting for user input:\n");
+			System.out.println("\nWaiting for user input:\n");
 			// receive user input
 			int bytes = System.in.read(inputBytes);
 			String searchAddr = new String(inputBytes, 0, bytes);
@@ -145,7 +149,7 @@ public class AddrSearch extends AAI_Module {
 			}
 			// output("input [" + searchAddr.length() + "]: " + searchAddr);
 			if (searchAddr.length() > 0) {
-				searching(searchAddr, m_topK);
+				searching(searchAddr, m_topk, m_topK);
 				// "28/344 pennant hills nsw 2012 nsw good carlingford 3");
 			}
 		}
@@ -157,7 +161,9 @@ public class AddrSearch extends AAI_Module {
 		// -i addr_csv
 		m_addrCSV = Common.getOption("i", options);
 		// -k topk
-		m_topK = Common.getOptionInteger("k", options, m_topK);
+		m_topk = Common.getOptionInteger("k", options, m_topk);
+		// -K topK
+		m_topK = Common.getOptionInteger("K", options, m_topK);
 		// debug, daemon, etc
 		super.setOptions(options);
 	}
@@ -165,7 +171,8 @@ public class AddrSearch extends AAI_Module {
 	public static String help() {
 		return "Address Search Program.\n" + "Syntax: Java -jar addrsearch.jar -i addr_csv [-k topk]\n"
 				+ "-i addr_csv - [input] the address.csv file: [ADDRESS_DETAIL_PID, BUILDING_NAME, FLAT_NUMBER, NUMBER_FIRST, NUMBER_FIRST_SUFFIX, NUMBER_LAST, NUMBER_LAST_SUFFIX, STREET_NAME, STREET_TYPE_CODE, STREET_SUFFIX_TYPE, LOCALITY_NAME, STATE_ABBREVIATION, POSTCODE]\n"
-				+ "-k topk - [para] top k results, default 10.\n";
+				+ "-k topk - [para] top k addresses, default 10.\n"
+				+ "-K topK - [para] top K fuzzy keywords, in spelling check, the limit on matched kwds[] to a input keyword. default 5.";
 	}
 
 	public static String version() {
