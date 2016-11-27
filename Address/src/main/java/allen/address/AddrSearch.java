@@ -139,7 +139,7 @@ public class AddrSearch extends AAI_Module {
 		// 2. searching
 		byte inputBytes[] = new byte[4096];
 		while (true) {
-			System.out.println("\nWaiting for user input:\n");
+			System.out.println("\nInput query keywords: (press \"exit\" to quit)\n");
 			// receive user input
 			int bytes = System.in.read(inputBytes);
 			String searchAddr = new String(inputBytes, 0, bytes);

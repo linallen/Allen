@@ -1,6 +1,7 @@
 package allen.address.fuzzykwd;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,19 +42,17 @@ public class CharPosKwds {
 	}
 
 	/**
-	 * return fuzzy kwds[] to a given key. if the key is in the global kwds[],
-	 * return itself.
+	 * return top fuzzy kwds[] to a given key. if the key is in the global
+	 * kwds[], return itself.
 	 */
-	public FuzzyKwd getFuzzyKwd(String kwdKey, int topKeyNum) {
-		FuzzyKwd fuzzyKwd = new FuzzyKwd(kwdKey);
+	public Collection<Key> getFuzzyKwd(String kwdKey, int topKeyNum) {
 		// 1. search close fuzzy kwds[]
 		List<Key> fuzzyKwdLst = new ArrayList<Key>(getFuzzyKwds(kwdKey, topKeyNum));
 		// 2. sort and trunk fuzzy kwds[]
 		Collections.sort(fuzzyKwdLst);
 		fuzzyKwdLst = fuzzyKwdLst.subList(0, Math.min(fuzzyKwdLst.size(), topKeyNum));
 		// 3. return fuzzy kwds[]
-		fuzzyKwd.addFuzzyKwds(fuzzyKwdLst);
-		return fuzzyKwd;
+		return fuzzyKwdLst;
 	}
 
 	/**
@@ -87,7 +86,7 @@ public class CharPosKwds {
 		}
 		fuzzyKwdSet.addAll(fuzzyKwdsCase);
 		if (fuzzyKwdSet.size() >= topKeyNum) {
-			return fuzzyKwdSet;
+			// return fuzzyKwdSet;
 		}
 		// 3. one extra char: *bank, b*ank, ba*nk, ban*k,
 		fuzzyKwdsCase = new ArrayList<Key>();
@@ -103,7 +102,7 @@ public class CharPosKwds {
 		}
 		fuzzyKwdSet.addAll(fuzzyKwdsCase);
 		if (fuzzyKwdSet.size() >= topKeyNum) {
-			return fuzzyKwdSet;
+			// return fuzzyKwdSet;
 		}
 		// 4. one missing char: ank, bnk, bak, ban
 		fuzzyKwdsCase = new ArrayList<Key>();
@@ -117,7 +116,7 @@ public class CharPosKwds {
 		}
 		fuzzyKwdSet.addAll(fuzzyKwdsCase);
 		if (fuzzyKwdSet.size() >= topKeyNum) {
-			return fuzzyKwdSet;
+			// return fuzzyKwdSet;
 		}
 		// 5. swap one chars: abnk, bnak, bakn
 		fuzzyKwdsCase = new ArrayList<Key>();
