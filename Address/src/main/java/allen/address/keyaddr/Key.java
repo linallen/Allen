@@ -54,10 +54,12 @@ public abstract class Key implements Serializable, Comparable<Key> {
 	}
 
 	public String toString() {
-		String buf = "<\"" + m_key + "\", length = " + length() + ", indexes = " + size() + ">: {";
+		StringBuffer buf = new StringBuffer()
+				.append("<\"" + m_key + "\", length = " + length() + ", indexes = " + size() + ">: {");
 		for (Key idx : getIndxes()) {
-			buf += "[" + idx.getKey() + "], ";
+			buf.append("[" + idx.getKey() + "], ");
 		}
-		return buf.trim() + "}";
+		buf.trimToSize();
+		return buf.append("}").toString();
 	}
 }

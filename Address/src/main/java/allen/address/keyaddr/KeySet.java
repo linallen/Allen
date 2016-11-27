@@ -31,10 +31,10 @@ public class KeySet {
 	}
 
 	public String toString() {
-		String buf = new String();
+		StringBuffer buf = new StringBuffer();
 		for (String key : m_keySet.keySet()) {
-			buf += get(key).toString() + "\n";
+			buf.append(get(key).toString() + "\n");
 		}
-		return buf;
+		return buf.toString();
 	}
 }
