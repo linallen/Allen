@@ -1,4 +1,4 @@
-package allen.base.module;
+package aai.base.module;
 
 /**
  * Status reflecting or influencing running behavior of an AAI module.

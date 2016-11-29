@@ -1,4 +1,4 @@
-package allen.matlab;
+package aai.matlab;
 
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;

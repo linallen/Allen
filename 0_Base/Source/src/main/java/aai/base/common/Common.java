@@ -1,4 +1,4 @@
-package allen.base.common;
+package aai.base.common;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -21,15 +21,22 @@ import java.util.List;
  */
 public class Common {
 
-	/** string to number (Integer or Double) */
-	public static Object toNumber(String valueStr) throws Exception {
+	/**
+	 * transfer a number from string to an number object (Integer or Double).
+	 * 
+	 * @param strNum
+	 *            the "string" number
+	 * @return an Integer or Double object depending on the input, or null if
+	 *         the input is not a number.
+	 */
+	public static Object toNumber(String strNum) throws Exception {
 		try {
-			return Integer.parseInt(valueStr);
+			return Integer.parseInt(strNum);
 		} catch (Exception e1) {
 			try {
-				return Double.parseDouble(valueStr);
+				return Double.parseDouble(strNum);
 			} catch (Exception e2) {
-				throw new Exception("Not a number: " + valueStr);
+				return null;
 			}
 		}
 	}
@@ -37,6 +44,8 @@ public class Common {
 	/**
 	 * added on 20 May 2015.<br>
 	 * TODO: need to remove this function.
+	 * 
+	 * concatenate two string separated by a specified separator.
 	 * 
 	 * @param str1
 	 * @param separator
@@ -49,7 +58,7 @@ public class Common {
 	}
 
 	/**
-	 * combine two arrays.
+	 * concatenate two arrays.
 	 * 
 	 * @param array1[]
 	 * @param array2[]
@@ -64,7 +73,7 @@ public class Common {
 	}
 
 	/**
-	 * get intersection of two lists.
+	 * return intersection of two lists.
 	 * 
 	 * @param list1[]
 	 * @param list2[]
@@ -263,13 +272,15 @@ public class Common {
 			System.out.println("Exception in ObjectCloner = " + e);
 			throw (e);
 		} finally {
-			oos.close();
-			ois.close();
+			if (oos != null)
+				oos.close();
+			if (ois != null)
+				ois.close();
 		}
 	}
 
 	/**
-	 * get string by combining strs[]. TODO discard
+	 * get string by concatenating strs[]. TODO discard
 	 * 
 	 * @param strs[]
 	 * @return combined strs[]
@@ -453,6 +464,8 @@ public class Common {
 	}
 
 	/**
+	 * assertion
+	 * 
 	 * @param statement
 	 */
 	public static void Assert(boolean statement) {
@@ -466,6 +479,8 @@ public class Common {
 	}
 
 	/**
+	 * assertion and throw exception with an error message.
+	 * 
 	 * @param statement
 	 * @param ErrMsg
 	 */
@@ -479,6 +494,10 @@ public class Common {
 		}
 	}
 
+	/**
+	 * @return the max of an array[]
+	 * 
+	 */
 	public static Double Max(ArrayList<Double> numbers) {
 		Double max = Double.NEGATIVE_INFINITY;
 		for (Double number : numbers) {
@@ -487,6 +506,10 @@ public class Common {
 		return max;
 	}
 
+	/**
+	 * @return the min of an array[]
+	 * 
+	 */
 	public static Double Min(ArrayList<Double> numbers) {
 		Double min = Double.POSITIVE_INFINITY;
 		for (Double number : numbers) {
@@ -500,11 +523,12 @@ public class Common {
 	// e.printStackTrace();
 	// }
 
+	/** @return if string is not null and not empty. */
 	public static boolean validString(String str) {
 		return ((str != null) && !str.isEmpty());
 	}
 
-	/** return the number of distinct numbers */
+	/** @return the number of distinct numbers of a list */
 	public static int countDist(ArrayList<Double> numbers) {
 		HashSet<Double> set = new HashSet<Double>();
 		for (Double number : numbers) {
@@ -513,6 +537,10 @@ public class Common {
 		return set.size();
 	}
 
+	/**
+	 * check if a string is "missing" value, i.e., it's "." or "?".<br>
+	 * DISCARDED
+	 */
 	public static boolean isMissing(String str) {
 		return str.equals(".") || str.equals("?");
 	}
@@ -602,7 +630,7 @@ public class Common {
 		return distWords.toArray(new String[0]);
 	}
 
-	/** return instance number of a CSV or ARFF file */
+	/** @return instance number of a CSV or ARFF file */
 	public static int getInstNum(String dataFile) throws Exception {
 		BufferedReader br = null;
 		int instNum = -1;
@@ -672,14 +700,17 @@ public class Common {
 		return outputStr;
 	}
 
+	/** quote a string with a double quotation mark */
 	public static String quote(String str) {
 		return "\"" + ((str == null) ? "" : str) + "\"";
 	}
 
+	/** quote a string with a specified marks ch */
 	public static String quote(String str, char ch) {
 		return ch + ((str == null) ? "" : str) + ch;
 	}
 
+	/** remove the quotation of a string */
 	public static String decodeQuotation(String text, char ch) {
 		String outputStr = new String();
 		return outputStr;
@@ -752,6 +783,7 @@ public class Common {
 		return (str != null) && !str.isEmpty();
 	}
 
+	/** check if a file is CSV */
 	public static boolean isCSV(String fileName) {
 		return validString(fileName) && fileName.toLowerCase().endsWith(".csv");
 	}

@@ -1,9 +1,9 @@
-package allen.base.dataset;
+package aai.base.dataset;
 
 import java.util.Collection;
 import java.util.HashMap;
 
-import allen.base.module.AAI_Module;
+import aai.base.module.AAI_Module;
 
 /**
  * Feature class.

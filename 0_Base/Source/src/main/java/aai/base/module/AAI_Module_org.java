@@ -1,4 +1,4 @@
-package allen.base.module;
+package aai.base.module;
 
 import java.io.File;
 import java.io.InputStream;
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import allen.base.common.AAI_IO;
-import allen.base.common.ClassManager;
-import allen.base.common.Common;
-import allen.base.common.Timer;
+import aai.base.common.AAI_IO;
+import aai.base.common.ClassManager;
+import aai.base.common.Common;
+import aai.base.common.Timer;
 
 /**
  * The definitions of common interfaces for all AAI modules.

@@ -1,4 +1,4 @@
-package allen.base.dataset;
+package aai.base.dataset;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import allen.base.common.AAI_IO;
-import allen.base.common.Common;
-import allen.base.common.Timer;
-import allen.base.module.AAI_Module;
-import allen.base.set.AllenSet;
+import aai.base.common.AAI_IO;
+import aai.base.common.Common;
+import aai.base.common.Timer;
+import aai.base.module.AAI_Module;
+import aai.base.set.AllenSet;
 
 /**
  * A data set containing a feature table.<br>

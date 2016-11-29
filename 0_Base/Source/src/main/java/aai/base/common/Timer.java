@@ -1,4 +1,4 @@
-package allen.base.common;
+package aai.base.common;
 
 public class Timer {
 	private long m_startTime;

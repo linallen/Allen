@@ -1,4 +1,4 @@
-package allen.base;
+package aai.base;
 
 /**
  * Classes and functions commonly used in all modules.

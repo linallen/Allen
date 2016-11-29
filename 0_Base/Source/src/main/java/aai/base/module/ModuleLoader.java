@@ -1,4 +1,4 @@
-package allen.base.module;
+package aai.base.module;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

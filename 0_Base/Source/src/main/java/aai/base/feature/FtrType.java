@@ -1,4 +1,4 @@
-package allen.base.feature;
+package aai.base.feature;
 
 /** feature type: Numeric, Categorical, String or Date */
 public enum FtrType {

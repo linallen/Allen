@@ -1,4 +1,4 @@
-package allen.base.module;
+package aai.base.module;
 
 import java.io.File;
 import java.io.InputStream;
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import allen.base.common.AAI_IO;
-import allen.base.common.ClassManager;
-import allen.base.common.Common;
-import allen.base.common.Timer;
+import aai.base.common.AAI_IO;
+import aai.base.common.ClassManager;
+import aai.base.common.Common;
+import aai.base.common.Timer;
 
 /**
  * The definitions of common interfaces for all AAI modules.
@@ -301,6 +301,8 @@ public class AAI_Module implements Runnable, Serializable {
 	protected String m_workDir = new String();
 	/** temporary directory, default = work_dir + "temp/" */
 	protected String m_tempDir = new String();
+	/** debug directory, default = work_dir + "debug/" */
+	protected String m_dbgDir = new String();
 	/** log file, default = work_dir + name() + ".log" */
 	protected String m_logFile = new String();
 
@@ -363,6 +365,16 @@ public class AAI_Module implements Runnable, Serializable {
 	/** 7. get temporary directory */
 	public String tempDir() {
 		return !m_tempDir.isEmpty() ? m_tempDir : (workDir() + "temp/");
+	}
+
+	/** 7. set debug directory */
+	public void dbgDir(String dbgDir) {
+		m_dbgDir = dbgDir;
+	}
+
+	/** 7. get debug directory */
+	public String dbgDir() {
+		return !m_dbgDir.isEmpty() ? m_dbgDir : (workDir() + "dbg/");
 	}
 
 	/** save str to temp file */
@@ -791,7 +803,7 @@ public class AAI_Module implements Runnable, Serializable {
 	public static Object getInstance(String clsName) throws Exception {
 		Object instance = s_clsManager.getInstance(clsName.trim().toUpperCase());
 		if (instance == null) {
-			throw new Exception(clsName + "： class not registered, please register it with register() first. ");
+			throw new Exception(clsName + ": class not registered, please register it with register() first. ");
 		}
 		return instance;
 	}

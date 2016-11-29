@@ -1,4 +1,4 @@
-package allen.base.dataset;
+package aai.base.dataset;
 
 /** feature type: Numeric, Categorical, String or Date */
 public enum FtrType {

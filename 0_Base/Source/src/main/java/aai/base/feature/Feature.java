@@ -1,10 +1,10 @@
-package allen.base.feature;
+package aai.base.feature;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import allen.base.common.Common;
+import aai.base.common.Common;
 
 public class Feature implements Serializable {
 	private static final long serialVersionUID = -3112397935229769909L;

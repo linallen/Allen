@@ -1,4 +1,4 @@
-package allen.base.table;
+package aai.base.table;
 
 import java.util.ArrayList;
 import java.util.Collections;

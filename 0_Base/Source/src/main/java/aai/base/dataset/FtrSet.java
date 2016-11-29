@@ -1,12 +1,12 @@
-package allen.base.dataset;
+package aai.base.dataset;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
-import allen.base.module.AAI_Module;
-import allen.base.set.AllenSet;
+import aai.base.module.AAI_Module;
+import aai.base.set.AllenSet;
 
 /** Feature Set[n] of a data set */
 public class FtrSet extends AAI_Module implements AllenSet {
