@@ -7,10 +7,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import allen.address.keyaddr.Kwd;
+import aai.base.common.Timer;
+import aai.base.module.AAI_Module;
+import allen.address.basic.Kwd;
 
 /** Stores <char ch, int pos, kwds[]>, where kwds[] contain 'ch' at pos. */
-public class CharPosKwds {
+public class CharPosKwds extends AAI_Module {
+	private static final long serialVersionUID = -3929749576412850339L;
+
 	/** [index] maximum position. position from 0, 1, ..., maxPos-1 */
 	private HashMap<String, HashSet<Kwd>> m_charPosKwds = new HashMap<String, HashSet<Kwd>>();
 
@@ -44,19 +48,19 @@ public class CharPosKwds {
 	 * return top fuzzy kwds[] to a given key. if the key is in the global
 	 * kwds[], return itself.
 	 */
-	public Collection<Kwd> getFuzzyKwd(String kwdKey, int topKeyNum) {
-		// 1. search close fuzzy kwds[]
-		List<Kwd> fuzzyKwdLst = new ArrayList<Kwd>(getSimKwds(kwdKey, topKeyNum));
-		// 2. sort and trunk fuzzy kwds[]
-		Collections.sort(fuzzyKwdLst);
-		fuzzyKwdLst = fuzzyKwdLst.subList(0, Math.min(fuzzyKwdLst.size(), topKeyNum));
-		// 3. return fuzzy kwds[]
-		return fuzzyKwdLst;
+	public Collection<Kwd> getSimKwd(String kwdKey, int topKeyNum) {
+		// 1. search close sim kwds[]
+		List<Kwd> simKwdLst = new ArrayList<Kwd>(getSimKwds(kwdKey, topKeyNum));
+		// 2. sort and trunk sim kwds[]
+		Collections.sort(simKwdLst);
+		simKwdLst = simKwdLst.subList(0, Math.min(simKwdLst.size(), topKeyNum));
+		// 3. return sim kwds[]
+		return simKwdLst;
 	}
 
 	/**
-	 * Similar idea as the fuzzy-addr matching. Suppose kwdKey="bank", then
-	 * fuzzy kwds[] include bankshill, banksia, ...
+	 * Same idea as the fuzzy-addr matching. Suppose kwdKey="bank", then similar
+	 * kwds[] include bankshill, banksia, ...
 	 */
 	private HashSet<Kwd> getSimKwds(String kwdKey, int topKeyNum) {
 		HashSet<Kwd> simKwdSet = new HashSet<Kwd>();
@@ -130,13 +134,25 @@ public class CharPosKwds {
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		for (String key : m_charPosKwds.keySet()) {
-			buf.append(key + ", [");
+			buf.append(key);
 			HashSet<Kwd> kwdSet = m_charPosKwds.get(key);
 			for (Kwd kwd : kwdSet) {
-				buf.append(kwd.toString() + " ");
+				buf.append(" " + Kwd.str(kwd));
 			}
-			buf.append("]\n");
+			buf.append("\n");
 		}
 		return buf.toString();
+	}
+
+	// TODO REVISE load index charPosKwds[] to file
+	private void loadChPosFile(String fileChPos) {
+		output("Started loading chPosKwds[] from file " + fileChPos);
+		Timer timer = new Timer();
+		for (int i = 0; i < m_charPosKwds.size(); i++) {
+			progress(i + 1, m_charPosKwds.size());
+			// Addr addr = m_addrLst.get(i);
+			// AAI_IO.saveFile(fileChPos, Addr.toStdAddr(addr) + "\n", true);
+		}
+		output("Finished loading chPosKwds[] from file. " + m_charPosKwds.size() + " loaded. " + timer);
 	}
 }
