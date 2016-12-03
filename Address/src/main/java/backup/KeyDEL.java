@@ -1,4 +1,4 @@
-package allen.address.keyaddr;
+package backup;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import aai.base.common.Common;
  * base class of Kwd and Addr. The structure is <key, indexes[]>, where
  * indexes[] are objects (Key sub-class) indexed by key.
  */
-public abstract class Key implements Serializable, Comparable<Key> {
+public abstract class KeyDEL implements Serializable, Comparable<KeyDEL> {
 	private static final long serialVersionUID = 7337253019623573474L;
 
 	private String m_key;
@@ -23,10 +23,10 @@ public abstract class Key implements Serializable, Comparable<Key> {
 	}
 
 	/** add an index */
-	public abstract void addIndex(Key idx);
+	public abstract void addIndex(KeyDEL idx);
 
 	/** get the indexes[] */
-	public abstract Collection<Key> getIndxes();
+	public abstract Collection<KeyDEL> getIndxes();
 
 	/** get # of indexes, i.e., it's DF (Document Frequency) */
 	public int size() {
@@ -44,7 +44,7 @@ public abstract class Key implements Serializable, Comparable<Key> {
 	}
 
 	/** sort keys[] by 1) length in ascending order and 2) dictionary */
-	public int compareTo(Key key) {
+	public int compareTo(KeyDEL key) {
 		// TODO 1st ordered by DF from high to low
 		int diff = (int) Math.signum(key.wt() - this.wt());
 		if (diff == 0) {
@@ -63,7 +63,7 @@ public abstract class Key implements Serializable, Comparable<Key> {
 		buf.append(Common.quote(m_key) + "<");
 		buf.append("len=" + length() + "|");
 		buf.append("wt=" + wt() + ">{");
-		for (Key idx : getIndxes()) {
+		for (KeyDEL idx : getIndxes()) {
 			buf.append("[" + idx.getKey() + "], ");
 		}
 		buf.trimToSize();
