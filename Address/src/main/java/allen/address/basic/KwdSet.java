@@ -53,10 +53,10 @@ public class KwdSet extends AAI_Module {
 	}
 
 	// TODO REVISE read indexed [kwd, addrs[]]
-	public void loadKwds(String kwdFile) {
-		output("Started loading kwds[] from file " + kwdFile);
+	public void loadKwds(String kwdsFile) {
+		output("Started loading kwds[] from file " + kwdsFile);
 		Timer timer = new Timer();
-		String buf = AAI_IO.readFile(kwdFile);
+		String buf = AAI_IO.readFile(kwdsFile);
 		String lines[] = buf.split("\n");
 		for (int i = 0; i < lines.length; i++) {
 			progress(i + 1, lines.length);

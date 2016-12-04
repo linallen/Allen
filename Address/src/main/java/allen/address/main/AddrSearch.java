@@ -63,6 +63,12 @@ public class AddrSearch extends AAI_Module {
 	/** 3. <char ch, int pos, kwds[]>, kwds[] contain 'ch' at pos. */
 	private CharPosKwds m_chposKwds = new CharPosKwds();
 
+	public AddrSearch() {
+		m_kwdSet.owner(this);
+		m_addrLst.owner(this);
+		m_chposKwds.owner(this);
+	}
+
 	private String kwdsFile() {
 		return m_dirIdx + "idx_kwds.txt";
 	}
@@ -75,31 +81,23 @@ public class AddrSearch extends AAI_Module {
 		return m_dirIdx + "idx_chars.txt";
 	}
 
-	// // TODO REVISE save index [kwd, addr[]] to file
-	// private void saveKwdFile(String fileKwd) {
-	// output("Started saving " + m_kwdSet.size() + " kwds[] to file " +
-	// fileKwd);
-	// Timer timer = new Timer();
-	// int total = m_kwdSet.size(), finished = 0;
-	// for (Kwd kwd : m_kwdSet.getKwds()) {
-	// progress(++finished, total);
-	// AAI_IO.saveFile(fileKwd, Kwd.toFile(kwd) + "\n", true);
-	// }
-	// output("Finished saving kwds[] to file. " + timer);
-	// }
-	//
-	// TODO REVISE save addrs[] to file
-	// private void saveAddrFile(String fileAddr) {
-	// output("Started saving " + m_addrLst.size() + " addrs[] to file " +
-	// fileAddr);
-	// Timer timer = new Timer();
-	// for (int i = 0; i < m_addrLst.size(); i++) {
-	// progress(i + 1, m_addrLst.size());
-	// Addr addr = m_addrLst.get(i);
-	// AAI_IO.saveFile(fileAddr, Addr.toStdAddr(addr) + "\n", true);
-	// }
-	// output("Finished saving addrs[] to file. " + timer);
-	// }
+	public void saveIdx(String idxDir) throws Exception {
+		// save kwds[] indexes to files
+		AAI_IO.saveFile(kwdsFile(), m_kwdSet.toString());
+		// save addrs[] to file
+		AAI_IO.saveFile(addrsFile(), m_addrLst.toString());
+		// save chPosKwds[] to file
+		AAI_IO.saveFile(chposKwdsFile(), m_chposKwds.toString());
+	}
+
+	public void loadIdx(String idxDir) throws Exception {
+		// load kwds[] indexes from files
+		m_kwdSet.loadKwds(kwdsFile());
+		// load addrs[] from file
+		m_addrLst.loadAddrs(addrsFile(), m_kwdSet);
+		// load chPosKwds[] from file
+		m_chposKwds.loadChPosFile(chposKwdsFile(), m_kwdSet);
+	}
 
 	/**
 	 * Phase 1: build Indexes from Address Book input: addrs.csv =
@@ -109,16 +107,9 @@ public class AddrSearch extends AAI_Module {
 	 * STREET_SUFFIX_TYPE[9], LOCALITY_NAME[10], STATE_ABBREVIATION[11],
 	 * POSTCODE[12]]}
 	 */
-	public void indexing(String addrCSV, String idxDir) throws Exception {
+	public void indexing(String addrCSV) throws Exception {
 		if (!AAI_IO.fileExist(addrCSV)) {
 			throw new Exception("File not exits. " + addrCSV);
-		}
-		m_dirIdx = AAI_IO.getAbsDir(idxDir);
-		if (m_dirIdx == null) {
-			m_dirIdx = this.workDir();
-		}
-		if (!AAI_IO.createDir(m_dirIdx)) {
-			throw new Exception("Failed to create indexing directory. " + idxDir);
 		}
 		this.updateDirs(AAI_IO.getAbsDir(addrCSV)); // TODO discard
 		Timer timer = new Timer();
@@ -145,10 +136,6 @@ public class AddrSearch extends AAI_Module {
 		output("Finished indexing kwds[]. " + addr_num_indexed + " addrs indexed, "
 				+ ((addr_num_discard == 0) ? "" : (addr_num_discard + " addrs discarded, ")) + m_kwdSet.size()
 				+ " indexing kwds[]. " + timer);
-		// save kwds[] indexes to files
-		AAI_IO.saveFile(kwdsFile(), m_kwdSet.toString());
-		// save addrs[] to file
-		AAI_IO.saveFile(addrsFile(), m_addrLst.toString());
 
 		// Step 1.2: build <char, pos, kwds[]> for spelling check
 		output("Step 2: indexing for spelling check");
@@ -163,8 +150,6 @@ public class AddrSearch extends AAI_Module {
 			}
 		}
 		output("Done. Produced " + m_chposKwds.size() + " [ch, pos, kwd] indexes. " + timer);
-		// save chPosKwds[] to file
-		AAI_IO.saveFile(chposKwdsFile(), m_chposKwds.toString());
 	}
 
 	/** Phase 2: search addrs[] with user query */
@@ -180,10 +165,26 @@ public class AddrSearch extends AAI_Module {
 		return fuzzySearch.search(usrQuery);
 	}
 
+	private String createIdxDir(String dirIdx) throws Exception {
+		if (dirIdx == null || dirIdx.isEmpty()) {
+			dirIdx = this.workDir() + "idx/";
+		}
+		if (!AAI_IO.createDir(dirIdx)) {
+			throw new Exception("Failed to create indexing directory. " + dirIdx);
+		}
+		return dirIdx;
+	}
+
 	@Override
 	protected void mainProc() throws Exception {
 		// Step 1. indexing
-		indexing(m_addrCSV, m_dirIdx);
+		if (AAI_IO.fileExist(m_addrCSV)) {
+			indexing(m_addrCSV);
+			saveIdx(m_dirIdx);
+		} else {
+			loadIdx(m_dirIdx);
+		}
+
 		// Step 2. searching
 		byte inputBytes[] = new byte[4096];
 		while (true) {
@@ -212,6 +213,7 @@ public class AddrSearch extends AAI_Module {
 		m_topK = Common.getOptionInteger("K", options, m_topK);
 		// -d dir_idx
 		m_dirIdx = Common.getOption("d", options);
+		m_dirIdx = createIdxDir(m_dirIdx);
 		// debug, daemon, etc
 		super.setOptions(options);
 	}

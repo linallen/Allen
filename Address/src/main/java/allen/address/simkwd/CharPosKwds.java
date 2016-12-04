@@ -7,9 +7,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import aai.base.common.AAI_IO;
+import aai.base.common.Common;
 import aai.base.common.Timer;
 import aai.base.module.AAI_Module;
+import allen.address.basic.CommFunc;
 import allen.address.basic.Kwd;
+import allen.address.basic.KwdSet;
 
 /** Stores <char ch, int pos, kwds[]>, where kwds[] contain 'ch' at pos. */
 public class CharPosKwds extends AAI_Module {
@@ -30,8 +34,7 @@ public class CharPosKwds extends AAI_Module {
 	}
 
 	/** add a kwd to the kwd set[] at <ch, pos> */
-	public void addKwd(char ch, int pos, Kwd kwd) throws Exception {
-		String key = genKey(ch, pos);
+	private void addKwd(String key, Kwd kwd) {
 		HashSet<Kwd> kwdSet = m_charPosKwds.get(key);
 		if (kwdSet == null) {
 			kwdSet = new HashSet<Kwd>();
@@ -40,7 +43,13 @@ public class CharPosKwds extends AAI_Module {
 		kwdSet.add(kwd);
 	}
 
-	public HashSet<Kwd> getKwdSet(char ch, int pos) throws Exception {
+	/** add a kwd to the kwd set[] at <ch, pos> */
+	public void addKwd(char ch, int pos, Kwd kwd) {
+		String key = genKey(ch, pos);
+		addKwd(key, kwd);
+	}
+
+	public HashSet<Kwd> getKwdSet(char ch, int pos) {
 		return m_charPosKwds.get(genKey(ch, pos));
 	}
 
@@ -145,13 +154,18 @@ public class CharPosKwds extends AAI_Module {
 	}
 
 	// TODO REVISE load index charPosKwds[] to file
-	private void loadChPosFile(String fileChPos) {
-		output("Started loading chPosKwds[] from file " + fileChPos);
+	public void loadChPosFile(String chposKwdsFile, KwdSet kwdSet) {
+		output("Started loading chPosKwds[] from file " + chposKwdsFile);
 		Timer timer = new Timer();
-		for (int i = 0; i < m_charPosKwds.size(); i++) {
-			progress(i + 1, m_charPosKwds.size());
-			// Addr addr = m_addrLst.get(i);
-			// AAI_IO.saveFile(fileChPos, Addr.toStdAddr(addr) + "\n", true);
+		String buf = AAI_IO.readFile(chposKwdsFile);
+		String lines[] = buf.split("\n");
+		for (int i = 0; i < lines.length; i++) {
+			progress(i + 1, lines.length);
+			String items[] = lines[i].split(" ");
+			String key = items[0];
+			for (int j = 1; j < items.length; j++) {
+				addKwd(key, kwdSet.add(items[j]));
+			}
 		}
 		output("Finished loading chPosKwds[] from file. " + m_charPosKwds.size() + " loaded. " + timer);
 	}
