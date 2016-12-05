@@ -150,6 +150,7 @@ public class AddrSearch extends AAI_Module {
 			}
 		}
 		output("Done. Produced " + m_chposKwds.size() + " [ch, pos, kwd] indexes. " + timer);
+		// System.gc();
 	}
 
 	/** Phase 2: search addrs[] with user query */

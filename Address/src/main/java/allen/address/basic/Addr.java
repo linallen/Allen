@@ -13,7 +13,7 @@ public class Addr implements Serializable, Comparable<Addr> {
 	/** addr id */
 	public Integer id;
 
-	/** kwd list[] */
+	/** kwd list[] (the kwds[] of addr is used for result display ONLY) */
 	private Kwd m_bldgNames[], m_flatNum;
 	private Kwd m_numFirst, m_numLast;
 	/** other kwds[] + middle street numbers besides specific ones above */
@@ -29,32 +29,34 @@ public class Addr implements Serializable, Comparable<Addr> {
 		addr.id = addrId;
 		HashSet<Kwd> addrAllKwds = new HashSet<Kwd>();
 
-		addrStr = addrStr.replaceAll(" +", " ").trim();
+		// addrStr = addrStr.replaceAll(" +", " ").trim();
 		// 1. extract building names[]
-		String[] items = addrStr.split("\\|");
-		Common.Assert(items.length <= 2);
-		if (items.length == 2) {
-			String bldgNames[] = items[1].trim().split(" ");
+		int pos = addrStr.indexOf('|');
+		if (pos > 0) {
+			String bldgNames[] = addrStr.substring(pos + 1, addrStr.length()).trim().split(" ");
 			addr.m_bldgNames = new Kwd[bldgNames.length];
 			for (int i = 0; i < bldgNames.length; i++) {
 				addr.m_bldgNames[i] = kwdSet.add(bldgNames[i]);
 				addrAllKwds.add(addr.m_bldgNames[i]);
 			}
-			addrStr = items[0].trim();
+			addrStr = addrStr.substring(0, pos).trim();
 		}
 		// 2. extract flat number
-		items = addrStr.split("/");
-		Common.Assert(items.length <= 2);
-		if (items.length == 2) {
-			addr.m_flatNum = kwdSet.add(items[0]);
+		pos = addrStr.indexOf('/');
+		if (pos > 0) {
+			String flatNum = addrStr.substring(0, pos).trim();
+			addr.m_flatNum = kwdSet.add(flatNum);
 			addrAllKwds.add(addr.m_flatNum);
-			addrStr = items[1];
+			addrStr = addrStr.substring(pos + 1, addrStr.length()).trim();
 		}
 		// 3. extract streetFirstNum-streetLastNum and other kwds[]
 		String kwdStrs[] = addrStr.split(" ");
 		addr.m_kwdLst = new Kwd[kwdStrs.length];
 		ArrayList<Kwd> addrDispKwds = new ArrayList<Kwd>();
 		for (String kwdStr : kwdStrs) {
+			if (kwdStr.isEmpty()) {
+				continue;
+			}
 			if (kwdStr.contains("-")) {
 				// parse & and street numbers "12a-15b" to kwds[]
 				// e.g., 12a-15b, add 12a, 13, 14, 15b
@@ -104,8 +106,10 @@ public class Addr implements Serializable, Comparable<Addr> {
 			String m_streetNames[], m_streetType, m_streetSuffix;
 			String m_localityNames[], m_stateAbbr, m_postCode;
 
-			line = line.replaceAll(" +", " ").replaceAll(" ,", ",").replaceAll(", ", ",");
-			String items[] = line.toLowerCase().trim().split(",");
+			// line = line.replaceAll(" +", " ").replaceAll(" ,",
+			// ",").replaceAll(", ", ",");
+			// line = line.replaceAll(",", " ");
+			String items[] = line.toLowerCase().split(",");
 			if (items.length < 13) {
 				return null; // invalid address line
 			}
