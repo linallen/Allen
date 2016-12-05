@@ -83,9 +83,11 @@ public class AddrSearch extends AAI_Module {
 
 	public void saveIdx(String idxDir) throws Exception {
 		// save kwds[] indexes to files
-		AAI_IO.saveFile(kwdsFile(), m_kwdSet.toString());
+		m_kwdSet.save(kwdsFile());
+		// AAI_IO.saveFile(kwdsFile(), m_kwdSet.toString());
 		// save addrs[] to file
-		AAI_IO.saveFile(addrsFile(), m_addrLst.toString());
+		m_addrLst.save(addrsFile());
+		// AAI_IO.saveFile(addrsFile(), m_addrLst.toString());
 		// save chPosKwds[] to file
 		AAI_IO.saveFile(chposKwdsFile(), m_chposKwds.toString());
 	}
@@ -127,7 +129,8 @@ public class AddrSearch extends AAI_Module {
 			progress(finished += line.length() + 2, total);
 			Addr addr = Addr.newAddr(line, m_kwdSet, addr_num_indexed);
 			if (addr != null) {
-				m_addrLst.add(addr);
+				// TODO
+				// m_addrLst.add(addr);
 				addr_num_indexed++;
 			}
 		}

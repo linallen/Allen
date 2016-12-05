@@ -1,5 +1,8 @@
 package allen.address.basic;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -50,6 +53,26 @@ public class KwdSet extends AAI_Module {
 			buf.append(Kwd.toString(this.get(kwdStr)) + "\n");
 		}
 		return buf.toString();
+	}
+
+	public boolean save(String fileName) {
+		BufferedWriter bw = null;
+		try {
+			output("Started saving kwds[] to file " + fileName);
+			Timer timer = new Timer();
+			bw = new BufferedWriter(new FileWriter(fileName));
+			ArrayList<Kwd> kwds = new ArrayList<Kwd>(m_kwdSet.values());
+			for (int i = 0; i < kwds.size(); i++) {
+				progress(i + 1, kwds.size());
+				Kwd kwd = kwds.get(i);
+				bw.write(Kwd.toString(kwd) + "\n");
+			}
+			bw.close();
+			output("Finished saving kwds[] to file. " + timer);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	// TODO REVISE read indexed [kwd, addrs[]]

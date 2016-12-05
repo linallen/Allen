@@ -1,9 +1,6 @@
 package allen.address.basic;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 
 /** keyword object */
 public class Kwd implements Serializable, Comparable<Kwd> {
@@ -12,11 +9,8 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 	/** kwd key */
 	private String m_kwdStr;
 
-	/** addrs[] containing this kwd */
-	private HashSet<Integer> m_addrIds = new HashSet<Integer>();
-
-	/** new sorted addrs[] containing this kwd */
-	private SortedIntLst m_addrSortedIds = new SortedIntLst();
+	/** sorted addrs[] containing this kwd */
+	private SortedIntLst m_addrIds = new SortedIntLst();
 
 	public Kwd(String kwdStr) {
 		m_kwdStr = kwdStr.intern();
@@ -37,7 +31,7 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 		return m_addrIds.size();
 	}
 
-	public Collection<Integer> hostAddrs() {
+	public SortedIntLst hostAddrs() {
 		return m_addrIds;
 	}
 
@@ -57,11 +51,14 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 	}
 
 	public static String toString(Kwd kwd) {
-		StringBuffer sb = new StringBuffer(kwd.m_kwdStr);
-		for (Integer addrId : kwd.m_addrIds) {
-			sb.append(" ").append(addrId);
-		}
-		return sb.toString();
+		// StringBuffer sb = new StringBuffer(kwd.m_kwdStr);
+		// for (Integer addrId : kwd.m_addrIds) {
+		// sb.append(" ").append(addrId);
+		// }
+		// return sb.toString();
+		int ratio = 100 * kwd.m_addrIds.length() / kwd.m_addrIds.size();
+		return kwd.m_kwdStr + ": <" + kwd.m_addrIds.length() + "/" + kwd.m_addrIds.size() + "=" + ratio + "%>"
+				+ SortedIntLst.toString(kwd.m_addrIds);
 	}
 
 	public static String str(Kwd kwd) {
