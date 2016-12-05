@@ -1,6 +1,7 @@
 package allen.address.basic;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -13,6 +14,9 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 
 	/** addrs[] containing this kwd */
 	private HashSet<Integer> m_addrIds = new HashSet<Integer>();
+
+	/** new sorted addrs[] containing this kwd */
+	private SortedIntLst m_addrSortedIds = new SortedIntLst();
 
 	public Kwd(String kwdStr) {
 		m_kwdStr = kwdStr.intern();
