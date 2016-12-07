@@ -130,7 +130,7 @@ public class AddrSearch extends AAI_Module {
 			Addr addr = Addr.newAddr(line, m_kwdSet, addr_num_indexed);
 			if (addr != null) {
 				// TODO
-				// m_addrLst.add(addr);
+				m_addrLst.add(addr);
 				addr_num_indexed++;
 			}
 		}
