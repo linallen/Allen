@@ -30,7 +30,7 @@ import allen.address.simkwd.CharPosKwds;
  * save them into file and then start the search loop, otherwise it will load
  * indexes from indexing files in the dir_idx and then start the search loop.
  * </li>
- * <li><i>-k topk</i> - [para] top k addresses.</li>
+ * <li><i>-k topk</i> - [para] top k addresses, default 10.</li>
  * <li><i>-K topK</i> - [para] top K similar keywords. In fuzzy search, it
  * defines the max-size of similar kwds[] to a user keyword that is not in the
  * address keyword list. Default 5.</li>
@@ -39,7 +39,7 @@ import allen.address.simkwd.CharPosKwds;
  * </ul>
  * 
  * Usage example:<br>
- * Java -jar addrsearch.jar -i addr.csv #building indexes and then search<br>
+ * Java -jar addrsearch.jar -i addr.csv #build indexes and then search<br>
  * Java -jar addrsearch.jar -k 10 -d c:/idx #load indexes and then search<br>
  *
  * @author Allen Lin, 22 Nov 2016
@@ -69,36 +69,36 @@ public class AddrSearch extends AAI_Module {
 		m_chposKwds.owner(this);
 	}
 
-	private String kwdsFile() {
-		return m_dirIdx + "idx_kwds.txt";
+	private String kwdsFile(String dirIdx) {
+		return dirIdx + "idx_kwds.txt";
 	}
 
-	private String addrsFile() {
-		return m_dirIdx + "idx_addrs.txt";
+	private String addrsFile(String dirIdx) {
+		return dirIdx + "idx_addrs.txt";
 	}
 
-	private String chposKwdsFile() {
-		return m_dirIdx + "idx_chars.txt";
+	private String chposKwdsFile(String dirIdx) {
+		return dirIdx + "idx_chars.txt";
 	}
 
 	public void saveIdx(String idxDir) throws Exception {
 		// save kwds[] indexes to files
-		m_kwdSet.save(kwdsFile());
+		m_kwdSet.save(kwdsFile(idxDir));
 		// AAI_IO.saveFile(kwdsFile(), m_kwdSet.toString());
 		// save addrs[] to file
-		m_addrLst.save(addrsFile());
+		m_addrLst.save(addrsFile(idxDir));
 		// AAI_IO.saveFile(addrsFile(), m_addrLst.toString());
 		// save chPosKwds[] to file
-		AAI_IO.saveFile(chposKwdsFile(), m_chposKwds.toString());
+		AAI_IO.saveFile(chposKwdsFile(idxDir), m_chposKwds.toString());
 	}
 
 	public void loadIdx(String idxDir) throws Exception {
 		// load kwds[] indexes from files
-		m_kwdSet.load(kwdsFile());
+		m_kwdSet.load(kwdsFile(idxDir));
 		// load addrs[] from file
-		m_addrLst.loadAddrs(addrsFile(), m_kwdSet);
+		m_addrLst.loadAddrs(addrsFile(idxDir), m_kwdSet);
 		// load chPosKwds[] from file
-		m_chposKwds.loadChPosFile(chposKwdsFile(), m_kwdSet);
+		m_chposKwds.loadChPosFile(chposKwdsFile(idxDir), m_kwdSet);
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class AddrSearch extends AAI_Module {
 			saveIdx(m_dirIdx);
 		} else {
 			loadIdx(m_dirIdx);
-			saveIdx(m_dirIdx + "/re-save/");
+			// saveIdx(m_dirIdx + "re-save/");
 		}
 
 		// Step 2. searching
@@ -225,14 +225,20 @@ public class AddrSearch extends AAI_Module {
 	}
 
 	public static String help() {
-		return "Address Search Program.\n" + "Syntax: Java -jar addrsearch.jar -i addr_csv [-k topk]\n"
+		return "Address Search Program.\n"
+				+ "Syntax: Java -jar addrsearch.jar [-i addr_csv] -k topk [-K topK] [-d dir_idx]\n"
 				+ "-i addr_csv - [input] the address.csv file: [ADDRESS_DETAIL_PID, BUILDING_NAME, FLAT_NUMBER, NUMBER_FIRST, NUMBER_FIRST_SUFFIX, NUMBER_LAST, NUMBER_LAST_SUFFIX, STREET_NAME, STREET_TYPE_CODE, STREET_SUFFIX_TYPE, LOCALITY_NAME, STATE_ABBREVIATION, POSTCODE]\n"
 				+ "-k topk - [para] top k addresses, default 10.\n"
-				+ "-K topK - [para] top K fuzzy keywords, in spelling check, the limit on matched kwds[] to a input keyword. default 5.";
+				+ "-K topK - [para] top K similar keywords. In fuzzy search, it defines the max-size of similar kwds[] to a user keyword that is not in the address keyword list. Default 5.\n"
+				+ "-d dir_idx - [para] the indexing directory where indexing files locate. Default is current directory.\n\n"
+				+ "Usage example:\n" + "Java -jar addrsearch.jar -i addr.csv #build indexes and then search\n"
+				+ "Java -jar addrsearch.jar -k 10 -d c:/idx #load indexes and then search";
 	}
 
 	public static String version() {
-		return "v0.0.1.Beta, crteated on 27 Nov 2016, Allen Lin";
+		return "v0.0.1.Beta, crteated on 27 Nov 2016, Allen Lin\n"
+				+ "v0.0.7, 5 Dec 2016, kwd.addrs[] adopted Range to save memory.\n"
+				+ "v0.0.8, 18 Dec 2016, bug fixed: OrderedLst.retainAll()";
 	}
 
 	public static void main(String[] args) throws Exception {
