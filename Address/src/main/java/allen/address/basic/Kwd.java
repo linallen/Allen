@@ -16,6 +16,18 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 		m_kwdStr = kwdStr.intern();
 	}
 
+	public String str() {
+		return m_kwdStr;
+	}
+
+	public int length() {
+		return m_addrIds.objNum();
+	}
+
+	public int size() {
+		return m_addrIds.intNum();
+	}
+
 	/** add a new addr to addrs[] */
 	public void addAddr(Integer addrId) {
 		m_addrIds.add(addrId);
@@ -23,7 +35,7 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 
 	/** TODO: REFINE weight of the key = size(key), IDF */
 	public double wt() {
-		return OrderedLst.size(m_addrIds);
+		return m_addrIds.intNum();
 	}
 
 	public OrderedLst hostAddrs() {
@@ -45,19 +57,12 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 		return diff;
 	}
 
-	public static String toString(Kwd kwd) {
-		// StringBuffer sb = new StringBuffer(kwd.m_kwdStr);
-		// for (Integer addrId : kwd.m_addrIds) {
-		// sb.append(" ").append(addrId);
-		// }
-		// return sb.toString();
-		int length = OrderedLst.length(kwd.m_addrIds);
-		int size = OrderedLst.size(kwd.m_addrIds);
-		int ratio = 100 * length / size;
-		return kwd.m_kwdStr + ": <" + length + "/" + size + "=" + ratio + "%>" + OrderedLst.toString(kwd.m_addrIds);
-	}
-
-	public static String str(Kwd kwd) {
-		return kwd.m_kwdStr;
+	/** [kwd, length, size, ratio%, addrs[]] */
+	public String toString() {
+		// int length = m_addrIds.objNum();
+		// int size = m_addrIds.intNum();
+		// int ratio = 100 * length / size;
+		// return m_kwdStr + ": " + length + "/" + size + "=" + ratio + "%";
+		return m_kwdStr;
 	}
 }

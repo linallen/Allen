@@ -94,7 +94,7 @@ public class AddrSearch extends AAI_Module {
 
 	public void loadIdx(String idxDir) throws Exception {
 		// load kwds[] indexes from files
-		m_kwdSet.loadKwds(kwdsFile());
+		m_kwdSet.load(kwdsFile());
 		// load addrs[] from file
 		m_addrLst.loadAddrs(addrsFile(), m_kwdSet);
 		// load chPosKwds[] from file
@@ -128,11 +128,12 @@ public class AddrSearch extends AAI_Module {
 			// m_finished += line.length() + 2;
 			progress(finished += line.length() + 2, total);
 			Addr addr = Addr.newAddr(line, m_kwdSet, addr_num_indexed);
-			if (addr != null) {
-				// TODO
-				m_addrLst.add(addr);
-				addr_num_indexed++;
+			if (addr == null) {
+				outputWarning("skip invalid address: " + Common.quote(line));
+				continue;
 			}
+			m_addrLst.add(addr);
+			addr_num_indexed++;
 		}
 		br.close();
 		int addr_num_discard = addr_num_all - addr_num_indexed;
@@ -187,6 +188,7 @@ public class AddrSearch extends AAI_Module {
 			saveIdx(m_dirIdx);
 		} else {
 			loadIdx(m_dirIdx);
+			saveIdx(m_dirIdx + "/re-save/");
 		}
 
 		// Step 2. searching

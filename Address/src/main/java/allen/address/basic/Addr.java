@@ -1,94 +1,111 @@
 package allen.address.basic;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import aai.base.common.Common;
 
 /** address object */
-public class Addr implements Serializable, Comparable<Addr> {
+public class Addr implements Serializable {
 	private static final long serialVersionUID = -1701729465126477598L;
 
-	/** addr id */
+	/** address id */
 	public Integer id;
 
-	/** kwd list[] (the kwds[] of addr is used for result display ONLY) */
-	private Kwd m_bldgNames[], m_flatNum;
-	private Kwd m_numFirst, m_numLast;
-	/** other kwds[] + middle street numbers besides specific ones above */
-	private Kwd m_kwdLst[];
+	/** below names will be used to build the address tree */
+	public String m_bldgNames, m_flatNum, m_numFirst, m_numLast;
+	public String m_stateAbbr, m_postCode, m_streetName, m_streetNo, m_suburb;
 
-	public static int length(Addr addr) {
-		return addr.m_kwdLst.length;
-	}
-
-	/** build an addr from "3b/12a-15b las vagas road | village" */
+	/**
+	 * build an addr from
+	 * "3b/12a-15b_las vagas road, north epping nsw 2008 | village"
+	 */
 	public static Addr readAddr(String addrStr, KwdSet kwdSet, Integer addrId) {
 		Addr addr = new Addr();
 		addr.id = addrId;
 		HashSet<Kwd> addrAllKwds = new HashSet<Kwd>();
 
-		// addrStr = addrStr.replaceAll(" +", " ").trim();
+		addrStr = addrStr.replaceAll(" +", " ").trim();
 		// 1. extract building names[]
 		int pos = addrStr.indexOf('|');
 		if (pos > 0) {
-			String bldgNames[] = addrStr.substring(pos + 1, addrStr.length()).trim().split(" ");
-			addr.m_bldgNames = new Kwd[bldgNames.length];
-			for (int i = 0; i < bldgNames.length; i++) {
-				addr.m_bldgNames[i] = kwdSet.add(bldgNames[i]);
-				addrAllKwds.add(addr.m_bldgNames[i]);
+			addr.m_bldgNames = addrStr.substring(pos + 1, addrStr.length()).trim();
+			for (String bldgName : addr.m_bldgNames.split(" ")) {
+				addrAllKwds.add(kwdSet.add(bldgName));
 			}
 			addrStr = addrStr.substring(0, pos).trim();
 		}
-		// 2. extract flat number
+		// 2. extract suburb, state_abbr and post_code "north epping nsw 2110"
+		pos = addrStr.indexOf(',');
+		if (pos > 0) {
+			String items[] = addrStr.substring(pos + 1, addrStr.length()).trim().split(" ");
+			if (items.length < 3) {
+				return null;
+			}
+			// TODO
+			for (int i = 0; i < items.length - 2; i++) {
+				addr.m_suburb = ((i == 0) ? "" : (addr.m_suburb + " ")) + items[i];
+				addrAllKwds.add(kwdSet.add(items[i]));
+			}
+			addr.m_stateAbbr = items[items.length - 2];
+			addr.m_postCode = items[items.length - 1];
+			addrAllKwds.add(kwdSet.add(addr.m_stateAbbr));
+			addrAllKwds.add(kwdSet.add(addr.m_postCode));
+			addrStr = addrStr.substring(0, pos).trim();
+		}
+		// 3. extract flat number
 		pos = addrStr.indexOf('/');
 		if (pos > 0) {
-			String flatNum = addrStr.substring(0, pos).trim();
-			addr.m_flatNum = kwdSet.add(flatNum);
-			addrAllKwds.add(addr.m_flatNum);
+			addr.m_flatNum = addrStr.substring(0, pos).trim();
+			addrAllKwds.add(kwdSet.add(addr.m_flatNum));
 			addrStr = addrStr.substring(pos + 1, addrStr.length()).trim();
 		}
-		// 3. extract streetFirstNum-streetLastNum and other kwds[]
-		String kwdStrs[] = addrStr.split(" ");
-		addr.m_kwdLst = new Kwd[kwdStrs.length];
-		ArrayList<Kwd> addrDispKwds = new ArrayList<Kwd>();
-		for (String kwdStr : kwdStrs) {
-			if (kwdStr.isEmpty()) {
-				continue;
+		// 4. extract streetFirstNum-streetLastNum and street name
+		String items[] = addrStr.split("_");
+		if (items.length > 2) {
+			return null;
+		}
+		if (items.length == 2) {
+			addr.m_streetNo = items[0];
+			addr.m_streetName = items[1];
+		} else {
+			addr.m_streetName = items[0];
+		}
+		// add street names[] to kwds[]
+		for (String streetName : addr.m_streetName.trim().split(" ")) {
+			addrAllKwds.add(kwdSet.add(streetName));
+		}
+
+		if (addr.m_streetNo != null) {
+			// parse & and street numbers "12a-15b" to kwds[]
+			// e.g., 12a-15b, add 12a, 13, 14, 15b
+			String numbers[] = addr.m_streetNo.split("-");
+			if (numbers.length > 2) {
+				return null;
 			}
-			if (kwdStr.contains("-")) {
-				// parse & and street numbers "12a-15b" to kwds[]
-				// e.g., 12a-15b, add 12a, 13, 14, 15b
-				String numbers[] = kwdStr.split("-");
-				Common.Assert(numbers.length == 2);
-				addr.m_numFirst = kwdSet.add(numbers[0]);
-				addr.m_numLast = kwdSet.add(numbers[1]);
-				addrAllKwds.add(addr.m_numFirst);
-				addrAllKwds.add(addr.m_numLast);
+			addr.m_numFirst = numbers[0];
+			addrAllKwds.add(kwdSet.add(addr.m_numFirst));
+			if (numbers.length == 2) {
+				addr.m_numLast = numbers[1];
+				addrAllKwds.add(kwdSet.add(addr.m_numLast));
+				// add street numbers between [numFirst, numLast]
 				Integer numFirst, numLast;
 				try {
 					numFirst = Integer.parseInt(CommFunc.retainDigits(numbers[0]));
 					numLast = Integer.parseInt(CommFunc.retainDigits(numbers[1]));
+					for (Integer streetNum = numFirst + 1; streetNum < numLast; streetNum++) {
+						addrAllKwds.add(kwdSet.add(streetNum.toString()));
+					}
 				} catch (Exception e) {
-					System.out.println(
-							"[Warning] discarded invalid street number " + Common.quote(kwdStr) + " in " + addrStr);
-					continue;
+					System.out.println("[Warning] discarded invalid street number " + Common.quote(addr.m_streetNo)
+							+ " in " + addrStr);
 				}
-				for (Integer streetNum = numFirst + 1; streetNum < numLast; streetNum++) {
-					addrAllKwds.add(kwdSet.add(streetNum.toString()));
-				}
-			} else {
-				Kwd kwd = kwdSet.add(kwdStr);
-				addrAllKwds.add(kwd);
-				addrDispKwds.add(kwd);
 			}
 		}
 
 		for (Kwd kwd : addrAllKwds) {
 			kwd.addAddr(addrId);
 		}
-		addr.m_kwdLst = addrDispKwds.toArray(new Kwd[0]);
 		return addr;
 	}
 
@@ -136,49 +153,20 @@ public class Addr implements Serializable, Comparable<Addr> {
 			// item[12]: post code "2008"
 			m_postCode = items[12];
 
-			// Step 2. build standard addr "3b/12a-15b las vagas road | village"
+			// Step 2. build standard addr
+			// "3b/12a-15b_las vagas road, north epping nsw 2008 | village"
 			// 2. street numbers
 			String streetNumFirst = m_numFirst + m_numFirstSuffix;
 			String streetNumLast = m_numLast + m_numLastSuffix;
 			String connector = (!streetNumFirst.trim().isEmpty() && !streetNumLast.trim().isEmpty()) ? "-" : "";
 			String streetNum = streetNumFirst + connector + streetNumLast;
-			String addrStr = m_flatNum + (m_flatNum.isEmpty() ? "" : "/") + streetNum + " "
-					+ Common.strArraytoStr(m_streetNames) + " " + m_streetSuffix + " " + m_streetType + " "
+			String addrStr = m_flatNum + (m_flatNum.isEmpty() ? "" : "/") + streetNum + "_"
+					+ Common.strArraytoStr(m_streetNames) + " " + m_streetSuffix + " " + m_streetType + ", "
 					+ Common.strArraytoStr(m_localityNames) + " " + m_stateAbbr + " " + m_postCode
 					+ (m_bldgNames == null ? "" : (" | " + Common.strArraytoStr(m_bldgNames)));
 			return Addr.readAddr(addrStr, kwdSet, addrId);
 		} catch (Exception e) {
 			return null;
 		}
-	}
-
-	// TODO Verify
-	public int compareTo(Addr addr) {
-		return Addr.length(this) - Addr.length(addr);
-	}
-
-	public static String toString(Addr addr) {
-		// StringBuffer sb = new StringBuffer(addr.id.toString()+" ");
-		StringBuffer sb = new StringBuffer();
-		// 1. flat number
-		if (addr.m_flatNum != null) {
-			sb.append(Kwd.str(addr.m_flatNum) + "/");
-		}
-		// 2. street numbers[]
-		if ((addr.m_numFirst != null) && (addr.m_numLast != null)) {
-			sb.append(Kwd.str(addr.m_numFirst) + "-" + Kwd.str(addr.m_numLast));
-		}
-		// 3. other kwds[]
-		for (Kwd kwd : addr.m_kwdLst) {
-			sb.append(" " + Kwd.str(kwd));
-		}
-		// 4. building names[]
-		if (addr.m_bldgNames != null) {
-			sb.append(" |");
-			for (Kwd kwd : addr.m_bldgNames) {
-				sb.append(" " + Kwd.str(kwd));
-			}
-		}
-		return sb.toString().trim().replaceAll(" +", " ").replaceAll("/ ", "/");
 	}
 }

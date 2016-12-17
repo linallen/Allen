@@ -146,7 +146,7 @@ public class CharPosKwds extends AAI_Module {
 			buf.append(key);
 			HashSet<Kwd> kwdSet = m_charPosKwds.get(key);
 			for (Kwd kwd : kwdSet) {
-				buf.append(" " + Kwd.str(kwd));
+				buf.append(" " + kwd.str());
 			}
 			buf.append("\n");
 		}
