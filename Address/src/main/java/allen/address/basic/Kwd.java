@@ -9,6 +9,9 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 	/** kwd key */
 	private String m_kwdStr;
 
+	/** weight of the kwd */
+	private double m_wt = 0;
+
 	/** sorted addrs[] containing this kwd */
 	private OrderedLst m_addrIds = new OrderedLst();
 
@@ -35,7 +38,15 @@ public class Kwd implements Serializable, Comparable<Kwd> {
 
 	/** TODO: REFINE weight of the key = size(key), IDF */
 	public double wt() {
-		return m_addrIds.intNum();
+		if (m_wt == 0 && m_addrIds.intNum() > 0) {
+			// m_wt = m_addrIds.intNum();
+			m_wt = 1. / m_addrIds.intNum(); // IDF
+		}
+		return m_wt;
+	}
+
+	public String wtStr() {
+		return (int) (wt() * 10000) + "";
 	}
 
 	public OrderedLst hostAddrs() {

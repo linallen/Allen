@@ -82,6 +82,7 @@ public class AddrSearch extends AAI_Module {
 	}
 
 	public void saveIdx(String idxDir) throws Exception {
+		createIdxDir(idxDir);
 		// save kwds[] indexes to files
 		m_kwdSet.save(kwdsFile(idxDir));
 		// AAI_IO.saveFile(kwdsFile(), m_kwdSet.toString());
@@ -185,7 +186,9 @@ public class AddrSearch extends AAI_Module {
 		// Step 1. indexing
 		if (AAI_IO.fileExist(m_addrCSV)) {
 			indexing(m_addrCSV);
-			saveIdx(m_dirIdx);
+			if (Common.notNullEmpty(m_dirIdx)) {
+				saveIdx(m_dirIdx);
+			}
 		} else {
 			loadIdx(m_dirIdx);
 			// saveIdx(m_dirIdx + "re-save/");
@@ -219,7 +222,6 @@ public class AddrSearch extends AAI_Module {
 		m_topK = Common.getOptionInteger("K", options, m_topK);
 		// -d dir_idx
 		m_dirIdx = Common.getOption("d", options);
-		m_dirIdx = createIdxDir(m_dirIdx);
 		// debug, daemon, etc
 		super.setOptions(options);
 	}
@@ -238,7 +240,8 @@ public class AddrSearch extends AAI_Module {
 	public static String version() {
 		return "v0.0.1.Beta, crteated on 27 Nov 2016, Allen Lin\n"
 				+ "v0.0.7, 5 Dec 2016, kwd.addrs[] adopted Range to save memory.\n"
-				+ "v0.0.8, 18 Dec 2016, bug fixed: OrderedLst.retainAll()";
+				+ "v0.0.8, 18 Dec 2016, bug fixed: OrderedLst.retainAll()\n"
+				+ "v0.0.9, 18 Dec 2016, optimize fuzzySearch.class: (1) sort search kwds[], (2) pruning search proc.\n";
 	}
 
 	public static void main(String[] args) throws Exception {

@@ -69,6 +69,9 @@ public class KwdSet extends AAI_Module {
 			OrderedLst addrLst = kwd.hostAddrs();
 			int length = addrLst.objNum();
 			int size = addrLst.intNum();
+			if (size == 0) {
+				continue;
+			}
 			int ratio = 100 * length / size;
 			sb.append(kwd.str() + "," + length + "," + size + "," + ratio + "%,");
 			for (int j = 0; j < addrLst.objNum(); j++) {
