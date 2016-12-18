@@ -57,7 +57,7 @@ public class KwdSet extends AAI_Module {
 	}
 
 	/** save [kwd, length, size, ratio%, addrs[]] */
-	public void save(String fileName) throws Exception {
+	public void saveOld(String fileName) throws Exception {
 		output("Started saving kwds[" + size() + "] to file " + fileName);
 		Timer timer = new Timer();
 		ArrayList<Kwd> kwds = new ArrayList<Kwd>(m_kwdSet.values());
@@ -92,7 +92,7 @@ public class KwdSet extends AAI_Module {
 		output("Finished saving kwds[" + size() + "] to file. " + timer);
 	}
 
-	public boolean saveOld(String fileName) {
+	public boolean save(String fileName) {
 		BufferedWriter bw = null;
 		try {
 			bw = new BufferedWriter(new FileWriter(fileName));
@@ -103,14 +103,28 @@ public class KwdSet extends AAI_Module {
 				progress(i + 1, kwds.size());
 				Kwd kwd = kwds.get(i);
 				// [kwd, length, size, ratio%, addrs[]]
-				// return kwd.m_kwdStr + "," + length + "," + size + "," + ratio
-				// + "%," + OrderedLst.toString(kwd.m_addrIds);
-				int length = kwd.hostAddrs().objNum();
-				int size = kwd.hostAddrs().intNum();
+				OrderedLst addrLst = kwd.hostAddrs();
+				int length = addrLst.objNum();
+				int size = addrLst.intNum();
+				if (size == 0) {
+					continue;
+				}
 				int ratio = 100 * length / size;
-				// bw.write(kwd.str() + "," + length + "," + size + "," + ratio
-				// + "%," + OrderedLst.toString(kwd.m_addrIds);
-				// bw.write(Kwd.toString(kwd) + "\n");
+				StringBuffer sb = new StringBuffer(kwd.str() + "," + length + "," + size + "," + ratio + "%,");
+				for (int j = 0; j < addrLst.objNum(); j++) {
+					sb.append(j > 0 ? " " : "");
+					Object addrId = addrLst.get(j);
+					if (addrId instanceof Integer) {
+						sb.append((Integer) addrId);
+					} else if (addrId instanceof Range) {
+						Range range = (Range) addrId;
+						sb.append(range.min + "~" + range.max);
+					} else {
+						throw new Exception("Invalid addrId " + Common.quote(addrId.toString()));
+					}
+				}
+				bw.write(sb.append("\n").toString());
+				bw.flush();
 			}
 			bw.close();
 			output("Finished saving kwds[" + kwds.size() + "] to file. " + timer);
