@@ -95,10 +95,10 @@ public class KwdSet extends AAI_Module {
 	public boolean save(String fileName) {
 		BufferedWriter bw = null;
 		try {
+			output("Started saving kwds[" + m_kwdSet.values().size() + "] to file " + fileName);
+			Timer timer = new Timer();
 			bw = new BufferedWriter(new FileWriter(fileName));
 			ArrayList<Kwd> kwds = new ArrayList<Kwd>(m_kwdSet.values());
-			output("Started saving kwds[" + kwds.size() + "] to file " + fileName);
-			Timer timer = new Timer();
 			for (int i = 0; i < kwds.size(); i++) {
 				progress(i + 1, kwds.size());
 				Kwd kwd = kwds.get(i);
@@ -107,27 +107,18 @@ public class KwdSet extends AAI_Module {
 				int length = addrLst.objNum();
 				int size = addrLst.intNum();
 				if (size == 0) {
-					continue;
+					continue; // to fix later
 				}
-				int ratio = 100 * length / size;
-				StringBuffer sb = new StringBuffer(kwd.str() + "," + length + "," + size + "," + ratio + "%,");
+				StringBuffer sb = new StringBuffer();
+				sb.append(kwd.str() + "," + length + "," + size + "," + (100 * length / size) + "%,");
 				for (int j = 0; j < addrLst.objNum(); j++) {
-					sb.append(j > 0 ? " " : "");
-					Object addrId = addrLst.get(j);
-					if (addrId instanceof Integer) {
-						sb.append((Integer) addrId);
-					} else if (addrId instanceof Range) {
-						Range range = (Range) addrId;
-						sb.append(range.min + "~" + range.max);
-					} else {
-						throw new Exception("Invalid addrId " + Common.quote(addrId.toString()));
-					}
+					sb.append(j > 0 ? " " : "").append(addrLst.get(j).toString());
 				}
 				bw.write(sb.append("\n").toString());
-				bw.flush();
+				// bw.flush();
 			}
 			bw.close();
-			output("Finished saving kwds[" + kwds.size() + "] to file. " + timer);
+			output("Finished saving kwds[" + m_kwdSet.values().size() + "] to file. " + timer);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -150,18 +141,11 @@ public class KwdSet extends AAI_Module {
 			// 2. add addrIds[]
 			pos = line.lastIndexOf(',');
 			String addrIdsStr = line.substring(pos + 1, line.length());
-			String addrIds[] = addrIdsStr.split(" ");
-			for (String addrId : addrIds) {
-				if (addrId.contains("~")) {
-					String numbers[] = addrId.split("~");
-					Common.Assert(numbers.length == 2);
-					int min = Integer.parseInt(numbers[0]);
-					int max = Integer.parseInt(numbers[1]);
-					for (int num = min; num <= max; num++) {
-						kwd.addAddr(num);
-					}
-				} else {
-					kwd.addAddr(Integer.parseInt(addrId));
+			String addrIdStrs[] = addrIdsStr.split(" ");
+			for (String addrIdStr : addrIdStrs) {
+				Integer addrIds[] = Range.getInts(addrIdStr);
+				for (Integer addrId : addrIds) {
+					kwd.addAddr(addrId);
 				}
 			}
 		}
